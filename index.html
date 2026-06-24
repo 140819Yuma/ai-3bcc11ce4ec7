@@ -804,40 +804,89 @@
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Organization Design</div>
-      <h2 class="sec-title">AIエージェント組織設計思想</h2>
-      <p class="sec-sub">参考動画から学んだ設計哲学。単一AIに全部やらせず、人間の専門組織を模倣した「専門特化・非同期連携・相互レビュー」を基本とする。</p>
+      <h2 class="sec-title">AIエージェント組織設計（参考動画ベース）</h2>
+      <p class="sec-sub">単一AIに全てを処理させず、人間の専門組織を模倣した18体・4チーム構成。「専門特化・非同期連携・相互レビュー」が設計の軸。</p>
     </div>
 
-    <!-- 組織構造図 -->
+    <!-- 全体組織図 -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:28px;">
-      <h3 style="font-size:15px;margin-bottom:20px;color:var(--accent);">全体の階層構造</h3>
-      <div style="display:flex;flex-direction:column;gap:12px;">
+      <h3 style="font-size:15px;margin-bottom:20px;color:var(--accent);">全体組織図（計18体のエージェント）</h3>
 
-        <!-- CEO -->
-        <div style="display:flex;align-items:center;gap:12px;">
-          <div style="background:#1f3a5f;border:1px solid var(--accent);border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap;">👤 CEO（人間）</div>
-          <div style="font-size:12px;color:var(--text2);">最終意思決定・タスク起票・システム全体の方向性</div>
+      <!-- CEO -->
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <div style="background:#1f3a5f;border:2px solid var(--accent);border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;color:var(--accent);">👤 CEO（人間）</div>
+        <div style="font-size:12px;color:var(--text2);">最終意思決定・タスク起票（Obsidianインボックスにメモ投入）・エスカレーション対応</div>
+      </div>
+
+      <!-- 調整層 -->
+      <div style="border-left:2px solid var(--orange);margin-left:32px;padding-left:20px;margin-bottom:16px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+          <div style="background:var(--bg3);border:1px solid var(--orange);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">📚 文脈エンジン（Obsidian）</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">会社理念・CEOの価値観<br>デザイン言語・プロジェクト履歴<br>全エージェントが作業前に読み込む「共有記憶」</div>
+          </div>
+          <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:6px;">📋 タスクボード（カンバン）</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.7;">人間・AIが共同アクセス<br>「未着手→作業中→ブロック→完了」でステータス管理<br>エージェントが自律的にタスクを拾う</div>
+          </div>
         </div>
 
-        <div style="border-left:2px solid var(--border);margin-left:28px;padding-left:20px;display:flex;flex-direction:column;gap:8px;">
-          <!-- Shared Context -->
-          <div style="display:flex;align-items:center;gap:12px;">
-            <div style="background:var(--bg3);border:1px solid var(--orange);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap;">📋 共有コンテキスト＆タスクボード</div>
-            <div style="font-size:12px;color:var(--text2);">エージェント間の直接対話なし。ナレッジベース＋カンバンを介した非同期連携</div>
+        <!-- 4チーム -->
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+
+          <!-- エンジニアリング -->
+          <div style="background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">⚙️ エンジニアリングチーム</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：Tech Lead AI（Sonnet級）</div>
+            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
+              <li>コーディング担当</li>
+              <li>UIデザイン担当</li>
+              <li>バックエンド担当</li>
+              <li>QA（品質保証）担当</li>
+            </ul>
           </div>
 
-          <div style="border-left:2px solid var(--border);margin-left:28px;padding-left:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:4px;">
-            <div style="background:var(--bg3);border:1px solid var(--green);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--green);text-align:center;">⚙️ エンジニアリング</div>
-            <div style="background:var(--bg3);border:1px solid var(--purple);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--purple);text-align:center;">✍️ コンテンツ</div>
-            <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--yellow);text-align:center;">💼 ビジネス</div>
-            <div style="background:var(--bg3);border:1px solid var(--teal);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--teal);text-align:center;">🔧 インフラ運用</div>
+          <!-- コンテンツ -->
+          <div style="background:var(--bg3);border:1px solid var(--purple);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px;">✍️ コンテンツチーム</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：コンテンツディレクター AI（Sonnet級）</div>
+            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
+              <li>動画台本の拡張</li>
+              <li>ブランドボイスチェック</li>
+              <li>本質的な内容かの確認</li>
+              <li>アンチAIスロップ（AI臭い表現の排除）</li>
+            </ul>
           </div>
+
+          <!-- ビジネス -->
+          <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:8px;">💼 ビジネスチーム</div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：ビジネスマネージャー AI（Sonnet級）</div>
+            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
+              <li>マーケティング</li>
+              <li>案件フィルタリング（低品質案件の排除）</li>
+              <li>契約書のリーガルチェック</li>
+            </ul>
+          </div>
+
+          <!-- インフラ -->
+          <div style="background:var(--bg3);border:2px solid var(--teal);border-radius:8px;padding:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:4px;">🔧 インフラ運用チーム <span style="color:var(--red);font-size:10px;">★最重要</span></div>
+            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：タスクディスパッチャー AI</div>
+            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
+              <li>Obsidianインボックスの定期スキャン</li>
+              <li>タスクの自動生成・ボードへの登録</li>
+              <li>不要ファイルの削除（ゴミ掃除）</li>
+              <li>夜間の自動テスト実行</li>
+            </ul>
+          </div>
+
         </div>
       </div>
 
-      <div class="callout c-info" style="margin-top:20px;">
-        <div class="callout-icon">🔑</div>
-        <div style="font-size:13px;">エージェント同士は<strong>直接会話しない</strong>。全ての情報は共有ドキュメント（ナレッジベース）とカンバン（タスクボード）を経由して非同期に受け渡す。コンテキスト汚染とハルシネーションを防ぐための設計。</div>
+      <div class="callout c-warn" style="margin-top:4px;">
+        <div class="callout-icon">⚠️</div>
+        <div style="font-size:13px;">エージェント同士は<strong>直接会話しない</strong>。全ての情報は文脈エンジン（Obsidian）＋タスクボードを経由して非同期に受け渡す。コンテキスト汚染・ハルシネーション防止のための根本設計。</div>
       </div>
     </div>
 
@@ -847,64 +896,91 @@
       <div class="card">
         <div class="card-icon">📖</div>
         <h3>① マニュアル（指示書）</h3>
-        <p>専門職務の定義を記したシステムプロンプト＋共有ナレッジからの文脈情報。エージェントの「役割」と「判断基準」を規定する。</p>
-        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">例: 「あなたはQAエンジニアです。以下のナレッジベースに基づきコードレビューを行ってください。」</div>
+        <p>職務定義のシステムプロンプト＋文脈エンジンから読み込んだ会社のルール。全エージェントは作業前に必ずこれを参照し、ブレのないアウトプットを出す。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">例：「あなたはUIデザイナーです。{デザイン言語} に従いコンポーネントを作成してください。」</div>
       </div>
       <div class="card">
         <div class="card-icon">🧠</div>
         <h3>② 頭脳（LLM）</h3>
-        <p>タスクの難易度に応じてモデルを使い分ける。高度な戦略・アーキテクチャ判断には最上位モデル、ルーチン処理には軽量モデルを選択。</p>
-        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">戦略・設計 → Llama 3.3 70B<br>ルーチン整理 → Llama 3.1 8B</div>
+        <p>役割・難易度でモデルを使い分ける。リーダーAI（Sonnet）が日常タスクを担い、高度な戦略判断が必要な場合のみアドバイザーAI（Opus）にお伺いを立てる。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">ルーチン処理 → Sonnet（コスト低）<br>戦略判断 → Opus（スポット利用のみ）</div>
       </div>
       <div class="card">
         <div class="card-icon">🗂️</div>
         <h3>③ 机（独立セッション）</h3>
-        <p>他タスクとは分離されたクリーンな実行環境。文脈の汚染やハルシネーションを防ぐため、タスクごとに新しいセッションで処理する。</p>
-        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">タスクA・タスクBは別セッション。終わったら破棄。</div>
+        <p>タスクごとに完全分離されたクリーンな実行環境。1つのLLMアカウントを使い回さず、役割ごとに独立したサブエージェントとして動かす。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">タスクA・Bは別セッション。終了後は破棄。コンテキスト混入ゼロ。</div>
       </div>
     </div>
 
-    <!-- 運用ルール -->
-    <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">運用の4ルール</h3>
-    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+    <!-- 24時間自動運転フロー -->
+    <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">24時間自動運転フロー</h3>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;margin-bottom:28px;">
+      <div style="display:flex;flex-direction:column;gap:0;">
 
-      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <span style="font-size:20px;margin-top:2px;">🎯</span>
-        <div>
-          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">リーダーによるタスク分配</p>
-          <p style="font-size:13px;color:var(--text2);">Tech Leadなどのオーケストレーターが要件を分析し、フロント・バック・QAなど適切な専門ペルソナに作業を分割して処理させる。</p>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1f3a5f;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;">1</div>
+            <div style="width:2px;flex:1;background:var(--border);margin:4px 0;min-height:32px;"></div>
+          </div>
+          <div style="padding-bottom:20px;">
+            <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">CEO がスマホからメモを投入</p>
+            <p style="font-size:12px;color:var(--text2);">Obsidianの「インボックス」に思いつきのアイデア・依頼をメモするだけ。</p>
+          </div>
         </div>
-      </div>
 
-      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <span style="font-size:20px;margin-top:2px;">🔍</span>
-        <div>
-          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">相互レビューの徹底</p>
-          <p style="font-size:13px;color:var(--text2);">1つのエージェントの出力をそのまま正とせず、必ず別視点のQAレビュープロセスを通す。現プロトタイプのリフレクションループがこれに該当。</p>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--teal);flex-shrink:0;">2</div>
+            <div style="width:2px;flex:1;background:var(--border);margin:4px 0;min-height:32px;"></div>
+          </div>
+          <div style="padding-bottom:20px;">
+            <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">タスクディスパッチャー AIが自動スキャン・タスク登録</p>
+            <p style="font-size:12px;color:var(--text2);">インフラAIが定期的にインボックスを確認し、タスクボードに自動で「タスク」として登録・チームに割り振り。</p>
+          </div>
         </div>
-      </div>
 
-      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <span style="font-size:20px;margin-top:2px;">📝</span>
-        <div>
-          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">引き継ぎのドキュメント化</p>
-          <p style="font-size:13px;color:var(--text2);">作業中断や別エージェントへのパス時は、暗黙の了解に頼らず必ずMarkdownで「引き継ぎドキュメント」を出力してコンテキストを保存する。</p>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--purple);display:flex;align-items:center;justify-content:function;font-size:13px;font-weight:700;color:var(--purple);flex-shrink:0;">3</div>
+            <div style="width:2px;flex:1;background:var(--border);margin:4px 0;min-height:32px;"></div>
+          </div>
+          <div style="padding-bottom:20px;">
+            <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">夜間に専門AIが並列処理・QAがテスト実行</p>
+            <p style="font-size:12px;color:var(--text2);">各チームのエージェントがタスクをこなし、QA担当がコードテスト・品質チェックを自動で回す。引き継ぎが必要な場合は「引き継ぎ書（Markdown）」を出力して次のエージェントに渡す。</p>
+          </div>
         </div>
-      </div>
 
-      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
-        <span style="font-size:20px;margin-top:2px;">🚨</span>
-        <div>
-          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">権限の明文化とエスカレーション</p>
-          <p style="font-size:13px;color:var(--text2);">エージェントが自己判断してよい範囲と、人間（CEO）の確認が必要な範囲を厳格に線引き。迷った場合は必ず人間にエスカレーション（処理をブロック）する。</p>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--bg3);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--red);flex-shrink:0;">!</div>
+            <div style="width:2px;flex:1;background:var(--border);margin:4px 0;min-height:32px;"></div>
+          </div>
+          <div style="padding-bottom:20px;">
+            <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">判断に迷ったらエスカレーション（ブロック）</p>
+            <p style="font-size:12px;color:var(--text2);">エージェントの権限外の判断が必要になったら処理を止めてタスクボードを「ブロック」状態に。人間の確認を待つ。</p>
+          </div>
         </div>
-      </div>
 
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+            <div style="width:32px;height:32px;border-radius:50%;background:#1f3a5f;border:2px solid var(--accent);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--accent);flex-shrink:0;">朝</div>
+          </div>
+          <div>
+            <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">CEO が朝起きると成果＋確認待ちリストが届いている</p>
+            <p style="font-size:12px;color:var(--text2);">「昨晩の完了タスク一覧」と「CEOの判断が必要なブロック中タスク」だけを確認すればよい状態になっている。</p>
+          </div>
+        </div>
+
+      </div>
     </div>
 
     <div class="callout c-tip">
       <div class="callout-icon">💡</div>
-      <div style="font-size:13px;"><strong>現プロトタイプとの対応：</strong> Python司令官＝タスク分配、リフレクションループ＝相互レビュー、まで実装済み。<strong>引き継ぎドキュメント出力・エスカレーション判定</strong>は次のフェーズで実装予定。</div>
+      <div style="font-size:13px;"><strong>現プロトタイプとの対応：</strong><br>
+        ✅ 実装済み：Python司令官（タスク分配）・リフレクションループ（相互レビュー）<br>
+        🔜 次フェーズ：文脈エンジン（Obsidianまたはmd）・引き継ぎドキュメント出力・エスカレーション判定・夜間自動実行
+      </div>
     </div>
 
   </div>
