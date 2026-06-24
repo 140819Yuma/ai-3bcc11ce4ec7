@@ -349,6 +349,7 @@
     <li><a href="#hybrid">ハイブリッド設計</a></li>
     <li><a href="#reflection">リフレクション</a></li>
     <li><a href="#patterns">パターン</a></li>
+    <li><a href="#org-design">組織設計</a></li>
     <li><a href="#free-api">無料API</a></li>
     <li><a href="#impl">実装</a></li>
     <li><a href="#tips">Tips</a></li>
@@ -795,6 +796,117 @@
         </div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ===== ORG DESIGN ===== -->
+<section id="org-design">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Organization Design</div>
+      <h2 class="sec-title">AIエージェント組織設計思想</h2>
+      <p class="sec-sub">参考動画から学んだ設計哲学。単一AIに全部やらせず、人間の専門組織を模倣した「専門特化・非同期連携・相互レビュー」を基本とする。</p>
+    </div>
+
+    <!-- 組織構造図 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:28px;">
+      <h3 style="font-size:15px;margin-bottom:20px;color:var(--accent);">全体の階層構造</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+
+        <!-- CEO -->
+        <div style="display:flex;align-items:center;gap:12px;">
+          <div style="background:#1f3a5f;border:1px solid var(--accent);border-radius:8px;padding:10px 20px;font-size:13px;font-weight:700;color:var(--accent);white-space:nowrap;">👤 CEO（人間）</div>
+          <div style="font-size:12px;color:var(--text2);">最終意思決定・タスク起票・システム全体の方向性</div>
+        </div>
+
+        <div style="border-left:2px solid var(--border);margin-left:28px;padding-left:20px;display:flex;flex-direction:column;gap:8px;">
+          <!-- Shared Context -->
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="background:var(--bg3);border:1px solid var(--orange);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;color:var(--orange);white-space:nowrap;">📋 共有コンテキスト＆タスクボード</div>
+            <div style="font-size:12px;color:var(--text2);">エージェント間の直接対話なし。ナレッジベース＋カンバンを介した非同期連携</div>
+          </div>
+
+          <div style="border-left:2px solid var(--border);margin-left:28px;padding-left:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-top:4px;">
+            <div style="background:var(--bg3);border:1px solid var(--green);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--green);text-align:center;">⚙️ エンジニアリング</div>
+            <div style="background:var(--bg3);border:1px solid var(--purple);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--purple);text-align:center;">✍️ コンテンツ</div>
+            <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--yellow);text-align:center;">💼 ビジネス</div>
+            <div style="background:var(--bg3);border:1px solid var(--teal);border-radius:6px;padding:8px 12px;font-size:12px;color:var(--teal);text-align:center;">🔧 インフラ運用</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout c-info" style="margin-top:20px;">
+        <div class="callout-icon">🔑</div>
+        <div style="font-size:13px;">エージェント同士は<strong>直接会話しない</strong>。全ての情報は共有ドキュメント（ナレッジベース）とカンバン（タスクボード）を経由して非同期に受け渡す。コンテキスト汚染とハルシネーションを防ぐための設計。</div>
+      </div>
+    </div>
+
+    <!-- エージェントの3要素 -->
+    <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">個別エージェントの3要素</h3>
+    <div class="card-grid" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-icon">📖</div>
+        <h3>① マニュアル（指示書）</h3>
+        <p>専門職務の定義を記したシステムプロンプト＋共有ナレッジからの文脈情報。エージェントの「役割」と「判断基準」を規定する。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">例: 「あなたはQAエンジニアです。以下のナレッジベースに基づきコードレビューを行ってください。」</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>② 頭脳（LLM）</h3>
+        <p>タスクの難易度に応じてモデルを使い分ける。高度な戦略・アーキテクチャ判断には最上位モデル、ルーチン処理には軽量モデルを選択。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">戦略・設計 → Llama 3.3 70B<br>ルーチン整理 → Llama 3.1 8B</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>③ 机（独立セッション）</h3>
+        <p>他タスクとは分離されたクリーンな実行環境。文脈の汚染やハルシネーションを防ぐため、タスクごとに新しいセッションで処理する。</p>
+        <div style="margin-top:12px;padding:10px;background:var(--bg);border-radius:6px;font-size:12px;color:var(--text2);">タスクA・タスクBは別セッション。終わったら破棄。</div>
+      </div>
+    </div>
+
+    <!-- 運用ルール -->
+    <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">運用の4ルール</h3>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px;">
+
+      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <span style="font-size:20px;margin-top:2px;">🎯</span>
+        <div>
+          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">リーダーによるタスク分配</p>
+          <p style="font-size:13px;color:var(--text2);">Tech Leadなどのオーケストレーターが要件を分析し、フロント・バック・QAなど適切な専門ペルソナに作業を分割して処理させる。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <span style="font-size:20px;margin-top:2px;">🔍</span>
+        <div>
+          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">相互レビューの徹底</p>
+          <p style="font-size:13px;color:var(--text2);">1つのエージェントの出力をそのまま正とせず、必ず別視点のQAレビュープロセスを通す。現プロトタイプのリフレクションループがこれに該当。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <span style="font-size:20px;margin-top:2px;">📝</span>
+        <div>
+          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">引き継ぎのドキュメント化</p>
+          <p style="font-size:13px;color:var(--text2);">作業中断や別エージェントへのパス時は、暗黙の了解に頼らず必ずMarkdownで「引き継ぎドキュメント」を出力してコンテキストを保存する。</p>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:14px;align-items:flex-start;background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <span style="font-size:20px;margin-top:2px;">🚨</span>
+        <div>
+          <p style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">権限の明文化とエスカレーション</p>
+          <p style="font-size:13px;color:var(--text2);">エージェントが自己判断してよい範囲と、人間（CEO）の確認が必要な範囲を厳格に線引き。迷った場合は必ず人間にエスカレーション（処理をブロック）する。</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">💡</div>
+      <div style="font-size:13px;"><strong>現プロトタイプとの対応：</strong> Python司令官＝タスク分配、リフレクションループ＝相互レビュー、まで実装済み。<strong>引き継ぎドキュメント出力・エスカレーション判定</strong>は次のフェーズで実装予定。</div>
+    </div>
+
   </div>
 </section>
 
