@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# 内部資料・PDF（機密情報含む可能性あり）
+AIエージェント調査.pdf
+
+# 環境・APIキー
+.env
+*.key
+*.pem
+
+# 一時ファイル
+*.tmp
+*.log

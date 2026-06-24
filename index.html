@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AIエージェント開発 リサーチノート — Yuma & Koki</title>
+  <style>
+    :root {
+      --bg: #0d1117;
+      --bg2: #161b22;
+      --bg3: #1c2128;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text2: #8b949e;
+      --accent: #58a6ff;
+      --accent2: #79c0ff;
+      --green: #3fb950;
+      --orange: #d29922;
+      --purple: #bc8cff;
+      --pink: #f778ba;
+      --red: #f85149;
+      --teal: #2ea043;
+      --yellow: #e3b341;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans JP", sans-serif;
+      line-height: 1.7;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(13,17,23,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      display: flex; align-items: center; gap: 24px; height: 52px;
+    }
+    .nav-logo { font-size: 14px; font-weight: 700; color: var(--accent); white-space: nowrap; }
+    .nav-logo span { color: var(--text2); font-weight: 400; }
+    nav ul { display: flex; gap: 2px; list-style: none; overflow-x: auto; scrollbar-width: none; }
+    nav ul::-webkit-scrollbar { display: none; }
+    nav a {
+      color: var(--text2); text-decoration: none; font-size: 12px;
+      padding: 5px 10px; border-radius: 6px; white-space: nowrap; transition: all .15s;
+    }
+    nav a:hover { color: var(--text); background: var(--bg2); }
+
+    /* ===== HERO ===== */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: 72px 24px 56px; text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero::before {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background:
+        radial-gradient(ellipse 70% 50% at 50% -5%, rgba(88,166,255,.16) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 30% at 85% 85%, rgba(188,140,255,.1) 0%, transparent 60%),
+        radial-gradient(ellipse 30% 20% at 10% 70%, rgba(63,185,80,.07) 0%, transparent 60%);
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid var(--accent); color: var(--accent);
+      font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+      padding: 4px 14px; border-radius: 20px; margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(26px, 5vw, 50px); font-weight: 800;
+      letter-spacing: -.025em; line-height: 1.15; margin-bottom: 14px;
+      background: linear-gradient(135deg, #e6edf3 0%, #79c0ff 45%, #bc8cff 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero p { color: var(--text2); font-size: 15px; max-width: 580px; margin: 0 auto 24px; }
+    .hero-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .chip {
+      font-size: 12px; color: var(--text2); background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .chip .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .dot-green { background: var(--green); box-shadow: 0 0 5px var(--green); }
+    .dot-blue  { background: var(--accent); box-shadow: 0 0 5px var(--accent); }
+    .dot-purple{ background: var(--purple); box-shadow: 0 0 5px var(--purple); }
+    .dot-orange{ background: var(--orange); box-shadow: 0 0 5px var(--orange); }
+
+    /* ===== LAYOUT ===== */
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+    section:last-of-type { border-bottom: none; }
+    .sec-tag { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+    .sec-title { font-size: clamp(18px, 3vw, 28px); font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; }
+    .sec-sub { color: var(--text2); max-width: 700px; font-size: 14px; }
+    .sec-head { margin-bottom: 32px; }
+
+    /* ===== PROGRESS LOG ===== */
+    .log-timeline { display: flex; flex-direction: column; gap: 0; }
+    .log-entry {
+      display: grid; grid-template-columns: 120px 1fr;
+      border-left: 2px solid var(--border); margin-left: 20px;
+      padding: 0 0 32px 24px; position: relative;
+    }
+    .log-entry::before {
+      content: ""; position: absolute; left: -6px; top: 4px;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--accent); border: 2px solid var(--bg);
+      box-shadow: 0 0 8px var(--accent);
+    }
+    .log-entry:last-child { padding-bottom: 0; }
+    .log-date { font-size: 12px; font-weight: 700; color: var(--accent); padding-top: 2px; }
+    .log-content {}
+    .log-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+    .log-content p  { font-size: 13px; color: var(--text2); margin-bottom: 8px; }
+    .log-items { list-style: none; margin: 0; }
+    .log-items li {
+      font-size: 13px; color: var(--text2); padding: 3px 0 3px 16px; position: relative;
+    }
+    .log-items li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-size: 11px; }
+    .log-insight {
+      background: rgba(88,166,255,.07); border: 1px solid rgba(88,166,255,.2);
+      border-radius: 8px; padding: 10px 14px; margin-top: 10px; font-size: 13px;
+    }
+    .log-insight strong { color: var(--accent); }
+
+    /* ===== CARDS ===== */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+    .card {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 22px;
+      transition: border-color .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .card::after {
+      content: ""; position: absolute; inset: 0;
+      background: rgba(88,166,255,.05); opacity: 0; transition: opacity .2s;
+    }
+    .card:hover { border-color: rgba(88,166,255,.5); transform: translateY(-2px); }
+    .card:hover::after { opacity: 1; }
+    .card-icon { font-size: 26px; margin-bottom: 10px; }
+    .card h3 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .card p  { font-size: 12px; color: var(--text2); line-height: 1.65; }
+    .badge {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 10px; margin-top: 10px;
+    }
+    .bg   { background: rgba(63,185,80,.15);  color: var(--green);  border: 1px solid rgba(63,185,80,.3); }
+    .bb   { background: rgba(88,166,255,.12); color: var(--accent); border: 1px solid rgba(88,166,255,.3); }
+    .bp   { background: rgba(188,140,255,.12);color: var(--purple); border: 1px solid rgba(188,140,255,.3); }
+    .bo   { background: rgba(210,153,34,.12); color: var(--orange); border: 1px solid rgba(210,153,34,.3); }
+    .bpk  { background: rgba(247,120,186,.12);color: var(--pink);   border: 1px solid rgba(247,120,186,.3); }
+
+    /* ===== CALLOUT ===== */
+    .callout {
+      display: flex; gap: 14px; padding: 14px 18px;
+      border-radius: 10px; margin: 16px 0;
+    }
+    .c-info   { background: rgba(88,166,255,.07);  border: 1px solid rgba(88,166,255,.2); }
+    .c-warn   { background: rgba(210,153,34,.07);  border: 1px solid rgba(210,153,34,.2); }
+    .c-danger { background: rgba(248,81,73,.07);   border: 1px solid rgba(248,81,73,.2); }
+    .c-tip    { background: rgba(63,185,80,.07);   border: 1px solid rgba(63,185,80,.2); }
+    .c-purple { background: rgba(188,140,255,.07); border: 1px solid rgba(188,140,255,.2); }
+    .callout-icon { font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+    .callout p { font-size: 13px; color: var(--text2); }
+    .callout strong { color: var(--text); }
+    .callout code { background: var(--bg3); border: 1px solid var(--border); padding: 1px 5px; border-radius: 4px; font-size: 12px; color: var(--accent2); }
+
+    /* ===== ARCHITECTURE ===== */
+    .arch-box {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px; overflow-x: auto;
+    }
+    .arch-title { font-size: 12px; font-weight: 700; color: var(--text2); text-align: center; letter-spacing: .1em; text-transform: uppercase; margin-bottom: 28px; }
+    .arch-zone {
+      border: 1px dashed var(--border); border-radius: 12px;
+      padding: 16px; margin-bottom: 20px; position: relative;
+    }
+    .arch-zone-label {
+      position: absolute; top: -10px; left: 14px;
+      background: var(--bg2); padding: 0 8px;
+      font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+    }
+    .arch-zone.local  { border-color: rgba(63,185,80,.4);  }
+    .arch-zone.local .arch-zone-label  { color: var(--green); }
+    .arch-zone.cloud  { border-color: rgba(88,166,255,.4); }
+    .arch-zone.cloud .arch-zone-label  { color: var(--accent); }
+    .arch-zone.bridge { border-color: rgba(210,153,34,.4); }
+    .arch-zone.bridge .arch-zone-label { color: var(--orange); }
+
+    .arch-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 8px 0; justify-content: center; }
+    .arch-node {
+      background: var(--bg3); border: 1px solid var(--border);
+      border-radius: 8px; padding: 10px 14px; text-align: center;
+      min-width: 120px; font-size: 12px;
+    }
+    .arch-node .n-icon { font-size: 18px; margin-bottom: 3px; }
+    .arch-node .n-name { font-weight: 700; font-size: 12px; }
+    .arch-node .n-sub  { font-size: 10px; color: var(--text2); margin-top: 2px; }
+    .arch-node.hl-green  { border-color: var(--green);  background: rgba(63,185,80,.08); }
+    .arch-node.hl-blue   { border-color: var(--accent); background: rgba(88,166,255,.08); }
+    .arch-node.hl-purple { border-color: var(--purple); background: rgba(188,140,255,.08); }
+    .arch-node.hl-orange { border-color: var(--orange); background: rgba(210,153,34,.08); }
+
+    .arch-arr { color: var(--text2); font-size: 18px; flex-shrink: 0; }
+    .arch-arr.down { display: block; text-align: center; margin: 6px 0; }
+
+    .mask-badge {
+      display: inline-block; background: rgba(247,120,186,.15);
+      color: var(--pink); border: 1px solid rgba(247,120,186,.3);
+      font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+      letter-spacing: .05em;
+    }
+
+    /* ===== REFLECTION FLOW ===== */
+    .reflection-flow {
+      display: flex; gap: 0; align-items: stretch; flex-wrap: wrap;
+    }
+    .rf-step {
+      flex: 1; min-width: 150px;
+      background: var(--bg3); border: 1px solid var(--border);
+      padding: 16px; position: relative; text-align: center;
+    }
+    .rf-step:not(:last-child)::after {
+      content: "→"; position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      color: var(--text2); font-size: 18px; z-index: 1;
+    }
+    .rf-step:first-child { border-radius: 10px 0 0 10px; }
+    .rf-step:last-child  { border-radius: 0 10px 10px 0; }
+    .rf-step .rf-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: rgba(88,166,255,.2); color: var(--accent);
+      font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 8px;
+    }
+    .rf-step .rf-label { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+    .rf-step .rf-sub   { font-size: 11px; color: var(--text2); }
+    .rf-step.active { border-color: var(--accent); background: rgba(88,166,255,.07); }
+
+    /* ===== TABLE ===== */
+    .tbl-wrap { overflow-x: auto; border-radius: 10px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: var(--bg3); }
+    thead th {
+      padding: 10px 14px; text-align: left;
+      font-size: 11px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase;
+      color: var(--text2); white-space: nowrap; border-bottom: 1px solid var(--border);
+    }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .1s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: var(--bg3); }
+    tbody td { padding: 10px 14px; color: var(--text2); vertical-align: top; }
+    tbody td:first-child { font-weight: 700; color: var(--text); white-space: nowrap; }
+    .ok  { color: var(--green); }
+    .ng  { color: var(--red); }
+    .tri { color: var(--orange); }
+
+    /* ===== PATTERN CARDS ===== */
+    .pat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:680px){ .pat-grid { grid-template-columns: 1fr; } }
+    .pat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .pat-head { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 10px; }
+    .pat-num {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+    }
+    .pn-bl { background: rgba(88,166,255,.2); color: var(--accent); }
+    .pn-gr { background: rgba(63,185,80,.2);  color: var(--green); }
+    .pn-pu { background: rgba(188,140,255,.2);color: var(--purple); }
+    .pn-or { background: rgba(210,153,34,.2); color: var(--orange); }
+    .pn-pk { background: rgba(247,120,186,.2);color: var(--pink); }
+    .pat-head h3 { font-size: 13px; font-weight: 700; }
+    .pat-head .aka { font-size: 10px; color: var(--text2); }
+    .pat-body { padding: 14px 18px; }
+    .pat-body p { font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+    .pv { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; padding: 10px; background: var(--bg3); border-radius: 7px; margin-bottom: 10px; }
+    .pv-b { background: var(--bg2); border: 1px solid var(--border); border-radius: 5px; padding: 4px 9px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .pv-a { color: var(--text2); font-size: 13px; }
+    .wl { list-style: none; }
+    .wl li { font-size: 12px; color: var(--text2); padding: 2px 0 2px 14px; position: relative; }
+    .wl li::before { content: "▸"; position: absolute; left: 0; color: var(--accent); font-size: 10px; }
+
+    /* ===== CODE ===== */
+    .code-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; margin: 18px 0; }
+    .code-head { display: flex; align-items: center; justify-content: space-between; padding: 8px 14px; border-bottom: 1px solid var(--border); }
+    .code-head .lang { font-size: 11px; font-weight: 700; color: var(--text2); letter-spacing: .05em; }
+    .dots { display: flex; gap: 5px; }
+    .dots span { width: 9px; height: 9px; border-radius: 50%; }
+    .dr { background: #ff5f57; } .dy { background: #febc2e; } .dg { background: #28c840; }
+    pre { padding: 18px; overflow-x: auto; font-size: 12.5px; line-height: 1.75; font-family: "JetBrains Mono","Fira Code",Consolas,monospace; }
+    .ck { color: #ff7b72; } .cf { color: #d2a8ff; } .cs { color: #a5d6ff; }
+    .cn { color: #79c0ff; } .cc { color: #8b949e; font-style: italic; }
+    .co { color: #ff7b72; } .cy { color: #e3b341; }
+
+    /* ===== API FREE TABLE ===== */
+    .api-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media(max-width:600px){ .api-grid { grid-template-columns: 1fr; } }
+    .api-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+    }
+    .api-card .api-head { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .api-card .api-logo { font-size: 26px; }
+    .api-card .api-name { font-size: 15px; font-weight: 700; }
+    .api-card .api-note { font-size: 11px; color: var(--text2); }
+    .api-stat { display: flex; flex-direction: column; gap: 6px; }
+    .api-stat .row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
+    .api-stat .row:last-child { border-bottom: none; }
+    .api-stat .label { font-size: 12px; color: var(--text2); }
+    .api-stat .val { font-size: 12px; font-weight: 700; color: var(--green); }
+
+    /* ===== STEP ===== */
+    .steps { display: flex; flex-direction: column; gap: 14px; }
+    .step { display: flex; gap: 14px; }
+    .snum {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 2px solid var(--accent); color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .scont h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .scont p  { font-size: 13px; color: var(--text2); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border); padding: 28px 24px;
+      text-align: center; color: var(--text2); font-size: 12px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    @media(max-width:640px){
+      .hero { padding: 48px 16px 36px; }
+      section { padding: 40px 0; }
+      .arch-box { padding: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">AI Dev <span>/ Yuma & Koki</span></div>
+  <ul>
+    <li><a href="#project">プロジェクト</a></li>
+    <li><a href="#log">進捗ログ</a></li>
+    <li><a href="#hybrid">ハイブリッド設計</a></li>
+    <li><a href="#reflection">リフレクション</a></li>
+    <li><a href="#patterns">パターン</a></li>
+    <li><a href="#free-api">無料API</a></li>
+    <li><a href="#impl">実装</a></li>
+    <li><a href="#tips">Tips</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">🚀 Research Notes · 2026</div>
+  <h1>AIエージェント開発<br/>リサーチノート</h1>
+  <p>業務にAIエージェントを導入し、AI × 人間のシステム体系化を進める。<br/>YumaとKokiのプロジェクトの設計・調査記録。</p>
+  <div class="hero-chips">
+    <span class="chip"><span class="dot dot-green"></span>ハイブリッド Local+Cloud</span>
+    <span class="chip"><span class="dot dot-blue"></span>機密マスキング方式</span>
+    <span class="chip"><span class="dot dot-purple"></span>リフレクション型エージェント</span>
+    <span class="chip"><span class="dot dot-orange"></span>Gemini &amp; Groq 無料API活用</span>
+  </div>
+</div>
+
+<!-- ===== PROJECT OVERVIEW ===== -->
+<section id="project">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Project Overview</div>
+      <h2 class="sec-title">プロジェクト概要</h2>
+      <p class="sec-sub">業務にAIエージェントを導入することで、AI × 人間のシステムの体系化を進め、人間側のリソースの有効活用をはかる。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🎯</div>
+        <h3>タスク管理の自動化</h3>
+        <p>Google Meetの議事録を自動読み込みし、To Doリストの作成・リマインドを実施。カレンダー連携・要項・報告書の自動作成も含む。</p>
+        <span class="badge bb">優先度：高</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔍</div>
+        <h3>自動リサーチ</h3>
+        <p>特定テーマの情報収集を自動化。複数AIが分担して最新ニュース・特定サイトのスクレイピング・資料整理を行う。</p>
+        <span class="badge bg">実装中</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">💻</div>
+        <h3>開発・運用デバイス</h3>
+        <p><strong>Mac mini M4/M4 Pro（64GB or 32GB）</strong> をローカルLLMのメインマシンとして想定。Windows + RTX 4060 Ti (16GB, 32GB) も候補。</p>
+        <span class="badge bo">検討中</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h3>システムモデル</h3>
+        <p>Obsidianかクラウドファイル（共有性のため）でナレッジ管理。複数LLMを並列活用。MCPx非同期連携。Gemini / Groq 無料APIを積極活用。</p>
+        <span class="badge bp">設計中</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PROGRESS LOG ===== -->
+<section id="log">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Progress Log</div>
+      <h2 class="sec-title">開発進捗ログ</h2>
+      <p class="sec-sub">PDFに記録された実際の開発ログ。試行錯誤の過程を時系列で整理。</p>
+    </div>
+
+    <div class="log-timeline">
+
+      <div class="log-entry">
+        <div class="log-date">6/19</div>
+        <div class="log-content">
+          <h4>2エージェント連携の試作完成</h4>
+          <ul class="log-items">
+            <li>Gemini × Groqの無料APIキーをそれぞれ作成</li>
+            <li>エージェントAがGoogle Document（md形式）を生成</li>
+            <li>エージェントBが生成されたmdを読み込み、結果レポートを別mdで生成</li>
+            <li>mdファイル形式を採用（.mdか.txtが扱いやすい）</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> ここからどうマルチエージェント化して自動化するかが大切。最新型はリフレクション型マルチエージェントだが、<strong>トークン消費が激しい</strong>・<strong>ファイルごみがたまっていかない</strong>問題がある。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">6/20</div>
+        <div class="log-content">
+          <h4>ハイブリッドマルチエージェント設計の確定</h4>
+          <ul class="log-items">
+            <li>ローカルLLM（Mac mini）＋ クラウドLLM のハイブリッド構成を採用</li>
+            <li>機密情報マスキング方式の導入決定（ローカルで伏字化→クラウドへ送信→復元）</li>
+            <li>門番エージェント（Llama 3 8B）が議事録の機密部分をマスク</li>
+            <li>執事エージェント（MCP filesystem）がフォルダ監視・自動リネーム・掃除</li>
+            <li>クラウド側でリフレクション型ワークフロー（Claude + GPT-4o + Gemini）</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 課題：</strong> 司令官をローカルLLMにすると処理が重い。→ <strong>Python司令官（if/then条件分岐）</strong>でルーティングする方式も検討中。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">継続中</div>
+        <div class="log-content">
+          <h4>次のマイルストーン</h4>
+          <ul class="log-items">
+            <li>Python オーケストレーターで複数エージェントを自動化</li>
+            <li>Google Meet 議事録の自動取り込みパイプライン構築</li>
+            <li>マスキング＆復元処理の精度検証</li>
+            <li>トークンコストの最適化（Haiku/Flash系を活用）</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== HYBRID ARCHITECTURE ===== -->
+<section id="hybrid">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Hybrid Architecture</div>
+      <h2 class="sec-title">ハイブリッドマルチエージェント設計</h2>
+      <p class="sec-sub">ローカルLLM（Mac mini）がプライバシーゲートとして機能し、機密情報をマスキングした上でクラウドLLMに高度な処理を依頼するアーキテクチャ。</p>
+    </div>
+
+    <div class="arch-box">
+      <div class="arch-title">ハイブリッドマルチエージェントシステム 組織図</div>
+
+      <!-- ローカル層 -->
+      <div class="arch-zone local">
+        <div class="arch-zone-label">🏠 ローカル層（Mac mini M4 — 24時間自走）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-green">
+            <div class="n-icon">🧠</div>
+            <div class="n-name">Python 司令官</div>
+            <div class="n-sub">if/then ルーティング</div>
+          </div>
+        </div>
+        <div class="arch-arr down">↓ タスク分割</div>
+        <div class="arch-row">
+          <div class="arch-node hl-orange">
+            <div class="n-icon">🛡️</div>
+            <div class="n-name">門番エージェント</div>
+            <div class="n-sub">Llama 3 8B<br/>機密マスキング・伏字化</div>
+          </div>
+          <div class="arch-arr">+</div>
+          <div class="arch-node">
+            <div class="n-icon">✏️</div>
+            <div class="n-name">執事エージェント</div>
+            <div class="n-sub">MCP filesystem<br/>フォルダ監視・自動リネーム</div>
+          </div>
+          <div class="arch-arr">+</div>
+          <div class="arch-node">
+            <div class="n-icon">📊</div>
+            <div class="n-name">データ連携 GW</div>
+            <div class="n-sub">RAG・外部API<br/>ナレッジ管理</div>
+          </div>
+        </div>
+        <div style="text-align:center; margin-top:10px;">
+          <span class="mask-badge">🔒 1文字も機密を含まない安全な通信</span>
+        </div>
+      </div>
+
+      <!-- Internet Border -->
+      <div class="arch-zone bridge">
+        <div class="arch-zone-label">🌐 Internet Border（機密マスク済みデータのみ通過）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-orange">
+            <div class="n-icon">🔄</div>
+            <div class="n-name">マスクデータ</div>
+            <div class="n-sub">固有名詞・金額・<br/>社名を伏字化済み</div>
+          </div>
+          <div class="arch-arr">→→→</div>
+          <div class="arch-node hl-orange">
+            <div class="n-icon">↩️</div>
+            <div class="n-name">復元処理</div>
+            <div class="n-sub">ローカルで<br/>伏字を元に戻す</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- クラウド層 -->
+      <div class="arch-zone cloud">
+        <div class="arch-zone-label">☁️ クラウド層（高速・大容量の脳みそ）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-blue">
+            <div class="n-icon">✍️</div>
+            <div class="n-name">草案作成</div>
+            <div class="n-sub">Claude 3.5 Sonnet<br/>/ Gemini Pro</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-purple">
+            <div class="n-icon">🔍</div>
+            <div class="n-name">品質チェック</div>
+            <div class="n-sub">ChatGPT GPT-4o<br/>激しいディスカッション</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-blue">
+            <div class="n-icon">📝</div>
+            <div class="n-name">修正提案</div>
+            <div class="n-sub">Gemini 1.5 Pro<br/>最終仕上げ</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-green">
+            <div class="n-icon">📋</div>
+            <div class="n-name">レポート生成</div>
+            <div class="n-sub">複数LLM統合<br/>並列処理型</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-info" style="margin-top:20px;">
+      <div class="callout-icon">💡</div>
+      <div class="callout">
+        <p><strong>Python司令官方式のメリット：</strong> ローカルLLMをオーケストレーターにすると処理が重い（推論コスト大）。代わりに <code>if/then</code> の条件分岐をPythonコードで書くことで、高速・決定論的なルーティングが実現できる。LangGraphの <strong>conditional edges</strong> も同様のアプローチ。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== REFLECTION ===== -->
+<section id="reflection">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Reflection Agent</div>
+      <h2 class="sec-title">リフレクション型マルチエージェント</h2>
+      <p class="sec-sub">PDFで「最新型」と記載されていたリフレクション型の仕組みと、トークンコストの課題について整理。</p>
+    </div>
+
+    <!-- Reflection flow -->
+    <div style="margin-bottom:24px;">
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px; color:var(--text2);">基本フロー（Self-Reflection Loop）</h3>
+      <div class="reflection-flow" style="gap:2px;">
+        <div class="rf-step active">
+          <div class="rf-num">1</div>
+          <div class="rf-label">初回生成</div>
+          <div class="rf-sub">Generatorが初回回答を生成</div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">2</div>
+          <div class="rf-label">自己評価</div>
+          <div class="rf-sub">ReflectorがCritiqueを出力</div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">3</div>
+          <div class="rf-label">改善指示</div>
+          <div class="rf-sub">問題点・改善案を特定</div>
+        </div>
+        <div class="rf-step">
+          <div class="rf-num">4</div>
+          <div class="rf-label">再生成</div>
+          <div class="rf-sub">改善版を生成（n回繰り返し）</div>
+        </div>
+        <div class="rf-step active">
+          <div class="rf-num">5</div>
+          <div class="rf-label">最終出力</div>
+          <div class="rf-sub">品質基準クリアで完了</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">✅</div>
+        <h3>メリット</h3>
+        <p>推論精度が大幅に向上。長文・複雑な分析タスクで一貫性が増す。ChatGPTのo1シリーズやClaudeのChain-of-Thoughtと同様のアプローチ。マルチLLMで行うと「第三者視点」の批評が入る。</p>
+        <span class="badge bg">品質向上</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚠️</div>
+        <h3>デメリット（PDF記載）</h3>
+        <p><strong>トークン消費が激しい</strong>（1タスクに対して3〜5回分の処理が走る）。<strong>ファイルごみがたまる</strong>問題（中間生成物の管理が必要）。コスト最適化のためリフレクション回数の上限設定が必須。</p>
+        <span class="badge bo">要注意</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔧</div>
+        <h3>コスト最適化戦略</h3>
+        <p>草案生成はGemini Flash（無料/安価）。品質チェックのみGPT-4o。修正提案はGroqで高速処理。最大リフレクション回数を<strong>3回</strong>に制限。品質スコアが閾値を超えたら早期終了。</p>
+        <span class="badge bb">推奨設計</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">📁</div>
+        <h3>ファイル管理対策</h3>
+        <p>中間ファイルは<code>/tmp/</code>に保存し、完了後に自動削除。ローカルの執事エージェント（MCP filesystem）が不要ファイルを定期的に掃除する役割を担う。</p>
+        <span class="badge bp">ローカルエージェント活用</span>
+      </div>
+    </div>
+
+    <!-- クラウドマルチLLMリフレクション -->
+    <div style="margin-top:28px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px;">
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">クラウド複数LLMによる並列リフレクション（PDF 6/20の設計）</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>役割</th><th>担当LLM</th><th>処理内容</th><th>コスト感</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>草案作成</td>
+              <td>Claude 3.5 Sonnet / Gemini Flash</td>
+              <td>マスク済みデータから初回ドキュメント生成</td>
+              <td><span class="ok">低〜中</span></td>
+            </tr>
+            <tr>
+              <td>品質チェック</td>
+              <td>ChatGPT GPT-4o</td>
+              <td>激しいディスカッション・問題点の指摘</td>
+              <td><span class="tri">中〜高</span></td>
+            </tr>
+            <tr>
+              <td>修正提案</td>
+              <td>Gemini 1.5 Pro</td>
+              <td>具体的な修正案を出力</td>
+              <td><span class="ok">低（無料枠内）</span></td>
+            </tr>
+            <tr>
+              <td>最終統合</td>
+              <td>ローカルLLM or Python</td>
+              <td>クラウドの結果を受け取り復元・レポート化</td>
+              <td><span class="ok">ゼロ（ローカル）</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PATTERNS ===== -->
+<section id="patterns">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Orchestration Patterns</div>
+      <h2 class="sec-title">5つのオーケストレーションパターン</h2>
+      <p class="sec-sub">プロジェクトの各フェーズで使い分けるべきパターン。現在のシステムはHandoff + Group Chat + Reflectionの組み合わせ。</p>
+    </div>
+
+    <div class="pat-grid">
+      <div class="pat-card">
+        <div class="pat-head">
+          <div class="pat-num pn-bl">1</div>
+          <div><h3>シーケンシャル</h3><div class="aka">パイプライン / プロンプトチェーン</div></div>
+        </div>
+        <div class="pat-body">
+          <div class="pv">
+            <div class="pv-b">門番</div><div class="pv-a">→</div>
+            <div class="pv-b">草案作成</div><div class="pv-a">→</div>
+            <div class="pv-b">品質チェック</div><div class="pv-a">→</div>
+            <div class="pv-b">レポート</div>
+          </div>
+          <p>前のエージェントの出力を次が処理する線形パイプライン。<strong>プロジェクトの基本フロー</strong>として活用。6/19の2エージェント試作がこのパターン。</p>
+        </div>
+      </div>
+
+      <div class="pat-card">
+        <div class="pat-head">
+          <div class="pat-num pn-gr">2</div>
+          <div><h3>コンカレント（並列）</h3><div class="aka">ファンアウト/ファンイン</div></div>
+        </div>
+        <div class="pat-body">
+          <div class="pv">
+            <div class="pv-b">Input</div><div class="pv-a">→</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="pv-b">Claude</div>
+              <div class="pv-b">GPT-4o</div>
+              <div class="pv-b">Gemini</div>
+            </div>
+            <div class="pv-a">→</div><div class="pv-b">統合</div>
+          </div>
+          <p>複数のクラウドLLMが同じデータを並列で処理し、結果を集約。<strong>クラウド側のリフレクション部分</strong>でこの方式を採用。</p>
+        </div>
+      </div>
+
+      <div class="pat-card">
+        <div class="pat-head">
+          <div class="pat-num pn-pu">3</div>
+          <div><h3>グループチャット</h3><div class="aka">Maker-Checker / リフレクションループ</div></div>
+        </div>
+        <div class="pat-body">
+          <div class="pv">
+            <div class="pv-b">Generator</div><div class="pv-a">⇄</div>
+            <div class="pv-b">Critic</div><div class="pv-a">→</div>
+            <div class="pv-b">改善版</div>
+          </div>
+          <p>草案作成者（Generator）と品質チェッカー（Critic）が議論しながら品質を向上。<strong>リフレクション型の本体</strong>がこのパターン。最大3回を上限に設定。</p>
+        </div>
+      </div>
+
+      <div class="pat-card">
+        <div class="pat-head">
+          <div class="pat-num pn-or">4</div>
+          <div><h3>ハンドオフ</h3><div class="aka">トリアージ / ルーティング</div></div>
+        </div>
+        <div class="pat-body">
+          <div class="pv">
+            <div class="pv-b">Python司令官</div><div class="pv-a">→?</div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="pv-b">門番AG</div>
+              <div class="pv-b">執事AG</div>
+              <div class="pv-b">データ連携</div>
+            </div>
+          </div>
+          <p><strong>Python if/then司令官</strong>がタスクの種類に応じて適切なエージェントにルーティング。LLMを使わないので処理が軽い。プロジェクトの<strong>推奨ルーティング方式</strong>。</p>
+        </div>
+      </div>
+
+      <div class="pat-card" style="grid-column:1/-1;">
+        <div class="pat-head">
+          <div class="pat-num pn-pk">5</div>
+          <div><h3>マゼンティック（動的）</h3><div class="aka">タスク台帳ベース / アダプティブプランニング</div></div>
+        </div>
+        <div class="pat-body">
+          <div class="pv" style="flex-wrap:wrap;">
+            <div class="pv-b" style="border-color:var(--pink);color:var(--pink);">Managerエージェント</div>
+            <div class="pv-a">⟺</div>
+            <div class="pv-b">タスク台帳</div>
+            <div class="pv-a">→</div>
+            <div class="pv-b">Sub-Agent群</div>
+            <div class="pv-a">→</div>
+            <div class="pv-b">外部システム</div>
+          </div>
+          <p>事前定義のないオープンエンドな問題に対応。マネージャーが台帳を動的に構築・調整しながら進める。将来的な拡張として検討。<strong>トークン消費が最も多い</strong>ため、今はHandoff + Reflectionを優先。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FREE API ===== -->
+<section id="free-api">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Free API</div>
+      <h2 class="sec-title">無料APIの活用（Gemini &amp; Groq）</h2>
+      <p class="sec-sub">PDFで明記されていた無料API活用方針。2026年6月時点の最新制限値。</p>
+    </div>
+
+    <div class="api-grid">
+      <div class="api-card">
+        <div class="api-head">
+          <div class="api-logo">🔵</div>
+          <div>
+            <div class="api-name">Google Gemini API</div>
+            <div class="api-note">無料枠 / クレジットカード不要</div>
+          </div>
+        </div>
+        <div class="api-stat">
+          <div class="row"><span class="label">Gemini 2.5 Flash</span><span class="val">15 RPM / 1,000 RPD</span></div>
+          <div class="row"><span class="label">Gemini 2.5 Pro</span><span class="val">5 RPM / 100 RPD</span></div>
+          <div class="row"><span class="label">Token/分</span><span class="val">1,000,000 TPM</span></div>
+          <div class="row"><span class="label">有効期限</span><span class="val">無期限（要注意：課金有効化で消滅）</span></div>
+          <div class="row"><span class="label">推奨モデル</span><span class="val">Gemini 2.5 Flash-Lite（最高RPD）</span></div>
+        </div>
+      </div>
+
+      <div class="api-card">
+        <div class="api-head">
+          <div class="api-logo">⚡</div>
+          <div>
+            <div class="api-name">Groq API</div>
+            <div class="api-note">LPUチップによる超高速推論 / 無料枠あり</div>
+          </div>
+        </div>
+        <div class="api-stat">
+          <div class="row"><span class="label">リクエスト/分</span><span class="val">30 RPM</span></div>
+          <div class="row"><span class="label">Token/分</span><span class="val">6,000〜12,000 TPM（モデル依存）</span></div>
+          <div class="row"><span class="label">リクエスト/日</span><span class="val">1,000〜14,400 RPD</span></div>
+          <div class="row"><span class="label">カード不要</span><span class="val">Googleアカウントでサインアップ可</span></div>
+          <div class="row"><span class="label">速度</span><span class="val">315 TPS（超高速・LPU専用）</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-warn" style="margin-top:16px;">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout">
+        <p><strong>Gemini注意点：</strong> 課金を有効化した瞬間に無料枠が完全消滅する。プロジェクトは無料枠専用プロジェクトと有料プロジェクトを分けて管理すること。</p>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;">
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">コスト別モデル使い分け推奨</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>タスク</th><th>推奨モデル</th><th>理由</th><th>月額目安</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>機密マスキング（ローカル）</td>
+              <td>Llama 3 8B / Qwen 2.5 7B</td>
+              <td>ローカル実行・コスト0・プライバシー保護</td>
+              <td><span class="ok">$0</span></td>
+            </tr>
+            <tr>
+              <td>草案生成・要約</td>
+              <td>Gemini 2.5 Flash / Groq</td>
+              <td>無料枠で十分・高速</td>
+              <td><span class="ok">$0</span></td>
+            </tr>
+            <tr>
+              <td>品質チェック（リフレクション）</td>
+              <td>GPT-4o / Claude Sonnet 4.6</td>
+              <td>精度優先。回数制限で最小化</td>
+              <td><span class="tri">$5〜20</span></td>
+            </tr>
+            <tr>
+              <td>オーケストレーション（Python）</td>
+              <td>Python if/then（LLM不使用）</td>
+              <td>LLMルーターは重い・決定論的な方が確実</td>
+              <td><span class="ok">$0</span></td>
+            </tr>
+            <tr>
+              <td>高度な推論・分析</td>
+              <td>Claude Opus 4.8</td>
+              <td>最難関タスクのみ・コスト $5/1M tokens</td>
+              <td><span class="tri">必要時のみ</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== IMPLEMENTATION ===== -->
+<section id="impl">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Implementation</div>
+      <h2 class="sec-title">実装ガイド</h2>
+      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。プロジェクトの現在の設計に対応。</p>
+    </div>
+
+    <div class="steps" style="margin-bottom:28px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>環境準備</h4><p>Gemini / Groq の無料APIキーを取得。<code>pip install anthropic google-generativeai groq langchain-core</code></p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>ローカルLLM導入</h4><p>Ollamaを使いLlama 3 8B / Qwen 2.5 7Bをローカルに展開。<code>ollama run llama3</code></p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>Python司令官の実装</h4><p>LLMを使わずif/thenでタスクをルーティング。LangGraphのConditional Edgesを活用。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>マスキングパイプライン</h4><p>ローカルでマスク→クラウドで処理→ローカルで復元のフローを実装。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">5</div>
+        <div class="scont"><h4>リフレクションループ</h4><p>最大3回のリフレクションループを設定。品質スコアが閾値を超えたら早期終了。</p></div>
+      </div>
+    </div>
+
+    <!-- Code: Python司令官 -->
+    <div class="code-wrap">
+      <div class="code-head">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <div class="lang">PYTHON — Python司令官（if/then ルーティング）</div>
+      </div>
+      <pre><span class="cc"># Python司令官：LLMを使わない高速・決定論的ルーティング</span>
+<span class="ck">import</span> os
+<span class="ck">from</span> groq <span class="ck">import</span> Groq
+<span class="ck">import</span> google.generativeai <span class="ck">as</span> genai
+
+groq_client <span class="co">=</span> Groq(api_key<span class="co">=</span>os.environ[<span class="cs">"GROQ_API_KEY"</span>])
+genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEMINI_API_KEY"</span>])
+
+<span class="ck">class</span> <span class="cf">PythonOrchestrator</span>:
+    <span class="cc">"""Python if/then による軽量オーケストレーター"""</span>
+
+    <span class="ck">def</span> <span class="cf">route_task</span>(self, task: <span class="cy">dict</span>) <span class="co">-></span> <span class="cy">str</span>:
+        <span class="cc"># タスクタイプで分岐（LLM不使用→高速・決定論的）</span>
+        task_type <span class="co">=</span> task.get(<span class="cs">"type"</span>, <span class="cs">""</span>)
+
+        <span class="ck">if</span> task_type <span class="co">==</span> <span class="cs">"meeting_minutes"</span>:
+            <span class="ck">return</span> self.handle_meeting_minutes(task)
+        <span class="ck">elif</span> task_type <span class="co">==</span> <span class="cs">"research"</span>:
+            <span class="ck">return</span> self.handle_research(task)
+        <span class="ck">elif</span> task_type <span class="co">==</span> <span class="cs">"report"</span>:
+            <span class="ck">return</span> self.handle_report_with_reflection(task)
+        <span class="ck">else</span>:
+            <span class="ck">return</span> self.handle_general(task)
+
+    <span class="ck">def</span> <span class="cf">handle_meeting_minutes</span>(self, task):
+        <span class="cc"># Step1: ローカルLLMでマスキング</span>
+        masked <span class="co">=</span> self.local_mask(task[<span class="cs">"content"</span>])
+        <span class="cc"># Step2: Groqで高速要約（無料API）</span>
+        summary <span class="co">=</span> self.groq_summarize(masked)
+        <span class="cc"># Step3: ローカルで復元</span>
+        <span class="ck">return</span> self.local_unmask(summary, task[<span class="cs">"mask_map"</span>])
+
+    <span class="ck">def</span> <span class="cf">handle_report_with_reflection</span>(self, task, max_iterations<span class="co">=</span><span class="cn">3</span>):
+        <span class="cc"># リフレクションループ（最大3回）</span>
+        masked_content <span class="co">=</span> self.local_mask(task[<span class="cs">"content"</span>])
+        draft <span class="co">=</span> self.gemini_generate(masked_content)
+
+        <span class="ck">for</span> i <span class="ck">in</span> <span class="cy">range</span>(max_iterations):
+            quality_score <span class="co">=</span> self.groq_quality_check(draft)
+            <span class="ck">if</span> quality_score <span class="co">>=</span> <span class="cn">0.85</span>:  <span class="cc"># 品質基準クリアで早期終了</span>
+                <span class="ck">break</span>
+            critique <span class="co">=</span> self.groq_critique(draft)
+            draft <span class="co">=</span> self.gemini_revise(draft, critique)
+
+        <span class="ck">return</span> self.local_unmask(draft, task[<span class="cs">"mask_map"</span>])
+
+    <span class="ck">def</span> <span class="cf">local_mask</span>(self, text: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">tuple</span>:
+        <span class="cc"># Ollama（Qwen 2.5 7B）でローカルマスキング</span>
+        <span class="cc"># 固有名詞・金額・社名を [PERSON_1], [AMOUNT_1] 等で置換</span>
+        <span class="cc"># mask_map: {"[PERSON_1]": "田中社長"} を返す</span>
+        <span class="ck">pass</span>
+
+    <span class="ck">def</span> <span class="cf">groq_summarize</span>(self, masked_text: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">str</span>:
+        resp <span class="co">=</span> groq_client.chat.completions.create(
+            model<span class="co">=</span><span class="cs">"llama-3.3-70b-versatile"</span>,
+            messages<span class="co">=</span>[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: masked_text}],
+            max_tokens<span class="co">=</span><span class="cn">2000</span>
+        )
+        <span class="ck">return</span> resp.choices[<span class="cn">0</span>].message.content
+
+orchestrator <span class="co">=</span> PythonOrchestrator()
+result <span class="co">=</span> orchestrator.route_task({
+    <span class="cs">"type"</span>: <span class="cs">"report"</span>,
+    <span class="cs">"content"</span>: <span class="cs">"Google Meet議事録の内容..."</span>
+})</pre>
+    </div>
+
+    <!-- Code: Claudeマルチエージェント -->
+    <div class="code-wrap">
+      <div class="code-head">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <div class="lang">PYTHON — Claude Managed Agents マルチエージェント構成</div>
+      </div>
+      <pre><span class="cc"># Claude Managed Agentsを使う場合の設計</span>
+<span class="ck">import</span> anthropic
+
+client <span class="co">=</span> anthropic.Anthropic()
+
+<span class="cc"># 1. 環境作成（一度だけ）</span>
+env <span class="co">=</span> client.beta.environments.create(
+    name<span class="co">=</span><span class="cs">"yuma-koki-env"</span>,
+    config<span class="co">=</span>{<span class="cs">"type"</span>: <span class="cs">"cloud"</span>, <span class="cs">"networking"</span>: {<span class="cs">"type"</span>: <span class="cs">"unrestricted"</span>}},
+)
+
+<span class="cc"># 2. ゲートウェイ/マスキングエージェント</span>
+gateway_agent <span class="co">=</span> client.beta.agents.create(
+    name<span class="co">=</span><span class="cs">"Privacy Gateway"</span>,
+    model<span class="co">=</span><span class="cs">"claude-haiku-4-5"</span>,  <span class="cc"># 軽いモデルで十分</span>
+    system<span class="co">=</span><span class="cs">"機密情報のマスキング専門。個人名・社名・金額を[MASK_*]で置換し、復元マップを出力する。"</span>,
+    tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
+)
+
+<span class="cc"># 3. リサーチ&ライターエージェント</span>
+research_agent <span class="co">=</span> client.beta.agents.create(
+    name<span class="co">=</span><span class="cs">"Research Writer"</span>,
+    model<span class="co">=</span><span class="cs">"claude-sonnet-4-6"</span>,
+    system<span class="co">=</span><span class="cs">"マスク済みデータを受け取り、高品質なレポートを生成する。mdファイル形式で出力。"</span>,
+    tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
+)
+
+<span class="cc"># 4. オーケストレーター（コスト優先：Claude Sonnet）</span>
+orchestrator <span class="co">=</span> client.beta.agents.create(
+    name<span class="co">=</span><span class="cs">"Task Orchestrator"</span>,
+    model<span class="co">=</span><span class="cs">"claude-sonnet-4-6"</span>,
+    system<span class="co">=</span><span class="cs">"タスクを適切なサブエージェントに振り分けるコーディネーター。"</span>,
+    tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
+    multiagent<span class="co">=</span>{
+        <span class="cs">"type"</span>: <span class="cs">"coordinator"</span>,
+        <span class="cs">"agents"</span>: [gateway_agent.id, research_agent.id],
+    },
+)
+
+<span class="cc"># 5. セッション実行（毎回）</span>
+session <span class="co">=</span> client.beta.sessions.create(
+    agent<span class="co">=</span>orchestrator.id,
+    environment_id<span class="co">=</span>env.id,
+    title<span class="co">=</span><span class="cs">"Google Meet議事録処理"</span>,
+)
+
+<span class="ck">with</span> client.beta.sessions.events.stream(session.id) <span class="ck">as</span> stream:
+    client.beta.sessions.events.send(
+        session_id<span class="co">=</span>session.id,
+        events<span class="co">=</span>[{
+            <span class="cs">"type"</span>: <span class="cs">"user.message"</span>,
+            <span class="cs">"content"</span>: [{<span class="cs">"type"</span>: <span class="cs">"text"</span>,
+              <span class="cs">"text"</span>: <span class="cs">"以下の議事録を処理してください:\n{meeting_content}"</span>}]
+        }]
+    )
+    <span class="ck">for</span> event <span class="ck">in</span> stream:
+        <span class="ck">if</span> event.type <span class="co">==</span> <span class="cs">"agent.message"</span>:
+            <span class="ck">for</span> b <span class="ck">in</span> event.content:
+                <span class="ck">if</span> b.type <span class="co">==</span> <span class="cs">"text"</span>: <span class="cy">print</span>(b.text, end<span class="co">=</span><span class="cs">""</span>)
+        <span class="ck">elif</span> event.type <span class="co">==</span> <span class="cs">"session.status_idle"</span>: <span class="ck">break</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TIPS ===== -->
+<section id="tips">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Tips &amp; Best Practices</div>
+      <h2 class="sec-title">プロジェクト固有のベストプラクティス</h2>
+      <p class="sec-sub">ハイブリッド設計・機密マスキング・無料API活用での注意点。</p>
+    </div>
+
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🛡️</div>
+        <h3>マスキング精度の確保</h3>
+        <p>Qwen 2.5 7B（日本語が強い）をマスキング担当に推奨。人名・社名・金額だけでなく、プロジェクト固有の用語リストを事前に定義しておく。<strong>復元マップは暗号化して保存</strong>。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📂</div>
+        <h3>ファイル管理</h3>
+        <p>mdファイルの中間生成物は<code>/tmp/agent_work/</code>に格納。MCP filesystemエージェントが24時間後に自動削除。最終成果物のみ<code>/output/</code>へ保存。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>コスト管理</h3>
+        <p>Gemini/Groqの無料枠を1日の処理上限として設定。超過しそうな場合はローカルLLMにフォールバック。<strong>リフレクション上限3回</strong>は絶対守る。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>Obsidian vs クラウドファイル</h3>
+        <p>共有が必要ならクラウドファイル（Google Drive/OneDrive）推奨。Obsidianはローカル完結型だが、GitHubやiCloud経由で同期可能。MCPサーバーでObsidianとエージェントを連携できる。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <h3>Mac mini vs Windows選択</h3>
+        <p><strong>Mac mini M4 Pro 64GB</strong> が最有力候補。Apple Siliconのユニファイドメモリは70Bモデルも動作可能。RTX 4060 Ti (16GB)はVRAM不足で大型モデルが動かない場合がある。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h3>MCP活用ポイント</h3>
+        <p>執事エージェントのMCP filesystemでファイル操作を自動化。Google DriveのMCPサーバーを使えば議事録の自動取得も可能。MCPx非同期での複数サーバー同時接続を検討。</p>
+      </div>
+    </div>
+
+    <div class="callout c-tip" style="margin-top:24px;">
+      <div class="callout-icon">✅</div>
+      <div class="callout">
+        <p><strong>次のアクション推奨：</strong> まず <strong>Groq + Gemini の無料APIキー</strong>を取得し、2エージェント（Generator + Reflector）のシンプルなリフレクションループを実装する。6/19の試作をベースに、Python司令官を追加してマルチエージェント化を進める。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>
+      Yuma &amp; Koki AIエージェント開発リサーチノート ·
+      <a href="https://www.youtube.com/watch?v=K1JBWvTIc2Y" target="_blank">参考動画</a> ·
+      <a href="https://console.groq.com" target="_blank">Groq Console</a> ·
+      <a href="https://ai.google.dev" target="_blank">Google AI Studio</a> ·
+      <a href="https://docs.anthropic.com" target="_blank">Anthropic Docs</a>
+    </p>
+    <p style="margin-top:6px; font-size:11px; color:var(--text2);">情報は2026年6月時点。最新の制限値は各サービスの公式ドキュメントを確認すること。</p>
+  </div>
+</footer>
+
+</body>
+</html>
