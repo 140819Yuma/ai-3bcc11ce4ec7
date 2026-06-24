@@ -452,14 +452,32 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">6/24</div>
+        <div class="log-content">
+          <h4>プロトタイプ環境構築・初稼働</h4>
+          <ul class="log-items">
+            <li>GitHubにPrivateリポジトリ作成 → ランダムURL（<code>ai-3bcc11ce4ec7</code>）でPublicに変更・GitHub Pages有効化</li>
+            <li>conda環境 <code>ai_agent</code>（Python 3.11）を新規作成</li>
+            <li>プロトタイプ構成を実装：<code>main.py</code>（対話型）＋ <code>orchestrator.py</code>（Python司令官）＋ <code>agents/</code>（Groq・Gemini）</li>
+            <li>Python司令官のif/thenルーティングが正常動作を確認</li>
+            <li>Groq Llama 3.3 70B（下書き）→ Groq Llama 3.1 8B（整理・評価）の2段構成でリフレクションループ動作確認</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 ハマった点：</strong> GeminiのAPIキーがGoogle有料アカウントに紐づくと無料枠クォータが強制的に0になる（<code>limit: 0</code>）。現状はGroqのみで代替。Geminiは別の無課金Googleアカウントでキーを作れば解決できる。<br>
+            <strong>📌 方針：</strong> ターミナル対話はプロトタイプ用。実用化時はSlack Botやフォルダ監視などのトリガーに差し替える。Mac mini購入前にコア機能を先に作り切る方針で確定。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
           <ul class="log-items">
-            <li>Python オーケストレーターで複数エージェントを自動化</li>
-            <li>Google Meet 議事録の自動取り込みパイプライン構築</li>
-            <li>マスキング＆復元処理の精度検証</li>
-            <li>トークンコストの最適化（Haiku/Flash系を活用）</li>
+            <li>コア機能の充実（ファイル入出力・会話履歴・並列処理）</li>
+            <li>Geminiキー問題の解消（無課金アカウントでキー再作成）</li>
+            <li>トリガーの実装（Slack Bot・フォルダ監視など）</li>
+            <li>マスキング＆復元処理の精度検証（Mac mini導入後）</li>
           </ul>
         </div>
       </div>
