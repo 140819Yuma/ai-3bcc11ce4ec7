@@ -352,6 +352,7 @@
     <li><a href="#free-api">無料API</a></li>
     <li><a href="#impl">実装</a></li>
     <li><a href="#tips">Tips</a></li>
+    <li><a href="#local-vs-cloud">ローカルLLM比較</a></li>
   </ul>
 </nav>
 
@@ -1100,6 +1101,166 @@ session <span class="co">=</span> client.beta.sessions.create(
         <p><strong>次のアクション推奨：</strong> まず <strong>Groq + Gemini の無料APIキー</strong>を取得し、2エージェント（Generator + Reflector）のシンプルなリフレクションループを実装する。6/19の試作をベースに、Python司令官を追加してマルチエージェント化を進める。</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- LOCAL VS CLOUD -->
+<section id="local-vs-cloud">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Environment Strategy</div>
+      <h2 class="sec-title">ローカルLLM あり vs なし</h2>
+      <p class="sec-sub">Mac mini（ローカルLLM）を購入する前後での構成比較。現フェーズはクラウドAPIのみで進める。</p>
+    </div>
+
+    <!-- 比較テーブル -->
+    <div class="tbl-wrap" style="margin-bottom:32px;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:22%">観点</th>
+            <th style="width:39%">🖥️ ローカルLLM あり（Mac mini導入後）</th>
+            <th style="width:39%">☁️ ローカルLLM なし（現在・クラウドAPIのみ）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>初期コスト</strong></td>
+            <td><span style="color:var(--red)">高い</span>（Mac mini M4 Pro 64GB ≒ ¥300,000）</td>
+            <td><span style="color:var(--green)">¥0（今すぐ開始できる）</span></td>
+          </tr>
+          <tr>
+            <td><strong>機密情報</strong></td>
+            <td><span style="color:var(--green)">ローカル完結</span>（クラウドに送らずに処理可能）</td>
+            <td><span style="color:var(--orange)">クラウドに送信必須</span>（マスキング処理が必要）</td>
+          </tr>
+          <tr>
+            <td><strong>レート制限</strong></td>
+            <td><span style="color:var(--green)">なし</span>（無制限リクエスト）</td>
+            <td><span style="color:var(--orange)">あり</span>（Groq: 30RPM / Gemini: 15RPM）</td>
+          </tr>
+          <tr>
+            <td><strong>モデル性能</strong></td>
+            <td>Llama 3 70B / Qwen 2.5 32B 程度<br><span style="color:var(--text2);font-size:12px;">クラウド最高モデルより劣る</span></td>
+            <td>Gemini 2.0 Flash / Llama 3.3 70B（Groq）<br><span style="color:var(--green);font-size:12px;">最新モデルが常に使える</span></td>
+          </tr>
+          <tr>
+            <td><strong>レスポンス速度</strong></td>
+            <td>M4 Pro: 約30〜60 tok/s（モデル依存）</td>
+            <td>Groq LPU: <span style="color:var(--green)">300+ tok/s（超高速）</span></td>
+          </tr>
+          <tr>
+            <td><strong>ランニングコスト</strong></td>
+            <td>電気代のみ（Mac mini: 約20〜40W）</td>
+            <td><span style="color:var(--green)">¥0</span>（無料枠内で運用）</td>
+          </tr>
+          <tr>
+            <td><strong>オフライン動作</strong></td>
+            <td><span style="color:var(--green)">可能</span></td>
+            <td><span style="color:var(--red)">不可</span>（ネット必須）</td>
+          </tr>
+          <tr>
+            <td><strong>セットアップ難度</strong></td>
+            <td><span style="color:var(--orange)">中〜高</span>（Ollama + モデルDL + 環境構築）</td>
+            <td><span style="color:var(--green)">低い</span>（APIキー取得のみ）</td>
+          </tr>
+          <tr>
+            <td><strong>メンテナンス</strong></td>
+            <td><span style="color:var(--orange)">必要</span>（モデル更新・ストレージ管理）</td>
+            <td><span style="color:var(--green)">不要</span></td>
+          </tr>
+          <tr>
+            <td><strong>プライバシーマスキング</strong></td>
+            <td><span style="color:var(--green)">完全実装可能</span>（Qwen 2.5 7B が担当）</td>
+            <td><span style="color:var(--red)">実装不可</span>（マスキング担当がいない）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- メリデメカード -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;">
+
+      <!-- ローカルLLMあり -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:24px;">🖥️</span>
+          <h3 style="font-size:16px;color:var(--accent)">ローカルLLM あり（Mac mini導入後）</h3>
+        </div>
+
+        <p style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px;">✅ メリット</p>
+        <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-bottom:16px;line-height:1.9;">
+          <li>機密情報をローカル完結で処理（プライバシー保護）</li>
+          <li>APIレート制限なし・コスト無制限</li>
+          <li>マスキングエージェントが実装可能</li>
+          <li>オフライン環境でも動作</li>
+          <li>長期運用でのコスト優位性</li>
+          <li>カスタムモデルの fine-tuning が可能</li>
+        </ul>
+
+        <p style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">❌ デメリット</p>
+        <ul style="font-size:13px;color:var(--text2);padding-left:16px;line-height:1.9;">
+          <li>初期コスト約30万円</li>
+          <li>環境構築に時間がかかる</li>
+          <li>クラウド最高モデルより性能が低い</li>
+          <li>ハードウェアの物理管理が必要</li>
+          <li>購入・配送の待ち時間</li>
+        </ul>
+      </div>
+
+      <!-- ローカルLLMなし -->
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <span style="font-size:24px;">☁️</span>
+          <h3 style="font-size:16px;color:var(--purple)">ローカルLLM なし（現在の構成）</h3>
+        </div>
+
+        <p style="font-size:13px;font-weight:700;color:var(--green);margin-bottom:8px;">✅ メリット</p>
+        <ul style="font-size:13px;color:var(--text2);padding-left:16px;margin-bottom:16px;line-height:1.9;">
+          <li>今すぐ開発を始められる（¥0）</li>
+          <li>Groqの超高速推論（300+ tok/s）が使える</li>
+          <li>最新モデルに常にアクセス可能</li>
+          <li>セットアップが APIキー取得のみ</li>
+          <li>メンテナンス不要</li>
+          <li>プロトタイプ検証に最適</li>
+        </ul>
+
+        <p style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:8px;">❌ デメリット</p>
+        <ul style="font-size:13px;color:var(--text2);padding-left:16px;line-height:1.9;">
+          <li>機密情報をクラウドに送る必要がある</li>
+          <li>プライバシーマスキングが実装不可</li>
+          <li>レート制限あり（Groq: 30RPM / Gemini: 15RPM）</li>
+          <li>インターネット必須</li>
+          <li>API仕様変更・サービス停止リスク</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- フェーズロードマップ -->
+    <div class="callout c-info" style="margin-bottom:20px;">
+      <div class="callout-icon">🗺️</div>
+      <div>
+        <p><strong>現在地と今後のロードマップ</strong></p>
+        <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="background:var(--green);color:#000;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">現在</span>
+            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 1-3（クラウドのみ）</strong> — Python司令官 + Groq + Gemini でプロトタイプを完成させる。機密情報は扱わない前提で開発。</span>
+          </div>
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <span style="background:var(--border);color:var(--text2);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">将来</span>
+            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 4（ハイブリッド）</strong> — Mac mini購入後、Qwen 2.5 7B でマスキングエージェントを追加。ローカル←→クラウドのハイブリッド構成へ移行。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">💡</div>
+      <div>
+        <p><strong>プロトタイプ完成後の購入判断基準：</strong> ①機密データを扱う業務が発生したとき ②Groq/Geminiの無料枠が業務量に対して足りなくなったとき ③レート制限でパイプラインが詰まりはじめたとき — この3条件のどれかが来たら Mac mini M4 Pro 64GB の購入タイミング。</p>
+      </div>
+    </div>
+
   </div>
 </section>
 
