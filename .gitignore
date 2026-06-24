@@ -11,6 +11,11 @@ AIエージェント調査.pdf
 *.key
 *.pem
 
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
 # 一時ファイル
 *.tmp
 *.log
