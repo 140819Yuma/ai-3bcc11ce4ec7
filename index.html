@@ -454,17 +454,16 @@
       <div class="log-entry">
         <div class="log-date">6/24</div>
         <div class="log-content">
-          <h4>プロトタイプ環境構築・初稼働</h4>
+          <h4>Python司令官 + リフレクション型エージェントの初稼働</h4>
           <ul class="log-items">
-            <li>GitHubにPrivateリポジトリ作成 → ランダムURL（<code>ai-3bcc11ce4ec7</code>）でPublicに変更・GitHub Pages有効化</li>
-            <li>conda環境 <code>ai_agent</code>（Python 3.11）を新規作成</li>
-            <li>プロトタイプ構成を実装：<code>main.py</code>（対話型）＋ <code>orchestrator.py</code>（Python司令官）＋ <code>agents/</code>（Groq・Gemini）</li>
-            <li>Python司令官のif/thenルーティングが正常動作を確認</li>
-            <li>Groq Llama 3.3 70B（下書き）→ Groq Llama 3.1 8B（整理・評価）の2段構成でリフレクションループ動作確認</li>
+            <li>Python司令官（if/thenルーティング）を実装・動作確認</li>
+            <li>タスクのキーワードで「要約」「リサーチ」「レビュー」「リフレクション」に自動振り分け</li>
+            <li>Groq Llama 3.3 70B（下書き）→ Groq Llama 3.1 8B（整理・評価）の2段構成でリフレクションループが正常稼働</li>
+            <li>Mac mini（ローカルLLM）なしでも、クラウドAPIのみでプロトタイプが成立することを確認</li>
           </ul>
           <div class="log-insight">
-            <strong>📌 ハマった点：</strong> GeminiのAPIキーがGoogle有料アカウントに紐づくと無料枠クォータが強制的に0になる（<code>limit: 0</code>）。現状はGroqのみで代替。Geminiは別の無課金Googleアカウントでキーを作れば解決できる。<br>
-            <strong>📌 方針：</strong> ターミナル対話はプロトタイプ用。実用化時はSlack Botやフォルダ監視などのトリガーに差し替える。Mac mini購入前にコア機能を先に作り切る方針で確定。
+            <strong>📌 設計方針の確定：</strong> Mac mini購入前にクラウドAPIのみでコア機能を先に完成させる。ターミナル対話は開発・検証用で、実用化時はSlack Botやフォルダ監視などのトリガーに差し替える。<br>
+            <strong>📌 Gemini問題：</strong> 有料Googleアカウントに紐づくとAPIの無料枠クォータが強制0になる。現状はGroq単体で代替。無課金アカウントでキーを作り直せば解決できる。
           </div>
         </div>
       </div>
