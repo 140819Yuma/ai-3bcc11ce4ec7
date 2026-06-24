@@ -491,103 +491,214 @@
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Hybrid Architecture</div>
-      <h2 class="sec-title">ハイブリッドマルチエージェント設計</h2>
-      <p class="sec-sub">ローカルLLM（Mac mini）がプライバシーゲートとして機能し、機密情報をマスキングした上でクラウドLLMに高度な処理を依頼するアーキテクチャ。</p>
+      <h2 class="sec-title">マルチエージェント設計（参考動画ベース）</h2>
+      <p class="sec-sub">YouTubeの設計思想を最大限パクった構成。CEO（Yuma/Koki）+ 文脈エンジン + タスクボード + 4チーム体制。現フェーズはクラウドAPIのみ、Mac mini導入後にローカル層を追加。</p>
     </div>
 
+    <!-- 全体アーキテクチャ -->
     <div class="arch-box">
-      <div class="arch-title">ハイブリッドマルチエージェントシステム 組織図</div>
+      <div class="arch-title">マルチエージェントシステム 全体構成図</div>
 
-      <!-- ローカル層 -->
-      <div class="arch-zone local">
-        <div class="arch-zone-label">🏠 ローカル層（Mac mini M4 — 24時間自走）</div>
-        <div class="arch-row">
-          <div class="arch-node hl-green">
-            <div class="n-icon">🧠</div>
-            <div class="n-name">Python 司令官</div>
-            <div class="n-sub">if/then ルーティング</div>
-          </div>
-        </div>
-        <div class="arch-arr down">↓ タスク分割</div>
-        <div class="arch-row">
-          <div class="arch-node hl-orange">
-            <div class="n-icon">🛡️</div>
-            <div class="n-name">門番エージェント</div>
-            <div class="n-sub">Llama 3 8B<br/>機密マスキング・伏字化</div>
-          </div>
-          <div class="arch-arr">+</div>
-          <div class="arch-node">
-            <div class="n-icon">✏️</div>
-            <div class="n-name">執事エージェント</div>
-            <div class="n-sub">MCP filesystem<br/>フォルダ監視・自動リネーム</div>
-          </div>
-          <div class="arch-arr">+</div>
-          <div class="arch-node">
-            <div class="n-icon">📊</div>
-            <div class="n-name">データ連携 GW</div>
-            <div class="n-sub">RAG・外部API<br/>ナレッジ管理</div>
-          </div>
-        </div>
-        <div style="text-align:center; margin-top:10px;">
-          <span class="mask-badge">🔒 1文字も機密を含まない安全な通信</span>
-        </div>
-      </div>
-
-      <!-- Internet Border -->
-      <div class="arch-zone bridge">
-        <div class="arch-zone-label">🌐 Internet Border（機密マスク済みデータのみ通過）</div>
-        <div class="arch-row">
-          <div class="arch-node hl-orange">
-            <div class="n-icon">🔄</div>
-            <div class="n-name">マスクデータ</div>
-            <div class="n-sub">固有名詞・金額・<br/>社名を伏字化済み</div>
-          </div>
-          <div class="arch-arr">→→→</div>
-          <div class="arch-node hl-orange">
-            <div class="n-icon">↩️</div>
-            <div class="n-name">復元処理</div>
-            <div class="n-sub">ローカルで<br/>伏字を元に戻す</div>
-          </div>
-        </div>
-      </div>
-
-      <!-- クラウド層 -->
-      <div class="arch-zone cloud">
-        <div class="arch-zone-label">☁️ クラウド層（高速・大容量の脳みそ）</div>
+      <!-- CEO層 -->
+      <div class="arch-zone local" style="border-color:var(--accent);">
+        <div class="arch-zone-label" style="color:var(--accent);">👤 CEO層（Yuma / Koki）</div>
         <div class="arch-row">
           <div class="arch-node hl-blue">
-            <div class="n-icon">✍️</div>
-            <div class="n-name">草案作成</div>
-            <div class="n-sub">Claude 3.5 Sonnet<br/>/ Gemini Pro</div>
+            <div class="n-icon">📱</div>
+            <div class="n-name">インボックス</div>
+            <div class="n-sub">inbox.md にメモを<br/>投入するだけ</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-green">
+            <div class="n-icon">✅</div>
+            <div class="n-name">エスカレーション対応</div>
+            <div class="n-sub">ブロック中タスクの<br/>最終意思決定</div>
           </div>
           <div class="arch-arr">→</div>
           <div class="arch-node hl-purple">
-            <div class="n-icon">🔍</div>
-            <div class="n-name">品質チェック</div>
-            <div class="n-sub">ChatGPT GPT-4o<br/>激しいディスカッション</div>
+            <div class="n-icon">📊</div>
+            <div class="n-name">朝の報告受け取り</div>
+            <div class="n-sub">完了タスク＋<br/>確認待ち一覧</div>
           </div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node hl-blue">
-            <div class="n-icon">📝</div>
-            <div class="n-name">修正提案</div>
-            <div class="n-sub">Gemini 1.5 Pro<br/>最終仕上げ</div>
+        </div>
+      </div>
+
+      <!-- 調整層 -->
+      <div class="arch-zone bridge">
+        <div class="arch-zone-label">🔗 調整層（エージェント同士は直接会話しない）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-orange">
+            <div class="n-icon">📚</div>
+            <div class="n-name">文脈エンジン</div>
+            <div class="n-sub">knowledge/*.md<br/>プロジェクト理念・ルール<br/>全AG が作業前に読む</div>
           </div>
-          <div class="arch-arr">→</div>
-          <div class="arch-node hl-green">
+          <div class="arch-arr">⇆</div>
+          <div class="arch-node hl-orange">
             <div class="n-icon">📋</div>
-            <div class="n-name">レポート生成</div>
-            <div class="n-sub">複数LLM統合<br/>並列処理型</div>
+            <div class="n-name">タスクボード</div>
+            <div class="n-sub">kanban.md<br/>未着手→作業中→<br/>ブロック→完了</div>
           </div>
+          <div class="arch-arr">⇆</div>
+          <div class="arch-node hl-orange">
+            <div class="n-icon">📝</div>
+            <div class="n-name">引き継ぎ書</div>
+            <div class="n-sub">handoff/*.md<br/>AG間パス時に<br/>必ずMD出力</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- チーム層 -->
+      <div class="arch-zone cloud" style="border-color:var(--green);">
+        <div class="arch-zone-label" style="color:var(--green);">🤖 専門チーム層（計4チーム）</div>
+
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+
+          <!-- インフラ運用チーム -->
+          <div style="background:rgba(46,160,67,.08);border:1px solid var(--teal);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:8px;">🔧 インフラ運用チーム ★最重要</div>
+            <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">⏰</div>
+                <div class="n-name" style="font-size:10px;">タスクディスパッチャー</div>
+                <div class="n-sub" style="font-size:9px;">inbox定期スキャン<br/>→ボード自動登録</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">🗑️</div>
+                <div class="n-name" style="font-size:10px;">掃除エージェント</div>
+                <div class="n-sub" style="font-size:9px;">不要ファイル削除<br/>tmp/ の自動整理</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">🧪</div>
+                <div class="n-name" style="font-size:10px;">夜間テスト</div>
+                <div class="n-sub" style="font-size:9px;">深夜に自動実行<br/>品質チェック</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- リサーチチーム -->
+          <div style="background:rgba(88,166,255,.06);border:1px solid var(--accent);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">🔍 リサーチチーム</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B） ＋ アドバイザーAI（戦略判断時のみ）</div>
+            <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">📡</div>
+                <div class="n-name" style="font-size:10px;">情報収集AG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>リサーチ・調査</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">📄</div>
+                <div class="n-name" style="font-size:10px;">レポート生成AG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>MD形式で出力</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">✅</div>
+                <div class="n-name" style="font-size:10px;">QA AG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>品質・事実確認</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- コンテンツチーム -->
+          <div style="background:rgba(188,140,255,.06);border:1px solid var(--purple);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;">✍️ コンテンツチーム</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B）</div>
+            <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">📝</div>
+                <div class="n-name" style="font-size:10px;">議事録整理AG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>要約・構造化</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">🎯</div>
+                <div class="n-name" style="font-size:10px;">ブランドチェックAG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>文体・品質統一</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- タスク管理チーム -->
+          <div style="background:rgba(227,179,65,.06);border:1px solid var(--yellow);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:4px;">💼 タスク管理チーム</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B）</div>
+            <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">🔀</div>
+                <div class="n-name" style="font-size:10px;">優先度整理AG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>タスク分類・整列</div>
+              </div>
+              <div class="arch-node" style="min-width:90px;padding:8px;">
+                <div class="n-icon" style="font-size:14px;">🚫</div>
+                <div class="n-name" style="font-size:10px;">フィルタリングAG</div>
+                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>低品質タスクの排除</div>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>
 
-    <div class="callout c-info" style="margin-top:20px;">
-      <div class="callout-icon">💡</div>
-      <div class="callout">
-        <p><strong>Python司令官方式のメリット：</strong> ローカルLLMをオーケストレーターにすると処理が重い（推論コスト大）。代わりに <code>if/then</code> の条件分岐をPythonコードで書くことで、高速・決定論的なルーティングが実現できる。LangGraphの <strong>conditional edges</strong> も同様のアプローチ。</p>
+    <!-- モデル使い分け -->
+    <h3 style="font-size:15px;margin:28px 0 16px;color:var(--text);">LLMモデルの使い分け（コストコントロール）</h3>
+    <div class="tbl-wrap" style="margin-bottom:28px;">
+      <table>
+        <thead>
+          <tr><th>役割</th><th>モデル</th><th>用途</th><th>コスト</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>リーダーAI</strong>（各チームの司令塔）</td>
+            <td>Groq Llama 3.3 70B</td>
+            <td>タスク分析・専門AGへの振り分け・日常処理</td>
+            <td><span class="ok">無料</span></td>
+          </tr>
+          <tr>
+            <td><strong>専門AG</strong>（実作業担当）</td>
+            <td>Groq Llama 3.3 70B</td>
+            <td>リサーチ・草案生成・レポート作成</td>
+            <td><span class="ok">無料</span></td>
+          </tr>
+          <tr>
+            <td><strong>QA / レビューAG</strong></td>
+            <td>Groq Llama 3.1 8B</td>
+            <td>品質チェック・事実確認・文体統一（高速）</td>
+            <td><span class="ok">無料</span></td>
+          </tr>
+          <tr>
+            <td><strong>アドバイザーAI</strong>（戦略判断のみ）</td>
+            <td>Groq Llama 3.3 70B（深いプロンプト）</td>
+            <td>高度な設計判断・アーキテクチャ決定時のみ呼ぶ</td>
+            <td><span class="ok">無料（スポット利用）</span></td>
+          </tr>
+          <tr>
+            <td><strong>プライバシーマスキング</strong>（Phase 4〜）</td>
+            <td>Qwen 2.5 7B（ローカル・Mac mini）</td>
+            <td>機密情報の伏字化・復元。クラウドに送る前に処理</td>
+            <td><span class="tri">Mac mini購入後</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- フェーズ対応 -->
+    <div class="callout c-info" style="margin-bottom:16px;">
+      <div class="callout-icon">🗺️</div>
+      <div>
+        <p style="font-weight:700;margin-bottom:8px;">フェーズ別の実装状況</p>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
+          <div><span style="background:var(--green);color:#000;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官 ＋ Groq 2モデル構成でリフレクションループ稼働。文脈エンジン・タスクボード・引き継ぎ書は未実装。</div>
+          <div><span style="background:var(--accent);color:#000;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 2</span>文脈エンジン（knowledge/）・タスクボード（kanban.md）・引き継ぎ書出力を実装。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>タスクディスパッチャーの自動化・夜間スケジューラー実装。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。Qwen 2.5 7B でプライバシーマスキング層を追加。完全ハイブリッド構成へ。</div>
+        </div>
       </div>
     </div>
+
+    <div class="callout c-warn">
+      <div class="callout-icon">⚠️</div>
+      <div style="font-size:13px;"><strong>設計上の絶対ルール（動画より）：</strong> エージェント同士は直接会話しない。全ての情報は文脈エンジン＋タスクボードを経由する。判断に迷ったら必ず人間にエスカレーション（ブロック）する。</div>
+    </div>
+
   </div>
 </section>
 
