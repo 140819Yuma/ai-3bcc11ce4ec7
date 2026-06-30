@@ -346,15 +346,15 @@
   <ul>
     <li><a href="#project">プロジェクト</a></li>
     <li><a href="#meeting">打ち合わせメモ</a></li>
-    <li><a href="#why-interesting">面白さ研究</a></li>
     <li><a href="#log">進捗ログ</a></li>
     <li><a href="#hybrid">ハイブリッド設計</a></li>
     <li><a href="#reflection">リフレクション</a></li>
     <li><a href="#patterns">パターン</a></li>
-    <li><a href="#org-design">組織設計</a></li>
+    <li><a href="#org-design">運用フロー</a></li>
     <li><a href="#free-api">無料API</a></li>
     <li><a href="#pricing">API料金比較</a></li>
     <li><a href="#agent-services">サービス比較</a></li>
+    <li><a href="#sakana-ai">Sakana AI</a></li>
     <li><a href="#impl">実装</a></li>
     <li><a href="#tips">Tips</a></li>
     <li><a href="#pc-spec">PCスペック</a></li>
@@ -477,79 +477,6 @@
       <div class="callout-icon">🔍</div>
       <div>
         <p><strong>話題に上がった具体ツール：</strong> <strong>Manus</strong>（後述の<a href="#agent-services" style="color:var(--accent)">サービス比較</a>セクションで詳細あり）と<strong>Merlin</strong>（最大8時間の自律的リサーチが可能とされるが、開発元の信頼性・セキュリティ上の懸念点が話題に）。Merlinは今回のリサーチ範囲（後述5記事）には登場せず未検証のため、導入前に個別調査が必要。</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===== WHY INTERESTING ===== -->
-<section id="why-interesting">
-  <div class="container">
-    <div class="sec-head">
-      <div class="sec-tag">Independent Research</div>
-      <h2 class="sec-title">AIマルチエージェント開発の「面白さ」を調査</h2>
-      <p class="sec-sub">打ち合わせで出た「独自性のあるユニークな体験」「話題性」というテーマを掘り下げるため、提供された5記事とは別に国内外の事例・研究を新規調査した。</p>
-    </div>
-
-    <div class="card-grid" style="margin-bottom:24px;">
-      <div class="card">
-        <div class="card-icon">🙈</div>
-        <h3>創発的行動：誰も教えていない戦略</h3>
-        <p>OpenAIの「かくれんぼ」実験では、約3.8億エピソードの自己対戦を通じて、エージェントが<strong>誰も明示的に教えていない戦略</strong>を次々と編み出した。追跡→シェルター構築→ランプ侵入→ランプ固定→箱サーフィン→全箱固定の6段階で進化（下表）。マルチエージェントの面白さは「設計者の想定を超える」瞬間にある。</p>
-        <span class="badge bb">OpenAI研究</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">🗣️</div>
-        <h3>人格が「伝染」する現象</h3>
-        <p>個人開発者が2つのAIに「関西弁」「お嬢様言葉」と異なる口調を設定して会話させたところ、<strong>会話を重ねるうちに両方とも関西弁になる</strong>現象が発生。著者は「現実の会話でも話し方の伝染は頻繁に起こる」と前向きに分析。意図しない振る舞いの観察自体が面白さの源泉になっている。</p>
-        <span class="badge bp">Qiita個人開発</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">🤖</div>
-        <h3>「意思を持っているような」感覚</h3>
-        <p>個人開発者の体験談では、自作AIが生成したメッセージがDiscordに届いた瞬間「自分のプログラムが意思を持って動いているような不思議な感覚」になり、「作業が自動化されていく快感は一度味わうと病みつきになる」と語られている。打ち合わせの「おもちゃとして楽しむ」方針と合致する感覚。</p>
-        <span class="badge bg">個人開発者の声</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">🔍</div>
-        <h3>ディベートでハルシネーションが減る</h3>
-        <p>複数エージェントに同じ問いを討論させると、<strong>互いの間違いを指摘し合うことで単独LLMよりハルシネーションが減る</strong>という研究結果がある。プロジェクトのリフレクションループ（Generator⇄Critic）が採用する「第三者視点」設計は、この知見と一致する。</p>
-        <span class="badge bb">研究知見</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">🚗</div>
-        <h3>実例：トヨタのO-Beya（大部屋）</h3>
-        <p>トヨタはMicrosoftと協業し、エンジン・規制・振動・燃費など<strong>9つの専門AIエージェント</strong>を導入。パワートレーン開発の約800人が2024年1月から利用し、月間利用回数は数百回に及ぶ。「適切な文書を探し膨大な文章に目を通す」作業が「情報を探すことが格段に容易」に変化したと利用者が証言。</p>
-        <span class="badge bg">企業事例</span>
-      </div>
-      <div class="card">
-        <div class="card-icon">⚖️</div>
-        <h3>冷静な視点：万能ではない</h3>
-        <p>同じツール・同じコンテキストで比較すると、<strong>単一エージェントがタスクの64%でマルチエージェントと同等以上の性能</strong>を発揮したという調査結果もある。マルチエージェント化は精度を2.1ポイント改善する一方、コストはおよそ2倍。「面白い」と「実用的」は必ずしも一致しない。</p>
-        <span class="badge bo">要注意</span>
-      </div>
-    </div>
-
-    <!-- かくれんぼ実験の6段階 -->
-    <h3 style="font-size:15px;margin:28px 0 16px;color:var(--text);">OpenAI「かくれんぼ」実験：創発の6段階</h3>
-    <div class="tbl-wrap" style="margin-bottom:24px;">
-      <table>
-        <thead><tr><th>段階</th><th>学習された戦略</th></tr></thead>
-        <tbody>
-          <tr><td>① 追跡</td><td>鬼が隠れる側を追いかけ、隠れる側は単純に逃げる</td></tr>
-          <tr><td>② シェルター構築</td><td>隠れる側が箱や壁を使って砦を作ることを学習</td></tr>
-          <tr><td>③ ランプ侵入</td><td>鬼がランプを使って砦に飛び込む方法を発見</td></tr>
-          <tr><td>④ ランプ固定</td><td>隠れる側がランプを遠くに移動させ固定し、使えなくする</td></tr>
-          <tr><td>⑤ 箱サーフィン</td><td>鬼が固定されたランプから未固定の箱に飛び乗り、砦まで「サーフィン」</td></tr>
-          <tr><td>⑥ 全箱固定</td><td>隠れる側が砦を作る前に未使用の箱もすべて固定する対策を学習</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div class="callout c-purple">
-      <div class="callout-icon">💡</div>
-      <div>
-        <p><strong>プロジェクトへの示唆：</strong> 打ち合わせで出た「自分たちがエージェントを活用していると実感できる独自体験」は、機能を実装するだけでなく<strong>エージェント同士のやり取りを観察できるログ・ダッシュボードを用意する</strong>ことで実現しやすくなる。Generator⇄Criticのリフレクションループや、各専門AGに口調・個性を与えた上での掛け合いを可視化すれば、上記の「人格の伝染」「予想外の戦略」のような発見が自分たちのプロジェクトでも起こりうる。</p>
       </div>
     </div>
   </div>
@@ -1062,90 +989,8 @@
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Organization Design</div>
-      <h2 class="sec-title">AIエージェント組織設計（参考動画ベース）</h2>
-      <p class="sec-sub">単一AIに全てを処理させず、人間の専門組織を模倣した18体・4チーム構成。「専門特化・非同期連携・相互レビュー」が設計の軸。</p>
-    </div>
-
-    <!-- 全体組織図 -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:28px;">
-      <h3 style="font-size:15px;margin-bottom:20px;color:var(--accent);">全体組織図（計18体のエージェント）</h3>
-
-      <!-- CEO -->
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-        <div style="background:#1f3a5f;border:2px solid var(--accent);border-radius:8px;padding:10px 24px;font-size:14px;font-weight:700;color:var(--accent);">👤 CEO（人間）</div>
-        <div style="font-size:12px;color:var(--text2);">最終意思決定・タスク起票（Obsidianインボックスにメモ投入）・エスカレーション対応</div>
-      </div>
-
-      <!-- 調整層 -->
-      <div style="border-left:2px solid var(--orange);margin-left:32px;padding-left:20px;margin-bottom:16px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
-          <div style="background:var(--bg3);border:1px solid var(--orange);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--orange);margin-bottom:6px;">📚 文脈エンジン（Obsidian）</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">会社理念・CEOの価値観<br>デザイン言語・プロジェクト履歴<br>全エージェントが作業前に読み込む「共有記憶」</div>
-          </div>
-          <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:6px;">📋 タスクボード（カンバン）</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.7;">人間・AIが共同アクセス<br>「未着手→作業中→ブロック→完了」でステータス管理<br>エージェントが自律的にタスクを拾う</div>
-          </div>
-        </div>
-
-        <!-- 4チーム -->
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
-
-          <!-- エンジニアリング -->
-          <div style="background:var(--bg3);border:1px solid var(--green);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px;">⚙️ エンジニアリングチーム</div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：Tech Lead AI（Sonnet級）</div>
-            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
-              <li>コーディング担当</li>
-              <li>UIデザイン担当</li>
-              <li>バックエンド担当</li>
-              <li>QA（品質保証）担当</li>
-            </ul>
-          </div>
-
-          <!-- コンテンツ -->
-          <div style="background:var(--bg3);border:1px solid var(--purple);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--purple);margin-bottom:8px;">✍️ コンテンツチーム</div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：コンテンツディレクター AI（Sonnet級）</div>
-            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
-              <li>動画台本の拡張</li>
-              <li>ブランドボイスチェック</li>
-              <li>本質的な内容かの確認</li>
-              <li>アンチAIスロップ（AI臭い表現の排除）</li>
-            </ul>
-          </div>
-
-          <!-- ビジネス -->
-          <div style="background:var(--bg3);border:1px solid var(--yellow);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--yellow);margin-bottom:8px;">💼 ビジネスチーム</div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：ビジネスマネージャー AI（Sonnet級）</div>
-            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
-              <li>マーケティング</li>
-              <li>案件フィルタリング（低品質案件の排除）</li>
-              <li>契約書のリーガルチェック</li>
-            </ul>
-          </div>
-
-          <!-- インフラ -->
-          <div style="background:var(--bg3);border:2px solid var(--teal);border-radius:8px;padding:14px;">
-            <div style="font-size:12px;font-weight:700;color:var(--teal);margin-bottom:4px;">🔧 インフラ運用チーム <span style="color:var(--red);font-size:10px;">★最重要</span></div>
-            <div style="font-size:11px;color:var(--text2);margin-bottom:6px;font-weight:600;">リーダー：タスクディスパッチャー AI</div>
-            <ul style="font-size:11px;color:var(--text2);padding-left:14px;line-height:1.8;">
-              <li>Obsidianインボックスの定期スキャン</li>
-              <li>タスクの自動生成・ボードへの登録</li>
-              <li>不要ファイルの削除（ゴミ掃除）</li>
-              <li>夜間の自動テスト実行</li>
-            </ul>
-          </div>
-
-        </div>
-      </div>
-
-      <div class="callout c-warn" style="margin-top:4px;">
-        <div class="callout-icon">⚠️</div>
-        <div style="font-size:13px;">エージェント同士は<strong>直接会話しない</strong>。全ての情報は文脈エンジン（Obsidian）＋タスクボードを経由して非同期に受け渡す。コンテキスト汚染・ハルシネーション防止のための根本設計。</div>
-      </div>
+      <h2 class="sec-title">エージェント設計の3要素 & 24時間運用フロー</h2>
+      <p class="sec-sub">組織図そのものは<a href="#hybrid" style="color:var(--accent)">ハイブリッド設計</a>セクションの全体構成図と重複するため統合済み。ここでは個々のエージェントを動かす3要素と、CEOが朝起きるまでの24時間自動運転フローを整理する。</p>
     </div>
 
     <!-- エージェントの3要素 -->
@@ -1499,6 +1344,103 @@
   </div>
 </section>
 
+<!-- ===== SAKANA AI ===== -->
+<section id="sakana-ai">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Sakana AI Research</div>
+      <h2 class="sec-title">Sakana AI 調査 — マルチエージェント基盤「Fugu」</h2>
+      <p class="sec-sub">「面白いことをしたい」という方針からSakana AIの活用を検討。会社概要・Fuguの仕組み・料金・他社AIとの違い・プロジェクトへの適合性を新規調査した。</p>
+    </div>
+
+    <div class="card-grid" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-icon">🐟</div>
+        <h3>会社概要</h3>
+        <p>東京・麻布台ヒルズ拠点の2023年7月設立のAI研究企業。CEO David Ha（元Google）、CTO Llion Jones（論文「Attention Is All You Need」共著者）、会長Ren Ito。「進化的アルゴリズム」と「集合知能」を軸とした研究で知られる。</p>
+        <span class="badge bp">日本発フロンティアAI</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧬</div>
+        <h3>研究分野：進化×集合知</h3>
+        <p>パラメータ数を増やすのではなく、<strong>小型モデル群を進化的に協調させて創発的な知能を生み出す</strong>アプローチが特徴。Evolutionary Model Merge（複数OSSモデルの進化的合成）、AI Scientist（仮説生成→実験→論文執筆を自律実行する研究エージェント）、Darwin Gödel Machineなどを開発。</p>
+        <span class="badge bb">独自路線</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🎻</div>
+        <h3>Sakana Fugu：マルチエージェントを「1モデル」として提供</h3>
+        <p>2026年4月にベータ公開、6月22日に一般提供開始。<strong>「Conductor」</strong>という強化学習ベースの仲介モデルが、GPT・Claude・Geminiなど複数のフロンティアモデルから最適なチーム編成・役割分担・通信フローを動的に組み立てる。利用者からはOpenAI互換の単一APIに見える。</p>
+        <span class="badge bg">最新リリース</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏆</div>
+        <h3>得意分野：コード生成・複雑な推論</h3>
+        <p>SWE-Bench Pro・TerminalBench・LiveCodeBenchなどコード系ベンチマークで高スコア。ルービックキューブ解法テストではGemini 3.1 Pro・Claude Opus 4.8・GPT-5.5より少ない19手で正解。複雑な多段階推論タスクで強みを発揮する設計。</p>
+        <span class="badge bb">コード・推論特化</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏦</div>
+        <h3>企業導入事例：MUFG</h3>
+        <p>三菱UFJ銀行と共同開発した「AI融資エキスパート」が2026年3月の検証を経て、融資稟議書の作成支援に導入。日本の大企業・公共セクター向けソリューション開発を重視する事業方針が表れている。</p>
+        <span class="badge bg">国内事例</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚨</div>
+        <h3>要注意：永続的な無料枠なし</h3>
+        <p>2026年6月時点で恒久的な無料ティアは提供されていない（7月末までの期間限定「2ヶ月目無料」キャンペーンのみ）。最安でも<strong>Standardプラン月額$20〜</strong>が必要で、プロジェクトの「まず無料枠で検証」という現フェーズの戦略とは前提が異なる。</p>
+        <span class="badge ng">課金前提</span>
+      </div>
+    </div>
+
+    <!-- 料金詳細 -->
+    <h3 style="font-size:15px;margin:28px 0 16px;color:var(--text);">料金体系の詳細</h3>
+    <div class="tbl-wrap" style="margin-bottom:20px;">
+      <table>
+        <thead><tr><th>プラン</th><th>料金</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td>Standard（個人向けサブスク）</td><td>$20/月</td><td>Fugu・Fugu Ultra両方利用可</td></tr>
+          <tr><td>Pro（個人向けサブスク）</td><td>$100/月</td><td>上位プラン</td></tr>
+          <tr><td>Max（個人向けサブスク）</td><td>$200/月</td><td>最上位プラン</td></tr>
+          <tr><td>Fugu Ultra API（従量課金）</td><td>入力$5〜10／出力$30〜45（1Mトークン）</td><td>コンテキスト272,000トークン超で単価が急上昇</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-warn" style="margin-bottom:24px;">
+      <div class="callout-icon">⚠️</div>
+      <div style="font-size:13px;"><strong>「Token Gobbler」リスク：</strong> Fuguは内部で複数モデルへ再帰的に呼び出しを行うため、1回のアクションで通常モデルの<strong>3〜10倍以上</strong>のトークンを消費する失敗が報告されている。要約・翻訳のような単純タスクはシングルLLMに振り分け、複雑な推論タスクのみFuguを使うルーティング設計が推奨される——これはプロジェクトの<a href="#hybrid" style="color:var(--accent)">Python司令官</a>のif/thenルーティング思想と同じ発想。</div>
+    </div>
+
+    <!-- 他の生成AIとの違い -->
+    <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">他の生成AIとの違い</h3>
+    <div class="tbl-wrap" style="margin-bottom:24px;">
+      <table>
+        <thead><tr><th>観点</th><th>Sakana Fugu</th><th>Claude / GPT / Gemini単体</th></tr></thead>
+        <tbody>
+          <tr><td>提供形態</td><td>複数モデルを束ねた「メタAPI」</td><td>単一モデルへの直接API</td></tr>
+          <tr><td>モデル選択</td><td>Conductorが自動でチーム編成</td><td>開発者が手動で選択・実装</td></tr>
+          <tr><td>透明性</td><td>どのモデルが使われたか非開示</td><td>常に明示的（指定モデルが応答）</td></tr>
+          <tr><td>コスト予測</td><td>困難（再帰呼び出しで変動大）</td><td>容易（単価×トークン数で試算可）</td></tr>
+          <tr><td>無料枠</td><td>なし（最低$20/月〜）</td><td>あり（Gemini・Groqは無料枠豊富）</td></tr>
+          <tr><td>強み</td><td>コード・複雑推論で高スコア</td><td>用途ごとに最適なモデルを選べる</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-info" style="margin-bottom:20px;">
+      <div class="callout-icon">📊</div>
+      <div style="font-size:13px;">あるベンチマークで「Fugu UltraがClaude Fable 5を上回った」と報じられているが、<strong>その測定はモデルプールにClaude Fable 5自体を含めずに行われた</strong>という注記がある。マーケティング上の比較スコアは差し引いて評価する必要がある。</div>
+    </div>
+
+    <div class="callout c-purple">
+      <div class="callout-icon">🐾</div>
+      <div>
+        <p><strong>プロジェクトへの示唆：</strong> Sakana Fuguは「自分たちでマルチエージェントを設計する」のではなく「マルチエージェント機構そのものを1つのAPIとして借りる」発想であり、Python司令官が自前でルーティング・リフレクションを組む現在のプロジェクト方針とは<strong>対照的なアプローチ</strong>。現フェーズ（無料API中心）で導入するのは時期尚早だが、Phase 4以降「自前のオーケストレーションと比べてどちらが面白い・使えるか」を比較検証する<strong>検証対象</strong>として位置づけるのが現実的。コード生成タスクが多い場合はStandardプラン（$20/月）でのお試し導入も選択肢になる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== IMPLEMENTATION ===== -->
 <section id="impl">
   <div class="container">
@@ -1802,7 +1744,7 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-tip">
       <div class="callout-icon">💡</div>
       <div>
-        <p><strong>プロジェクトへの示唆：</strong> 現フェーズ（クラウドAPIのみ）は5〜10万円クラスのPCで十分。後述の<a href="#local-vs-cloud" style="color:var(--accent)">ローカルLLM比較</a>セクションのMac mini M4 Pro 64GB導入判断基準（①機密データ業務発生 ②無料枠の枯渇 ③レート制限での詰まり）は、本リサーチの「複雑な意思決定モデル（30B〜70B）には32〜64GB・20〜40万円クラスが必要」という相場感とも整合する。</p>
+        <p><strong>プロジェクトへの示唆：</strong> 現フェーズ（クラウドAPIのみ）は5〜10万円クラスのPCで十分。後述の<a href="#local-vs-cloud" style="color:var(--accent)">ローカルLLM比較</a>セクションのMac mini購入判断基準は、本リサーチの「複雑な意思決定モデル（30B〜70B）には32〜64GB・20〜40万円クラスが必要」という相場感とも整合する。</p>
       </div>
     </div>
 
@@ -1992,10 +1934,12 @@ session <span class="co">=</span> client.beta.sessions.create(
       <a href="https://soken.signate.jp/column/ai-agent-service" target="_blank">AIエージェントサービス10選</a>
     </p>
     <p style="margin-top:10px;">
-      「面白さ」独自リサーチ出典 ·
-      <a href="https://openai.com/index/emergent-tool-use/" target="_blank">OpenAI: Emergent tool use</a> ·
-      <a href="https://qiita.com/KokumaruGarasu/items/93260136bc1f668db058" target="_blank">AI同士を会話させてみた（Qiita）</a> ·
-      <a href="https://news.microsoft.com/ja-jp/features/241120-toyota-is-deploying-ai-agents-to-harness-the-collective-wisdom-of-engineers-and-innovate-faster/" target="_blank">トヨタO-Beya事例（Microsoft）</a>
+      Sakana AI 調査出典 ·
+      <a href="https://sakana.ai/fugu/" target="_blank">Sakana Fugu 公式</a> ·
+      <a href="https://sakana.ai/company-info/" target="_blank">Sakana AI 会社概要</a> ·
+      <a href="https://admina.moneyforward.com/jp/blog/sakana-fugu-enterprise-guide" target="_blank">企業導入ガイド（Admina）</a> ·
+      <a href="https://qiita.com/ronitsachdev/items/d8f1c3e60f39bdf14eaa" target="_blank">技術解説（Qiita）</a> ·
+      <a href="https://gigazine.net/gsc_news/en/20260622-sakana-fugu-multi-agent-system-ai/" target="_blank">GIGAZINE</a>
     </p>
     <p style="margin-top:6px; font-size:11px; color:var(--text2);">情報は2026年6月時点。最新の制限値は各サービスの公式ドキュメントを確認すること。</p>
   </div>
