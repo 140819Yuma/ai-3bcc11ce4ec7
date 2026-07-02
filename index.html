@@ -423,7 +423,7 @@
     <span class="chip"><span class="dot dot-green"></span>ハイブリッド Local+Cloud</span>
     <span class="chip"><span class="dot dot-blue"></span>機密マスキング方式</span>
     <span class="chip"><span class="dot dot-purple"></span>リフレクション型エージェント</span>
-    <span class="chip"><span class="dot dot-orange"></span>Gemini &amp; Groq 無料API活用</span>
+    <span class="chip"><span class="dot dot-orange"></span>クラウドAPI 無料枠を検証中</span>
   </div>
 </div>
 
@@ -458,7 +458,7 @@
       <div class="card">
         <div class="card-icon">🔗</div>
         <h3>システムモデル</h3>
-        <p>Obsidianかクラウドファイル（共有性のため）でナレッジ管理。複数LLMを並列活用。MCPx非同期連携。Gemini / Groq 無料APIを積極活用。</p>
+        <p>Obsidianかクラウドファイル（共有性のため）でナレッジ管理。複数LLMを並列活用。MCPx非同期連携。現在はGroq無料APIでプロトタイプを検証中。Geminiも候補として調査済み。今後使用するAPIは引き続き検討中。</p>
         <span class="badge bp">設計中</span>
       </div>
     </div>
@@ -810,6 +810,10 @@
       </table>
     </div>
 
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">⚠️</div>
+      <div style="font-size:13px;">上の構成図および下のモデル表に記載している <strong>Groq Llama 3.3 70B / 3.1 8B</strong> は、現在のプロトタイプで試用中の構成です。本番で採用するLLMサービス・モデルは<strong>未確定</strong>であり、今後変更になる可能性があります。</div>
+    </div>
     <!-- フェーズ対応 -->
     <div class="callout c-info" style="margin-bottom:16px;">
       <div class="callout-icon">🗺️</div>
@@ -888,8 +892,8 @@
       </div>
       <div class="card">
         <div class="card-icon">🔧</div>
-        <h3>コスト最適化戦略</h3>
-        <p>草案生成はGemini Flash（無料/安価）。品質チェックのみGPT-4o。修正提案はGroqで高速処理。最大リフレクション回数を<strong>3回</strong>に制限。品質スコアが閾値を超えたら早期終了。</p>
+        <h3>コスト最適化の設計方針（例）</h3>
+        <p>例として「草案生成にGemini Flash、品質チェックにGPT-4o、修正提案にGroq」を割り当てる構成が考えられる。最大リフレクション回数を<strong>3回</strong>に制限する方針は変わらないが、各役割に使うAPIは未確定。</p>
         <span class="badge bb">推奨設計</span>
       </div>
       <div class="card">
@@ -1155,7 +1159,7 @@
     <div class="sec-head">
       <div class="sec-tag">Free API</div>
       <h2 class="sec-title">無料APIの活用（Gemini &amp; Groq）</h2>
-      <p class="sec-sub">PDFで明記されていた無料API活用方針。2026年6月時点の最新制限値。</p>
+      <p class="sec-sub">現在プロトタイプで使用中のGroqと、候補として調査したGemini APIの仕様を整理。本番で使用するAPIは未確定。</p>
     </div>
 
     <div class="api-grid">
@@ -1197,12 +1201,12 @@
     <div class="callout c-warn" style="margin-top:16px;">
       <div class="callout-icon">⚠️</div>
       <div class="callout">
-        <p><strong>Gemini注意点：</strong> 課金を有効化した瞬間に無料枠が完全消滅する。プロジェクトは無料枠専用プロジェクトと有料プロジェクトを分けて管理すること。</p>
+        <p><strong>Gemini注意点：</strong> 課金を有効化した瞬間に無料枠が完全消滅する。Geminiを採用する場合は、無料枠専用プロジェクトと有料プロジェクトを分けて管理すること。</p>
       </div>
     </div>
 
     <div style="margin-top:24px;">
-      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">コスト別モデル使い分け推奨</h3>
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">コスト別モデル使い分け（参考パターン・未確定）</h3>
       <div class="tbl-wrap">
         <table>
           <thead>
@@ -1303,7 +1307,7 @@
     <div class="callout c-tip" style="margin-top:20px;">
       <div class="callout-icon">💡</div>
       <div>
-        <p><strong>打ち合わせの「月額1〜2万円」との整合性：</strong> 仮にClaude Sonnet 4.6（$3/$15・1Mトークン）を1日数十万トークン規模で使う場合、為替次第だが月数千円〜1万円台に収まる試算になり、複数API（草案＝Gemini Flash無料枠／品質チェックのみ有料API）の組み合わせなら打ち合わせで出た相場感と概ね一致する。プロジェクトの<strong>リフレクション回数上限3回</strong>という設計方針は、コスト超過を防ぐ実践的な対策として裏付けられる。</p>
+        <p><strong>打ち合わせの「月額1〜2万円」との整合性：</strong> 仮にClaude Sonnet 4.6（$3/$15・1Mトークン）を1日数十万トークン規模で使う場合、為替次第だが月数千円〜1万円台に収まる試算になり、例えば「草案にGemini Flash無料枠 ＋ 品質チェックのみ有料API」を組み合わせた場合、打ち合わせで出た相場感と概ね一致する試算になる（実際に使用するAPIは未確定）。プロジェクトの<strong>リフレクション回数上限3回</strong>という設計方針は、コスト超過を防ぐ実践的な対策として裏付けられる。</p>
       </div>
     </div>
   </div>
@@ -1315,7 +1319,7 @@
     <div class="sec-head">
       <div class="sec-tag">Agent Services Research</div>
       <h2 class="sec-title">AIエージェントサービス比較（10選）</h2>
-      <p class="sec-sub">SIGNATEの比較記事をもとに、打ち合わせで話題になった「Manus」を含む主要サービスを整理。自社構築（Python司令官 + Groq/Gemini）との比較軸として活用。</p>
+      <p class="sec-sub">SIGNATEの比較記事をもとに、打ち合わせで話題になった「Manus」を含む主要サービスを整理。自社構築（Python司令官 + 現在はGroqで試験運用中）との比較軸として活用。</p>
     </div>
 
     <div class="card-grid" style="margin-bottom:24px;">
@@ -1511,7 +1515,7 @@
     <div class="sec-head">
       <div class="sec-tag">Implementation</div>
       <h2 class="sec-title">実装ガイド</h2>
-      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。プロジェクトの現在の設計に対応。</p>
+      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。<strong>コードはGroq/Geminiを用いた現プロトタイプ（2026年6月時点）に基づく実装例であり、採用するAPIは今後変更になる可能性があります。</strong></p>
     </div>
 
     <div class="steps" style="margin-bottom:28px;">
@@ -1703,7 +1707,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="card">
         <div class="card-icon">💰</div>
         <h3>コスト管理</h3>
-        <p>Gemini/Groqの無料枠を1日の処理上限として設定。超過しそうな場合はローカルLLMにフォールバック。<strong>リフレクション上限3回</strong>は絶対守る。</p>
+        <p>現在使用中のAPI（Groq等）の無料枠を1日の処理上限として設定。超過しそうな場合はローカルLLMにフォールバック。<strong>リフレクション上限3回</strong>は絶対守る。</p>
       </div>
       <div class="card">
         <div class="card-icon">🔄</div>
@@ -1725,7 +1729,7 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-tip" style="margin-top:24px;">
       <div class="callout-icon">✅</div>
       <div class="callout">
-        <p><strong>次のアクション推奨：</strong> まず <strong>Groq + Gemini の無料APIキー</strong>を取得し、2エージェント（Generator + Reflector）のシンプルなリフレクションループを実装する。6/19の試作をベースに、Python司令官を追加してマルチエージェント化を進める。</p>
+        <p><strong>現在地と方針：</strong> Groqの無料APIキーで2エージェントのリフレクションループが動作確認済み（6/19試作）。どのAPIを本格採用するかは<strong>引き続き検討中</strong>。まずはGroqで機能を磨きつつ、Gemini・Sakana Fugu等と比較しながら確定していく方針。</p>
       </div>
     </div>
   </div>
@@ -1959,7 +1963,7 @@ session <span class="co">=</span> client.beta.sessions.create(
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <span style="background:var(--green);color:#000;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">現在</span>
-            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 1-3（クラウドのみ）</strong> — Python司令官 + Groq + Gemini でプロトタイプを完成させる。機密情報は扱わない前提で開発。</span>
+            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 1-3（クラウドのみ）</strong> — Python司令官 + クラウドAPI（現在はGroqを試用中）でプロトタイプを完成させる。使用するAPIは未確定。機密情報は扱わない前提で開発。</span>
           </div>
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <span style="background:var(--border);color:var(--text2);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">将来</span>
@@ -1972,7 +1976,7 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-tip">
       <div class="callout-icon">💡</div>
       <div>
-        <p><strong>プロトタイプ完成後の購入判断基準：</strong> ①機密データを扱う業務が発生したとき ②Groq/Geminiの無料枠が業務量に対して足りなくなったとき ③レート制限でパイプラインが詰まりはじめたとき — この3条件のどれかが来たら Mac mini M4 Pro 64GB の購入タイミング。</p>
+        <p><strong>プロトタイプ完成後の購入判断基準：</strong> ①機密データを扱う業務が発生したとき ②現在使用中のAPI無料枠が業務量に対して足りなくなったとき ③レート制限でパイプラインが詰まりはじめたとき — この3条件のどれかが来たら Mac mini M4 Pro 64GB の購入タイミング。</p>
       </div>
     </div>
 
