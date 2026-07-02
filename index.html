@@ -90,7 +90,6 @@
     /* ===== LAYOUT ===== */
     .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
     section { padding: 60px 0; border-bottom: 1px solid var(--border); }
-    section:last-of-type { border-bottom: none; }
     .sec-tag { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
     .sec-title { font-size: clamp(18px, 3vw, 28px); font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; }
     .sec-sub { color: var(--text2); max-width: 700px; font-size: 14px; }
@@ -336,6 +335,43 @@
       section { padding: 40px 0; }
       .arch-box { padding: 18px; }
     }
+
+    /* ===== TABS ===== */
+    .nav-tabs { display:flex; gap:2px; overflow-x:auto; scrollbar-width:none; }
+    .nav-tabs::-webkit-scrollbar { display:none; }
+    .nav-tab {
+      background:none; border:none; cursor:pointer;
+      color:var(--text2); font-size:13px; letter-spacing:.02em;
+      padding:5px 14px; border-radius:6px;
+      font-family:inherit; transition:all .15s;
+      white-space:nowrap; display:inline-flex; align-items:center; gap:6px;
+    }
+    .nav-tab:hover { color:var(--text); background:var(--bg2); }
+    .nav-tab.active { color:var(--accent); background:rgba(88,166,255,.12); font-weight:700; }
+
+    .sub-nav-bar {
+      display:none; align-items:center; gap:0;
+      position:sticky; top:52px; z-index:99;
+      background:rgba(22,27,34,.97); backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--border);
+      padding:0 24px; height:36px;
+      overflow-x:auto; scrollbar-width:none;
+    }
+    .sub-nav-bar::-webkit-scrollbar { display:none; }
+    .sub-nav-bar.active { display:flex; }
+    .sub-nav-bar a {
+      color:var(--text2); text-decoration:none; font-size:11px;
+      padding:4px 10px; border-radius:5px; white-space:nowrap;
+      transition:all .15s;
+    }
+    .sub-nav-bar a:hover { color:var(--text); background:var(--bg3); }
+    .sub-sep { color:var(--border); font-size:11px; padding:0 1px; user-select:none; }
+
+    .tab-pane { display:none; }
+    .tab-pane.active { display:block; }
+    .tab-pane section:last-child { border-bottom:none; }
+
+    @media(max-width:640px){ .nav-tab { font-size:12px; padding:5px 10px; } }
   </style>
 </head>
 <body>
@@ -343,24 +379,40 @@
 <!-- NAV -->
 <nav>
   <div class="nav-logo">AI Dev <span>/ Yuma & Koki</span></div>
-  <ul>
-    <li><a href="#project">プロジェクト</a></li>
-    <li><a href="#meeting">打ち合わせメモ</a></li>
-    <li><a href="#log">進捗ログ</a></li>
-    <li><a href="#hybrid">ハイブリッド設計</a></li>
-    <li><a href="#reflection">リフレクション</a></li>
-    <li><a href="#patterns">パターン</a></li>
-    <li><a href="#org-design">運用フロー</a></li>
-    <li><a href="#free-api">無料API</a></li>
-    <li><a href="#pricing">API料金比較</a></li>
-    <li><a href="#agent-services">サービス比較</a></li>
-    <li><a href="#sakana-ai">Sakana AI</a></li>
-    <li><a href="#impl">実装</a></li>
-    <li><a href="#tips">Tips</a></li>
-    <li><a href="#pc-spec">PCスペック</a></li>
-    <li><a href="#local-vs-cloud">ローカルLLM比較</a></li>
-  </ul>
+  <div class="nav-tabs" role="tablist">
+    <button class="nav-tab active" data-tab="overview" role="tab">📋 概要</button>
+    <button class="nav-tab" data-tab="design" role="tab">⚙️ 設計</button>
+    <button class="nav-tab" data-tab="research" role="tab">🔍 リサーチ</button>
+    <button class="nav-tab" data-tab="impl" role="tab">🖥️ 環境&実装</button>
+  </div>
 </nav>
+
+<!-- ===== SUB NAV ===== -->
+<div class="sub-nav-bar active" data-tab="overview">
+  <a href="#project">プロジェクト概要</a><span class="sub-sep"> · </span>
+  <a href="#meeting">打ち合わせメモ</a><span class="sub-sep"> · </span>
+  <a href="#log">進捗ログ</a>
+</div>
+<div class="sub-nav-bar" data-tab="design">
+  <a href="#hybrid">ハイブリッド設計</a><span class="sub-sep"> · </span>
+  <a href="#reflection">リフレクション</a><span class="sub-sep"> · </span>
+  <a href="#patterns">パターン</a><span class="sub-sep"> · </span>
+  <a href="#org-design">運用フロー</a>
+</div>
+<div class="sub-nav-bar" data-tab="research">
+  <a href="#free-api">無料API</a><span class="sub-sep"> · </span>
+  <a href="#pricing">API料金比較</a><span class="sub-sep"> · </span>
+  <a href="#agent-services">サービス比較</a><span class="sub-sep"> · </span>
+  <a href="#sakana-ai">Sakana AI</a>
+</div>
+<div class="sub-nav-bar" data-tab="impl">
+  <a href="#impl">実装ガイド</a><span class="sub-sep"> · </span>
+  <a href="#tips">Tips</a><span class="sub-sep"> · </span>
+  <a href="#pc-spec">PCスペック</a><span class="sub-sep"> · </span>
+  <a href="#local-vs-cloud">ローカルLLM比較</a>
+</div>
+
+<div class="tab-pane active" data-tab="overview">
 
 <!-- HERO -->
 <div class="hero">
@@ -559,6 +611,10 @@
     </div>
   </div>
 </section>
+
+</div><!-- /tab-pane overview -->
+
+<div class="tab-pane" data-tab="design">
 
 <!-- ===== HYBRID ARCHITECTURE ===== -->
 <section id="hybrid">
@@ -1089,6 +1145,10 @@
   </div>
 </section>
 
+</div><!-- /tab-pane design -->
+
+<div class="tab-pane" data-tab="research">
+
 <!-- ===== FREE API ===== -->
 <section id="free-api">
   <div class="container">
@@ -1440,6 +1500,10 @@
     </div>
   </div>
 </section>
+
+</div><!-- /tab-pane research -->
+
+<div class="tab-pane" data-tab="impl">
 
 <!-- ===== IMPLEMENTATION ===== -->
 <section id="impl">
@@ -1915,6 +1979,8 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
+</div><!-- /tab-pane impl -->
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1944,6 +2010,58 @@ session <span class="co">=</span> client.beta.sessions.create(
     <p style="margin-top:6px; font-size:11px; color:var(--text2);">情報は2026年6月時点。最新の制限値は各サービスの公式ドキュメントを確認すること。</p>
   </div>
 </footer>
+
+
+<script>
+(function(){
+  var tabs    = document.querySelectorAll('.nav-tab');
+  var panes   = document.querySelectorAll('.tab-pane');
+  var subnav  = document.querySelectorAll('.sub-nav-bar');
+
+  function activate(name) {
+    tabs.forEach(function(t){   t.classList.toggle('active', t.dataset.tab === name); });
+    panes.forEach(function(p){  p.classList.toggle('active', p.dataset.tab === name); });
+    subnav.forEach(function(s){ s.classList.toggle('active', s.dataset.tab === name); });
+    if (history.replaceState) history.replaceState(null, '', '#tab-' + name);
+    window.scrollTo(0, 0);
+  }
+
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ activate(t.dataset.tab); });
+  });
+
+  /* deep-link: #section-id jumps to the right tab */
+  var hash = location.hash.replace('#','');
+  if (hash && hash.indexOf('tab-') !== 0) {
+    var target = document.getElementById(hash);
+    if (target) {
+      var pane = target.closest('.tab-pane');
+      if (pane) {
+        activate(pane.dataset.tab);
+        setTimeout(function(){ target.scrollIntoView(); }, 50);
+      }
+    }
+  } else if (hash.indexOf('tab-') === 0) {
+    activate(hash.replace('tab-',''));
+  }
+
+  /* footer links stay working (open correct tab) */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click', function(e){
+      var id = a.getAttribute('href').replace('#','');
+      var target = document.getElementById(id);
+      if (target) {
+        var pane = target.closest('.tab-pane');
+        if (pane && !pane.classList.contains('active')) {
+          e.preventDefault();
+          activate(pane.dataset.tab);
+          setTimeout(function(){ target.scrollIntoView({behavior:'smooth'}); }, 80);
+        }
+      }
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
