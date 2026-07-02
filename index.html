@@ -429,7 +429,8 @@
   <a href="#project">プロジェクト概要</a><span class="sub-sep"> · </span>
   <a href="#meeting">打ち合わせメモ</a><span class="sub-sep"> · </span>
   <a href="#log">進捗ログ</a><span class="sub-sep"> · </span>
-  <a href="#plan">実行計画</a>
+  <a href="#plan">実行計画</a><span class="sub-sep"> · </span>
+  <a href="#decisions">意思決定ボード</a>
 </div>
 <div class="sub-nav-bar" data-tab="design">
   <a href="#hybrid">ハイブリッド設計</a><span class="sub-sep"> · </span>
@@ -637,6 +638,21 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/2</div>
+        <div class="log-content">
+          <h4>ディスカッションサイクル #1 — 調査×本文の突き合わせ運用を開始</h4>
+          <ul class="log-items">
+            <li>「AIが調査→本文と議論→人間が判断」のサイクルを仕組み化（ai-researchスキルに組み込み）</li>
+            <li><a href="#decisions">意思決定ボード</a>を新設。要判断の論点3件を起票（クラウド側アーキテクチャ／フレームワーク導入基準／Gemini再導入）</li>
+            <li>Groq・Geminiの無料枠数値を2026年6〜7月時点に更新（Groqの実質ボトルネックはTPM 12,000と判明）</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> 2025年の「single vs multi論争」は2026年に「司令官＋使い捨てサブエージェント」型へ収束。<strong>現行のPython司令官設計は業界の収束形と一致していた</strong>（設計変更不要の裏付けが取れた）。次サイクルは意思決定ボードの決定内容を反映してから実施する。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
@@ -731,6 +747,77 @@
       <div class="callout-icon">💰</div>
       <div>
         <p><strong>コスト確認：</strong> この計画は全段階で¥0（Groq無料枠＋Discord Webhook＋GitHub Pages）。有料化の検討は、<a href="#local-vs-cloud" style="color:var(--accent);">ローカルLLM比較</a>に記載した既存の判断基準（無料枠の枯渇・レート制限で詰まる等）が実際に来たときに初めて行えばよい。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DECISION BOARD ===== -->
+<section id="decisions">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Decision Board</div>
+      <h2 class="sec-title">意思決定ボード — Yumaが決める論点</h2>
+      <p class="sec-sub">AIが定期的に最新動向を調査し、本レポートの内容と突き合わせて議論した結果、「人間が決めるべき論点」だけをここに起票する。Yumaはこのボードを見て方針・ゴールを決めればよい。決定されたら本文に反映し、ステータスを更新する。運用: 🟢裏付け＝根拠追記 / 🟡更新＝数値差し替え / 🔴矛盾＝両論併記して起票 / ⚪欠落＝新規追記か要否確認。</p>
+    </div>
+
+    <!-- サイクル#1 サマリー -->
+    <div class="callout c-info">
+      <div class="callout-icon">🔄</div>
+      <div>
+        <p><strong>ディスカッションサイクル #1（2026-07-02実施）：</strong> 🟢裏付け1件・🟡更新2件・🔴矛盾1件・⚪欠落1件。最大の発見は、<strong>2025年の「single vs multi論争」が2026年に収束し、現行のPython司令官設計が業界の収束形とほぼ一致していた</strong>こと。一方、クラウド側の「Claude + GPT-4o + Gemini によるリフレクション構想」は脆いとされたピア型に近く、論点として起票した（論点1）。</p>
+      </div>
+    </div>
+
+    <!-- 論点1 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 1 ｜ 🔴 矛盾 ｜ ステータス: 未決</div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">クラウド側のリフレクション構成を「司令官＋使い捨てサブエージェント」型に寄せるか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> Cognitionは2025年6月の「<a href="https://cognition.com/blog/dont-build-multi-agents" style="color:var(--accent);">Don't Build Multi-Agents</a>」で対等な複数エージェント協調（ピア型）は脆いと主張したが、2026年3月に自ら管理者型マルチ（Devinが複数のDevinを管理）へ転換。業界は「<strong>単一エージェントが全体の文脈を保持し、使い捨てのサブエージェントが個別タスクを実行して要約だけを返す</strong>」形に収束した（<a href="https://niteagent.com/blog/multi-agent-production-2026/" style="color:var(--accent);">本番導入で生き残ったパターン調査</a>、2026-07-02取得）。現行のPython司令官はこの収束形と一致する一方、<a href="#free-api" style="color:var(--accent);">無料API</a>セクションの「草案Gemini／品質GPT-4o／修正Groq」というピア型リフレクション構想は脆いとされた形に近い。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>クラウド側も「司令官がサブエージェントを都度起動→要約回収」に統一</td><td>業界収束形と一致。Token Gobblerリスク（トークン3〜10倍消費）も抑制</td></tr>
+          <tr><td>B</td><td>ピア型リフレクションをあえて維持し、比較を観察日誌のネタにする</td><td>話題性はあるがトークン消費が重い</td></tr>
+          <tr><td>C</td><td>両方作って同一タスクで比較実験</td><td>面白いが工数増。Step 2〜3完了後なら現実的</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- 論点2 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 2 ｜ ⚪ 欠落 ｜ ステータス: 未決</div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">フレームワーク（LangGraph等）をいつ導入するか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>Step 2〜3（フォルダ監視＋Discord）までは自作継続。「状態の永続化」か「人間承認フロー」が必要になった時点でLangGraphを検討</td><td>今の規模なら自作で十分。移行基準が明文化される</td></tr>
+          <tr><td>B</td><td>今すぐLangGraphへ移行</td><td>学習コストでStep 2〜3が遅れる</td></tr>
+          <tr><td>C</td><td>フレームワークなしを貫く</td><td>規模拡大時に自作で再発明が続くリスク</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- 論点3 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 3 ｜ 🟡 更新 ｜ ステータス: 未決</div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">Groq TPMボトルネック対策 — Gemini再導入のタイミング</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景（数値更新）：</strong> Groq無料枠の llama-3.3-70b-versatile は <strong>30 RPM / 1,000 RPD / 12,000 TPM / 100,000 TPD</strong>（2026年6月時点、<a href="https://console.groq.com/docs/rate-limits" style="color:var(--accent);">公式ドキュメント</a>）。リフレクションループは1タスクでトークンを3〜10倍消費するため、実質の壁はRPDではなく<strong>TPM 12,000</strong>。一方Geminiは2025年12月の無料枠削減のあと、2026年5月7日にFlash系の上限が引き上げられ、Flash無料枠は <strong>10 RPM / 250,000 TPM / 1,500 RPD</strong>（<a href="https://ai.google.dev/gemini-api/docs/rate-limits" style="color:var(--accent);">公式レート制限</a>、2026-07-02取得）。TPMはGroqの20倍以上あり、トークン重量級タスクの逃し先として有力。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>無課金アカウントでGeminiキーを再作成し、長文タスクをGeminiへ逃す2プロバイダ体制</td><td>既存の「継続中」タスクと一致。¥0方針を維持</td></tr>
+          <tr><td>B</td><td>Groq単体のままプロンプト圧縮・履歴要約で耐える</td><td>工数小だが根本解決ではない</td></tr>
+          <tr><td>C</td><td>少額課金でGroq Devプランへ</td><td>課金判断基準（無料枠枯渇）にまだ達していない</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">✅</div>
+      <div>
+        <p><strong>決め方：</strong> 各論点について「A/B/C＋ひとこと理由」をClaude Codeに伝えるだけでよい（例:「論点1はA、論点3もAで進めて」）。決定はステータス欄に反映され、次のディスカッションサイクルで本文・実行計画に組み込まれる。<strong>🟢裏付けの反映済み事項：</strong> Python司令官のif/thenルーティング設計は2026年の業界収束形（司令官＋使い捨てサブエージェント）と一致することを確認。設計変更の必要なし。</p>
       </div>
     </div>
   </div>
