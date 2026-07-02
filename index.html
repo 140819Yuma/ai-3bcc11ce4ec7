@@ -428,7 +428,8 @@
 <div class="sub-nav-bar active" data-tab="overview">
   <a href="#project">プロジェクト概要</a><span class="sub-sep"> · </span>
   <a href="#meeting">打ち合わせメモ</a><span class="sub-sep"> · </span>
-  <a href="#log">進捗ログ</a>
+  <a href="#log">進捗ログ</a><span class="sub-sep"> · </span>
+  <a href="#plan">実行計画</a>
 </div>
 <div class="sub-nav-bar" data-tab="design">
   <a href="#hybrid">ハイブリッド設計</a><span class="sub-sep"> · </span>
@@ -648,6 +649,89 @@
         </div>
       </div>
 
+    </div>
+  </div>
+</section>
+
+<!-- ===== EXECUTION PLAN ===== -->
+<section id="plan">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Execution Plan</div>
+      <h2 class="sec-title">実行計画 — 要件を満たす最短ルート</h2>
+      <p class="sec-sub">打ち合わせで出た要件を棚卸しすると、7割は既存の資産（プロトタイプ＋本レポート）で満たせる状態にある。埋まっていない最大のギャップは「ストーリーの一本化」。ここでは要件を貫く一本の物語を固定し、無料枠のまま到達できる4段階の計画に落とす。</p>
+    </div>
+
+    <!-- ストーリー -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:30px 34px;margin:0 0 20px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">One Story</div>
+      <p style="font-family:var(--serif);font-size:clamp(17px,2.6vw,23px);font-weight:700;line-height:1.9;color:var(--text);">「会議が終わったら、人間はもう何もしない。<br>翌朝、ToDoと日報が届いている」</p>
+      <p style="font-size:13.5px;color:var(--text2);margin-top:14px;line-height:2;">この一文が打ち合わせの要件をすべて同時に満たす。課題は議事録処理というルーチンワーク（＝役割分担テーマそのもの）。Gemini単体では実現不可能（フォルダ監視・通知というAPI連携が必須）。「朝スマホに届く」という体験の実感。そして既存のPython司令官＋リフレクションループの延長で作れるため、速さ優先の合意にも沿う。</p>
+    </div>
+
+    <!-- 要件マッピング -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">要件の棚卸し — 何が満たせていて、何が欠けているか</h3>
+    <div class="tbl-wrap" style="margin-bottom:36px;">
+      <table>
+        <thead><tr><th>打ち合わせの要件</th><th>現状</th><th>この計画での対応</th></tr></thead>
+        <tbody>
+          <tr><td>無料枠→検証後に有料化</td><td><span class="ok">満たせている</span> — Groqで稼働中</td><td>全4段階を¥0のまま実行。課金は既存の判断基準が来たときのみ</td></tr>
+          <tr><td>課題特定→目的→手法の整理</td><td><span class="tri">部品はあるが未統合</span></td><td>Step 1 の「1枚化」で回収</td></tr>
+          <tr><td>効率化を超えたストーリー</td><td><span class="ng" style="font-weight:600;">最大の欠落</span></td><td>上記の One Story に固定</td></tr>
+          <tr><td>Gemini単体でできない外部連携</td><td><span class="ng" style="font-weight:600;">連携ゼロ</span> — ターミナル対話のみ</td><td>Step 2〜3（フォルダ監視＋Discord通知）</td></tr>
+          <tr><td>「活用している」実感・独自体験</td><td><span class="tri">ループは動くが実感が薄い</span></td><td>Step 3 の「朝刊がスマホに届く」体験</td></tr>
+          <tr><td>話題性・面白いレポート</td><td><span class="ok">方向性は確定済み</span> — 本サイト＋面白さ×新規性調査</td><td>Step 4 の観察日誌で継続的に回収</td></tr>
+          <tr><td>速さ優先・おもちゃとして楽しむ</td><td><span class="ok">合意済み</span></td><td>各Stepを数日単位に分割。あとは実行</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 4段階 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 20px;">4段階ロードマップ — すべて無料枠のまま</h3>
+    <div class="steps" style="margin-bottom:36px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont">
+          <h4>今週：フレームワークを1枚に落とす</h4>
+          <p>「課題の特定 → 目的の明確化 → 手法の選定」を One Story で埋めた1枚を作る。課題＝議事録処理・タスク管理のルーチン／目的＝人間は判断だけに集中する環境／手法＝既存Python司令官の拡張。これが次回ミーティングの土台になる。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont">
+          <h4>数日：入口と出口をつける</h4>
+          <p>フォルダ監視（inboxに議事録mdを置くと自動処理が走る）＋出力（ToDo.md・日報.mdの生成）。ターミナル対話からの卒業がそのまま「エージェントを使っている実感」に変わる。既存のリフレクションループはそのまま中身として使う。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont">
+          <h4>1週間：外部連携を1つだけ足す</h4>
+          <p>最初はDiscordのWebhook通知が最適——無料・審査なし・数行のコードで「朝刊がスマホに届く」体験が完成する。Googleカレンダー連携は認証（OAuth）が重いので2番手に回す。これで「Gemini単体でできないこと」の要件を具体物で証明できる。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont">
+          <h4>継続：観察日誌をつける</h4>
+          <p>動かした結果を失敗込みで本レポートに追記していく。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で確認したとおり、Project VendもAI Villageも価値の中心は性能ではなく観察記録だった。「話題性」「面白いレポート」の要件はこの習慣だけで回収できる。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 次回ミーティング -->
+    <div class="callout c-tip">
+      <div class="callout-icon">🎒</div>
+      <div>
+        <p><strong>次回ミーティングへの持ち物（宿題「各自調査して深掘り」への回答）：</strong> ①動くデモ——議事録を放り込むと朝刊が出てくるまでの一連の流れ。②本レポートサイトのURL——調査成果としてそのまま提示できる。③3人で決めたい論点リスト——観察日誌の公開範囲、課金トリガーの承認、次に足す連携先の優先順位。この3点が揃えば担当分としては十分な形になる。</p>
+      </div>
+    </div>
+
+    <div class="callout c-info">
+      <div class="callout-icon">💰</div>
+      <div>
+        <p><strong>コスト確認：</strong> この計画は全段階で¥0（Groq無料枠＋Discord Webhook＋GitHub Pages）。有料化の検討は、<a href="#local-vs-cloud" style="color:var(--accent);">ローカルLLM比較</a>に記載した既存の判断基準（無料枠の枯渇・レート制限で詰まる等）が実際に来たときに初めて行えばよい。</p>
+      </div>
     </div>
   </div>
 </section>
