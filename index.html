@@ -752,7 +752,7 @@
     <div class="callout c-purple">
       <div class="callout-icon">🧠</div>
       <div>
-        <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
+        <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。さらに<strong>Obsidianをknowledge/のビューアとして被せる</strong>と、GUI・グラフ表示・スマホからのメモ投入（当初構想のインボックス）が追加コスト0円で手に入る。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
       </div>
     </div>
 
@@ -1835,8 +1835,8 @@
     </div>
 
     <!-- 追補調査 -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:44px 0 8px;">追補調査 — チームから持ち込まれた3つの参考資料（2026年7月）</h3>
-    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">メンバーから共有された資料を評価した。3つは独立に見えて、実は<strong style="color:var(--text)">「ループ定義（設計図）× 文脈エンジン（記憶）× ダッシュボード（観察窓）」</strong>という1つの構図に収まる。それぞれ実行計画のStepに反映済み。</p>
+    <h3 style="font-family:var(--serif);font-size:16px;margin:44px 0 8px;">追補調査 — チームから持ち込まれた4つの参考資料（2026年7月）</h3>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">メンバーから共有された資料を評価した。4つは独立に見えて、実は<strong style="color:var(--text)">「ループ定義（設計図）× 文脈エンジン（記憶）× ダッシュボード（観察窓）× AI社員ランタイム（実行）」</strong>という1つの構図に収まる。それぞれ実行計画のStepに反映済み。</p>
 
     <div class="card-grid" style="margin-bottom:24px;">
       <div class="card">
@@ -1856,6 +1856,12 @@
         <h3>第二の脳（チャエン氏の紹介 / 原典 Iwo Szapar）</h3>
         <p>「AIの性能差はモデルの賢さより、<strong>どれだけ自分の知識・過去の意思決定・業務文脈を読ませられるか</strong>で決まる」というテーゼ。Markdownの知識リポジトリ（episodic／semantic／procedural）＋CLAUDE.md＋4つのルーチンスキルで“自分を知っているAI”を作る手法。プロジェクトの文脈エンジンは<strong>この設計のチーム共有版</strong>であり、個人で回して検証した構造をチームに移植する流れは「小さく速く」の合意と一致する。</p>
         <span class="badge bp">文脈エンジンの原型として参照</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🗂️</div>
+        <h3>Claude × Obsidian「AI社員」（東大ClaudeCode研究所）</h3>
+        <p>Obsidianのvault（保管庫）とClaude Codeの作業ディレクトリを一致させ、CLAUDE.mdの自動読み込み＋3層記憶（CLAUDE.md＝憲法／MEMORY.md＝AI記憶／vault＝知識）＋MCP連携（カレンダー・メール）で「業務に組み込まれたAI社員」を作る手法。注目すべきは、これが<strong>6月の組織設計で文脈エンジンとして想定していたObsidianの、具体的な実装レシピそのもの</strong>である点。Obsidianはmdフォルダのビューアにすぎないため、knowledge/ にそのまま被せられ（追加コスト0円）、モバイルアプリ経由で「CEOがスマホからメモを投入」する当初構想のフローも実現できる。PostToolUseフック（実行のたびにログを自動記録）は観察ダッシュボードのデータソース実装の有力候補。</p>
+        <span class="badge bb">Step 2・4 の実装レシピ</span>
       </div>
     </div>
   </div>
@@ -2379,7 +2385,9 @@ session <span class="co">=</span> client.beta.sessions.create(
       <a href="https://x.com/gagarotai200/status/2072920840618823900" target="_blank">観察ダッシュボードのデモ（ガガロットAI）</a> ·
       <a href="https://signals.forwardfuture.com/loop-library/" target="_blank">Loop Library（Forward Future）</a> ·
       <a href="https://x.com/masahirochaen/status/2073548158270144705" target="_blank">第二の脳の紹介（チャエン氏）</a> ·
-      <a href="https://www.iwoszapar.com/p/how-to-build-second-brain-in-claude-code" target="_blank">How to build a second brain in Claude Code（Iwo Szapar）</a>
+      <a href="https://www.iwoszapar.com/p/how-to-build-second-brain-in-claude-code" target="_blank">How to build a second brain in Claude Code（Iwo Szapar）</a> ·
+      <a href="https://x.com/claudecode_ut/status/2058664601085157559" target="_blank">Claude × Obsidian AI社員（東大ClaudeCode研究所）</a> ·
+      <a href="https://dev.classmethod.jp/articles/obsidian-claude-optimization/" target="_blank">Obsidian × Claude Code構成（DevelopersIO）</a>
     </p>
     <p style="margin-top:6px; font-size:11px; color:var(--text2);">情報は2026年6月時点。最新の制限値は各サービスの公式ドキュメントを確認すること。</p>
   </div>
