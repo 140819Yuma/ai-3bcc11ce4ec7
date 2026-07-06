@@ -675,7 +675,7 @@
     <div class="sec-head">
       <div class="sec-tag">Execution Plan</div>
       <h2 class="sec-title">実行計画 — 要件を満たす最短ルート</h2>
-      <p class="sec-sub">打ち合わせで出た要件を棚卸しすると、7割は既存の資産（プロトタイプ＋本レポート）で満たせる状態にある。埋まっていない最大のギャップは「ストーリーの一本化」。ここでは要件を貫く一本の物語を固定し、無料枠のまま到達できる4段階の計画に落とす。</p>
+      <p class="sec-sub">打ち合わせで出た要件を棚卸しすると、7割は既存の資産（プロトタイプ＋本レポート）で満たせる状態にある。埋まっていない最大のギャップは「ストーリーの一本化」。ここでは要件を貫く一本の物語を固定し、無料枠のまま到達できる6段階の計画に落とす。</p>
     </div>
 
     <!-- ストーリー -->
@@ -696,14 +696,14 @@
           <tr><td>効率化を超えたストーリー</td><td><span class="ng" style="font-weight:600;">最大の欠落</span></td><td>上記の One Story に固定</td></tr>
           <tr><td>Gemini単体でできない外部連携</td><td><span class="ng" style="font-weight:600;">連携ゼロ</span> — ターミナル対話のみ</td><td>Step 2〜3（フォルダ監視＋Discord通知）</td></tr>
           <tr><td>「活用している」実感・独自体験</td><td><span class="tri">ループは動くが実感が薄い</span></td><td>Step 3 の「朝刊がスマホに届く」体験</td></tr>
-          <tr><td>話題性・面白いレポート</td><td><span class="ok">方向性は確定済み</span> — 本サイト＋面白さ×新規性調査</td><td>Step 4 の観察日誌で継続的に回収</td></tr>
+          <tr><td>話題性・面白いレポート</td><td><span class="ok">方向性は確定済み</span> — 本サイト＋面白さ×新規性調査</td><td>Step 6 の観察日誌で継続的に回収</td></tr>
           <tr><td>速さ優先・おもちゃとして楽しむ</td><td><span class="ok">合意済み</span></td><td>各Stepを数日単位に分割。あとは実行</td></tr>
         </tbody>
       </table>
     </div>
 
     <!-- 4段階 -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 20px;">4段階ロードマップ — すべて無料枠のまま</h3>
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 20px;">6段階ロードマップ — すべて無料枠のまま</h3>
     <div class="steps" style="margin-bottom:36px;">
       <div class="step">
         <div class="snum">1</div>
@@ -729,9 +729,30 @@
       <div class="step">
         <div class="snum">4</div>
         <div class="scont">
+          <h4>数日：観察ダッシュボードを立てる</h4>
+          <p>各エージェントの「いま誰が・何を考え・何をしたか」をログファイルに落とし、それを読むだけの1枚のHTML画面で表示する。かんばん（未着手→作業中→ブロック→完了）と直近の行動ログが並ぶだけで経営シミュレーション感が出る。ガガロットAIのデモが示したとおり、<strong>可視化そのものが話題性になる</strong>。次回ミーティングのデモ映えも段違いになる。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">5</div>
+        <div class="scont">
+          <h4>1週間：タスクをループ定義書にする</h4>
+          <p>議事録処理・リサーチ・掃除の各タスクを「トリガー／指示／検証／停止条件／権限境界」の5部構成（Loop Library形式）で knowledge/loops/ にmdとして書く。エスカレーションルールは権限境界として明文化。ここまで揃うと文脈エンジン（Phase 2）の中身が実質完成する。</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="snum">6</div>
+        <div class="scont">
           <h4>継続：観察日誌をつける</h4>
           <p>動かした結果を失敗込みで本レポートに追記していく。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で確認したとおり、Project VendもAI Villageも価値の中心は性能ではなく観察記録だった。「話題性」「面白いレポート」の要件はこの習慣だけで回収できる。</p>
         </div>
+      </div>
+    </div>
+
+    <div class="callout c-purple">
+      <div class="callout-icon">🧠</div>
+      <div>
+        <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
       </div>
     </div>
 
@@ -1812,6 +1833,31 @@
         <p><strong>結論：</strong> 世界の事例は「高性能なマルチエージェントを作った」ではなく「エージェントに舞台を与えて観察した」ものが話題になっている。打ち合わせで合意した「話題性のある領域をあえて狙う」「面白いレポートを作る」という方針は、この潮流と正確に一致する。<strong>作る対象はシステムではなく“観察記録が生まれる舞台”</strong>——これが本調査の答えである。3案はどれも現在のプロトタイプ＋無料APIの範囲で着手でき、互いに排他的でもない。案1から始めて案3へ育てるのが現実的なルートだと考える。</p>
       </div>
     </div>
+
+    <!-- 追補調査 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:44px 0 8px;">追補調査 — チームから持ち込まれた3つの参考資料（2026年7月）</h3>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:20px;">メンバーから共有された資料を評価した。3つは独立に見えて、実は<strong style="color:var(--text)">「ループ定義（設計図）× 文脈エンジン（記憶）× ダッシュボード（観察窓）」</strong>という1つの構図に収まる。それぞれ実行計画のStepに反映済み。</p>
+
+    <div class="card-grid" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-icon">🖥️</div>
+        <h3>観察ダッシュボード（ガガロットAI のデモ）</h3>
+        <p>8体のAIエージェント組織（Scout・Research・Copy・Meeting・CRM・Manager等）が24時間動く様子を、経営シミュレーションゲーム風の画面でライブ表示するデモ。「AI自動化はブラックボックス」という課題への答えが可視化であり、本調査の結論（観察できる舞台）と一致する。借りるのは用途（営業リード獲得）ではなく<strong>設計パターン</strong>——①ライブ行動ログ ②かんばん進捗 ③スコア表示。なお「月0円」訴求は集客文句で、8体×24時間は無料枠のレート制限では不可能。まず2〜3体から。</p>
+        <span class="badge bb">実行計画 Step 4 に採用</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔄</div>
+        <h3>Loop Library（Forward Future / Matthew Berman）</h3>
+        <p>実戦投入されたエージェント用ループ26本のキュレーション集。価値は個々のループより<strong>「トリガー→指示→検証→停止条件→権限境界」の5部構成フォーマット</strong>にある。現行のリフレクションループ（品質スコア0.85で早期終了・最大3回で強制停止）は既にこの形式を満たしており、議事録処理・リサーチ・掃除もループ定義書として書けばPhase 2の文脈エンジン（knowledge/）にそのまま収まる。「判断に迷ったら人間へ」の絶対ルールは⑤権限境界そのもの。</p>
+        <span class="badge bb">実行計画 Step 5 に採用</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧠</div>
+        <h3>第二の脳（チャエン氏の紹介 / 原典 Iwo Szapar）</h3>
+        <p>「AIの性能差はモデルの賢さより、<strong>どれだけ自分の知識・過去の意思決定・業務文脈を読ませられるか</strong>で決まる」というテーゼ。Markdownの知識リポジトリ（episodic／semantic／procedural）＋CLAUDE.md＋4つのルーチンスキルで“自分を知っているAI”を作る手法。プロジェクトの文脈エンジンは<strong>この設計のチーム共有版</strong>であり、個人で回して検証した構造をチームに移植する流れは「小さく速く」の合意と一致する。</p>
+        <span class="badge bp">文脈エンジンの原型として参照</span>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -2327,6 +2373,13 @@ session <span class="co">=</span> client.beta.sessions.create(
       <a href="https://arxiv.org/pdf/2304.03442" target="_blank">Generative Agents（Stanford）</a> ·
       <a href="https://theaidigest.org/village" target="_blank">AI Village（AI Digest）</a> ·
       <a href="https://morikatron.ai/2026/04/ai_civilization/" target="_blank">文明シミュレーション（モリカトロンAIラボ）</a>
+    </p>
+    <p style="margin-top:10px;">
+      追補調査出典（2026/7） ·
+      <a href="https://x.com/gagarotai200/status/2072920840618823900" target="_blank">観察ダッシュボードのデモ（ガガロットAI）</a> ·
+      <a href="https://signals.forwardfuture.com/loop-library/" target="_blank">Loop Library（Forward Future）</a> ·
+      <a href="https://x.com/masahirochaen/status/2073548158270144705" target="_blank">第二の脳の紹介（チャエン氏）</a> ·
+      <a href="https://www.iwoszapar.com/p/how-to-build-second-brain-in-claude-code" target="_blank">How to build a second brain in Claude Code（Iwo Szapar）</a>
     </p>
     <p style="margin-top:6px; font-size:11px; color:var(--text2);">情報は2026年6月時点。最新の制限値は各サービスの公式ドキュメントを確認すること。</p>
   </div>
