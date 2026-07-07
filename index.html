@@ -558,6 +558,10 @@
       </div>
       <div class="step">
         <div class="snum">3</div>
+        <div class="scont"><h4>Obsidianを導入する（決定済み・約30分）</h4><p>knowledge/ をvaultとして開き、エージェントの入出力先にする。手順は<a href="#plan" style="color:var(--accent);">実行計画のObsidian導入手順</a>へ。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
         <div class="scont"><h4>次回ミーティングに3点を持ち込む</h4><p>①動くデモ（議事録→朝刊） ②本レポートURL ③決めたい論点リスト（観察日誌の公開範囲・課金トリガーの承認・連携先の優先順位）。</p></div>
       </div>
     </div>
@@ -855,6 +859,32 @@
       <div class="callout-icon">🧠</div>
       <div>
         <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。さらに<strong>Obsidianをknowledge/のビューアとして被せる</strong>と、GUI・グラフ表示・スマホからのメモ投入（当初構想のインボックス）が追加コスト0円で手に入る。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
+      </div>
+    </div>
+
+    <!-- Obsidian導入手順 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 8px;">Obsidian導入手順 — 文脈エンジンにビューアを被せる<span style="font-size:11px;color:var(--green);font-weight:700;margin-left:10px;">2026-07-07 導入決定</span></h3>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:16px;">Obsidianはmdフォルダを開くだけの無料ビューア。knowledge/ に被せることで、GUI・グラフ表示・スマホからのメモ投入（当初構想のインボックス）が¥0で手に入る。所要は約30分。</p>
+    <div class="steps" style="margin-bottom:20px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>Obsidianをインストールする</h4><p><a href="https://obsidian.md" target="_blank" style="color:var(--accent);">obsidian.md</a> から無料版をダウンロード（Mac/Windows/スマホ対応）。メンバー各自のPCに入れる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>knowledge/ を作成し、.gitignore に追加する</h4><p>リポジトリ直下に <code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">knowledge/</code> を作成し、<strong>先に .gitignore へ <code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">knowledge/</code> と <code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">.obsidian/</code> を追加</strong>する。本リポジトリは公開のため、会議記録・実データは絶対にpushしない。この順番を間違えないこと。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>knowledge/ をvaultとして開く</h4><p>Obsidianの「Open folder as vault」で knowledge/ を指定。中に <code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">inbox/</code>・<code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">loops/</code>・<code style="background:var(--bg3);border:1px solid var(--border);padding:1px 6px;border-radius:3px;font-size:12px;">daily/</code> を作る。これが文脈エンジンの骨格になり、Step 5のループ定義書は loops/ へ収まる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>エージェントの入口と出口を knowledge/ に向ける</h4><p>Step 2のフォルダ監視は knowledge/inbox/ を、ToDo・日報の出力は knowledge/daily/ を使う。<strong>エージェントが書いたmdが即座にObsidianの画面に現れる＝最小の観察窓</strong>となり、Step 4（ダッシュボード）の前哨になる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">5</div>
+        <div class="scont"><h4>（任意）スマホ連携で「歩きながらメモ投入」</h4><p>Obsidianモバイル＋iCloud/OneDrive等の同期でvaultをスマホから開けるようにすると、6月の組織設計で構想した「CEOがスマホからインボックスにメモを投入する」フローがそのまま実現する。</p></div>
       </div>
     </div>
 
