@@ -3,6 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="複数のAIエージェントを協調させて業務を任せる——その設計・試作・調査の記録。Yuma & Koki のリサーチノート。" />
+  <meta property="og:title" content="AIエージェント開発 リサーチノート — Yuma & Koki" />
+  <meta property="og:description" content="複数のAIエージェントを協調させて業務を任せる——その設計・試作・調査の記録。" />
+  <meta property="og:type" content="website" />
+  <meta name="theme-color" content="#f7f4ee" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%93%93%3C/text%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;700;800&family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -183,10 +189,10 @@
     .card {
       background: var(--bg2); border: 1px solid var(--border);
       border-radius: 8px; padding: 26px 24px;
-      transition: border-color .2s, box-shadow .2s;
+      transition: border-color .2s, box-shadow .2s, transform .25s ease;
       position: relative;
     }
-    .card:hover { border-color: #c9c1ad; box-shadow: 0 3px 16px rgba(38,35,30,.06); }
+    .card:hover { border-color: #c9c1ad; box-shadow: 0 5px 20px rgba(38,35,30,.07); transform: translateY(-2px); }
     .card-icon { font-size: 21px; margin-bottom: 12px; filter: grayscale(1); opacity: .5; }
     .card h3 { font-size: 14.5px; font-weight: 700; margin-bottom: 8px; line-height: 1.6; }
     .card p  { font-size: 13px; color: var(--text2); line-height: 1.9; }
@@ -402,6 +408,29 @@
     footer a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(44,95,170,.25); }
     footer a:hover { border-bottom-color: var(--accent); }
 
+    /* ===== POLISH ===== */
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+    h1, h2, h3, .sec-title { text-wrap: balance; }
+    p, li { text-wrap: pretty; }
+    table, .log-date, .api-stat .val, .case-no { font-variant-numeric: tabular-nums; }
+    .nav-tab:active, .sub-nav-bar a:active, footer a:active { transform: translateY(1px); }
+    .card { display: flex; flex-direction: column; }
+    .card .badge { margin-top: auto; align-self: flex-start; }
+    .card :is(p, div):has(+ .badge) { margin-bottom: 14px; }
+
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: 200; pointer-events: none;
+      opacity: .04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    .reveal { transition: opacity .55s ease, transform .55s ease; }
+    .reveal:not(.in) { opacity: 0; transform: translateY(14px); }
+    @media (prefers-reduced-motion: reduce) {
+      .reveal, .reveal:not(.in) { opacity: 1; transform: none; transition: none; }
+      html { scroll-behavior: auto; }
+    }
+
     @media(max-width:640px){
       .hero { padding: 56px 0 40px; }
       section { padding: 48px 0; }
@@ -452,6 +481,8 @@
   <a href="#pc-spec">PCスペック</a><span class="sub-sep"> · </span>
   <a href="#local-vs-cloud">ローカルLLM比較</a>
 </div>
+
+<main>
 
 <div class="tab-pane active" data-tab="overview">
 
@@ -2479,6 +2510,8 @@ session <span class="co">=</span> client.beta.sessions.create(
 
 </div><!-- /tab-pane impl -->
 
+</main>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -2574,6 +2607,25 @@ session <span class="co">=</span> client.beta.sessions.create(
       }
     });
   });
+
+  /* staggered scroll reveal (progressive enhancement) */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (!en.isIntersecting) return;
+        var el = en.target;
+        io.unobserve(el);
+        setTimeout(function(){ el.classList.add('in'); }, el.dataset.rvd || 0);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.05 });
+
+    document.querySelectorAll('.card, .log-entry, .step, .case, .pat-card, .api-card, .rf-step').forEach(function(el){
+      var idx = Array.prototype.indexOf.call(el.parentNode.children, el);
+      el.dataset.rvd = Math.min(idx % 6, 4) * 70;
+      el.classList.add('reveal');
+      io.observe(el);
+    });
+  }
 })();
 </script>
 
