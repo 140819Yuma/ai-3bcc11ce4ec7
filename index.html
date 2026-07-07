@@ -426,6 +426,7 @@
 
 <!-- ===== SUB NAV ===== -->
 <div class="sub-nav-bar active" data-tab="overview">
+  <a href="#summary">全体サマリー</a><span class="sub-sep"> · </span>
   <a href="#project">プロジェクト概要</a><span class="sub-sep"> · </span>
   <a href="#meeting">打ち合わせメモ</a><span class="sub-sep"> · </span>
   <a href="#log">進捗ログ</a><span class="sub-sep"> · </span>
@@ -468,6 +469,107 @@
     </div>
   </div>
 </div>
+
+<!-- ===== SUMMARY ===== -->
+<section id="summary">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Executive Summary</div>
+      <h2 class="sec-title">全体サマリー — ここまでの結論と、次にやること</h2>
+      <p class="sec-sub">2026年6月19日の試作開始から現在までの設計・調査・意思決定を1画面に圧縮した。根拠と詳細は各セクションへ。（最終更新: 2026-07-07）</p>
+    </div>
+
+    <!-- 確定した3つのこと -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">確定した3つのこと</h3>
+    <div class="card-grid" style="margin-bottom:36px;">
+      <div class="card">
+        <div class="card-icon">📖</div>
+        <h3>① 物語 — One Story</h3>
+        <p>「会議が終わったら、人間はもう何もしない。翌朝、ToDoと日報が届いている」。打ち合わせの全要件（役割分担・API連携・体験の実感・速さ優先）を1文で貫くストーリーとして固定した。→ <a href="#plan" style="color:var(--accent);">実行計画</a></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏗️</div>
+        <h3>② 構造 — 4層アーキテクチャ</h3>
+        <p>世界の事例・参考資料はすべて<strong>「設計図（ループ定義）× 記憶（文脈エンジン）× 実行（AI社員ランタイム）× 観察窓（ダッシュボード）」</strong>の4層に収束した。作る対象は高性能なシステムではなく、観察記録が生まれる舞台。→ <a href="#frontier" style="color:var(--accent);">面白さ×新規性</a></p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>③ 費用 — 無料のまま検証</h3>
+        <p>実行計画の全6ステップは¥0で完走できる（Groq無料枠＋Webhook＋GitHub Pages）。有料化は3条件（機密データ業務の発生・無料枠の枯渇・レート制限の詰まり）が来たときのみ検討。使用APIは<strong>未確定</strong>（現在Groq試用中）。→ <a href="#pricing" style="color:var(--accent);">API料金比較</a></p>
+      </div>
+    </div>
+
+    <!-- 歩み -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">これまでの歩み</h3>
+    <div class="tbl-wrap" style="margin-bottom:36px;">
+      <table>
+        <thead><tr><th style="width:26mm;">日付</th><th>出来事</th></tr></thead>
+        <tbody>
+          <tr><td>6/19</td><td>2エージェント連携を試作（無料APIで初稼働）</td></tr>
+          <tr><td>6/20</td><td>ハイブリッド構成・機密マスキング方式を設計</td></tr>
+          <tr><td>6/24</td><td>Python司令官＋リフレクションループ稼働。クラウドAPIのみでプロトタイプ成立を確認</td></tr>
+          <tr><td>6/30</td><td>3人の打ち合わせ（コスト観・目的設計・役割分担の方針を合意）。本レポートサイトを公開</td></tr>
+          <tr><td>7/2</td><td>Sakana AI調査／「面白さ」調査で勝ち筋＝<strong>観察できる舞台</strong>と結論／実行計画（One Story＋6ステップ）を策定</td></tr>
+          <tr><td>7/5–6</td><td>参考資料4件（ダッシュボード・Loop Library・第二の脳・Claude×Obsidian）を評価し4層アーキテクチャに収束。個人側の知識基盤（第二の脳）と運用スキル4本も整備</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 現在地 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">現在地 — できていること／これから</h3>
+    <div class="tbl-wrap" style="margin-bottom:36px;">
+      <table>
+        <thead><tr><th style="width:32mm;">領域</th><th>✅ できている</th><th>⬜ これから</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>プロトタイプ</td>
+            <td>Python司令官／リフレクションループ（品質0.85早期終了・上限3回）</td>
+            <td>フォルダ監視の入口・ToDo/日報の出口（Step 2）、Discord通知（Step 3）</td>
+          </tr>
+          <tr>
+            <td>設計・調査</td>
+            <td>組織設計／5+9本の記事・事例調査／実行計画6ステップ／参考資料4件の評価</td>
+            <td>フレームワークの1枚化（Step 1）＝次回ミーティングの土台</td>
+          </tr>
+          <tr>
+            <td>文脈エンジン</td>
+            <td>設計と実装レシピ（Claude×Obsidian方式）の特定。個人側で同構造を先行運用中</td>
+            <td>knowledge/ の実装、ループ定義書（Step 5）、Obsidianビューアの装着</td>
+          </tr>
+          <tr>
+            <td>観察・話題性</td>
+            <td>勝ち筋の特定（観察できる舞台）。レポートサイトという発信基盤</td>
+            <td>観察ダッシュボード（Step 4）、観察日誌の習慣化（Step 6）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 次にやること -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">次にやること（優先順）</h3>
+    <div class="steps" style="margin-bottom:24px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>フレームワークを1枚に落とす（Step 1・今週）</h4><p>「課題→目的→手法」をOne Storyで埋めた1枚。これが次回ミーティングの議論の土台になる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>入口と出口を実装する（Step 2・数日）</h4><p>inboxフォルダ監視→既存リフレクションループ→ToDo.md／日報.md出力。ターミナル対話からの卒業。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>次回ミーティングに3点を持ち込む</h4><p>①動くデモ（議事録→朝刊） ②本レポートURL ③決めたい論点リスト（観察日誌の公開範囲・課金トリガーの承認・連携先の優先順位）。</p></div>
+      </div>
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>ひとことで：</strong> 調査と設計のフェーズは完了した。結論は「性能ではなく観察で勝つ」「¥0のまま6ステップを完走できる」。ここから先にやるべきことは調査の追加ではなく、<strong>Step 1（1枚化）とStep 2（入口と出口）の実装</strong>である。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ===== PROJECT OVERVIEW ===== -->
 <section id="project">
