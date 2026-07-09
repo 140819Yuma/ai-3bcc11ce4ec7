@@ -415,6 +415,12 @@
     table, .log-date, .api-stat .val, .case-no { font-variant-numeric: tabular-nums; }
     .nav-tab:active, .sub-nav-bar a:active, footer a:active { transform: translateY(1px); }
     .card { display: flex; flex-direction: column; }
+    details.archive { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; margin: 24px 0; }
+    details.archive summary { cursor: pointer; font-weight: 700; font-size: 13.5px; color: var(--text2); list-style: none; display: flex; align-items: center; gap: 8px; }
+    details.archive summary::before { content: "▸"; color: var(--accent); transition: transform .2s; }
+    details.archive[open] summary::before { transform: rotate(90deg); }
+    details.archive summary::-webkit-details-marker { display: none; }
+    details.archive .archive-body { margin-top: 16px; padding-top: 16px; border-top: 1px dashed var(--border); }
     .card .badge { margin-top: auto; align-self: flex-start; }
     .card :is(p, div):has(+ .badge) { margin-bottom: 14px; }
 
@@ -495,7 +501,7 @@
     <div class="hero-chips">
       <span class="chip"><span class="dot dot-green"></span>ハイブリッド Local+Cloud</span>
       <span class="chip"><span class="dot dot-blue"></span>機密マスキング方式</span>
-      <span class="chip"><span class="dot dot-purple"></span>リフレクション型エージェント</span>
+      <span class="chip"><span class="dot dot-purple"></span>合議型（批判×中立×推進）</span>
       <span class="chip"><span class="dot dot-orange"></span>クラウドAPI 無料枠を検証中</span>
     </div>
   </div>
@@ -507,26 +513,33 @@
     <div class="sec-head">
       <div class="sec-tag">Executive Summary</div>
       <h2 class="sec-title">全体サマリー — ここまでの結論と、次にやること</h2>
-      <p class="sec-sub">2026年6月19日の試作開始から現在までの設計・調査・意思決定を1画面に圧縮した。根拠と詳細は各セクションへ。（最終更新: 2026-07-07）</p>
+      <p class="sec-sub">2026年6月19日の試作開始から現在までの設計・調査・意思決定を1画面に圧縮した。根拠と詳細は各セクションへ。（最終更新: 2026-07-08）</p>
+    </div>
+
+    <div class="callout c-warn" style="margin-bottom:28px;">
+      <div class="callout-icon">🔀</div>
+      <div>
+        <p><strong>方針転換（2026-07-08）：</strong> プロジェクトの軸足を「議事録→ToDo/日報」から<strong>「財務予測エージェント」</strong>へ完全に切り替えた。API料金比較・PCスペック・オーケストレーションパターン・Sakana AI・面白さ×新規性調査などドメイン非依存の調査資産はそのまま活用する。旧ストーリー・実行計画・意思決定ボードの初期3論点は<a href="#plan" style="color:var(--accent);">実行計画セクション末尾にアーカイブ</a>済み。</p>
+      </div>
     </div>
 
     <!-- 確定した3つのこと -->
     <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">確定した3つのこと</h3>
     <div class="card-grid" style="margin-bottom:36px;">
       <div class="card">
-        <div class="card-icon">📖</div>
-        <h3>① 物語 — One Story</h3>
-        <p>「会議が終わったら、人間はもう何もしない。翌朝、ToDoと日報が届いている」。打ち合わせの全要件（役割分担・API連携・体験の実感・速さ優先）を1文で貫くストーリーとして固定した。→ <a href="#plan" style="color:var(--accent);">実行計画</a></p>
+        <div class="card-icon">⚖️</div>
+        <h3>① 物語 — 3視点の合議で予測する</h3>
+        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AGが3つを読んで最終予測＋根拠を1本にまとめる。社員のカレンダー（活動量シグナル）と過去の財務データの両方を入力に使う。→ <a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a></p>
       </div>
       <div class="card">
-        <div class="card-icon">🏗️</div>
-        <h3>② 構造 — 4層アーキテクチャ</h3>
-        <p>世界の事例・参考資料はすべて<strong>「設計図（ループ定義）× 記憶（文脈エンジン）× 実行（AI社員ランタイム）× 観察窓（ダッシュボード）」</strong>の4層に収束した。作る対象は高性能なシステムではなく、観察記録が生まれる舞台。→ <a href="#frontier" style="color:var(--accent);">面白さ×新規性</a></p>
+        <div class="card-icon">♻️</div>
+        <h3>② 構造 — 既存資産のドメイン転用</h3>
+        <p>Python司令官・リフレクション（合議）ループ・機密マスキング設計は財務予測にそのまま使える。財務・カレンダーデータは議事録より機微性が高いため、<strong>マスキングの重要度はむしろ上がった</strong>。→ <a href="#reflection" style="color:var(--accent);">合議の仕組み</a></p>
       </div>
       <div class="card">
-        <div class="card-icon">💰</div>
-        <h3>③ 費用 — 無料のまま検証</h3>
-        <p>実行計画の全6ステップは¥0で完走できる（Groq無料枠＋Webhook＋GitHub Pages）。有料化は3条件（機密データ業務の発生・無料枠の枯渇・レート制限の詰まり）が来たときのみ検討。使用APIは<strong>未確定</strong>（現在Groq試用中）。→ <a href="#pricing" style="color:var(--accent);">API料金比較</a></p>
+        <div class="card-icon">🧪</div>
+        <h3>③ 未決 — 合議方式とバックテスト</h3>
+        <p>3体の意見が割れたときの決め方（調整AG／平均／人間判断）と、「予測が本当に正確になったか」を検証するバックテスト方法は<strong>まだ設計途中</strong>。→ <a href="#decisions" style="color:var(--accent);">意思決定ボード</a></p>
       </div>
     </div>
 
@@ -542,6 +555,7 @@
           <tr><td>6/30</td><td>3人の打ち合わせ（コスト観・目的設計・役割分担の方針を合意）。本レポートサイトを公開</td></tr>
           <tr><td>7/2</td><td>Sakana AI調査／「面白さ」調査で勝ち筋＝<strong>観察できる舞台</strong>と結論／実行計画（One Story＋6ステップ）を策定</td></tr>
           <tr><td>7/5–6</td><td>参考資料4件（ダッシュボード・Loop Library・第二の脳・Claude×Obsidian）を評価し4層アーキテクチャに収束。個人側の知識基盤（第二の脳）と運用スキル4本も整備</td></tr>
+          <tr><td>7/8</td><td><strong>方針転換</strong>：議事録処理から財務予測（批判的×中立×推進的×調整の4エージェント合議）へ。旧One Story・実行計画・初期3論点をアーカイブし、既存アーキテクチャを新ドメインへ転用する形で書き換え</td></tr>
         </tbody>
       </table>
     </div>
@@ -550,27 +564,27 @@
     <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">現在地 — できていること／これから</h3>
     <div class="tbl-wrap" style="margin-bottom:36px;">
       <table>
-        <thead><tr><th style="width:32mm;">領域</th><th>✅ できている</th><th>⬜ これから</th></tr></thead>
+        <thead><tr><th style="width:32mm;">領域</th><th>✅ できている（転用可）</th><th>⬜ これから（財務予測固有）</th></tr></thead>
         <tbody>
           <tr>
-            <td>プロトタイプ</td>
-            <td>Python司令官／リフレクションループ（品質0.85早期終了・上限3回）</td>
-            <td>フォルダ監視の入口・ToDo/日報の出口（Step 2）、Discord通知（Step 3）</td>
+            <td>基盤アーキテクチャ</td>
+            <td>Python司令官／合議ループ（Generator⇄Critic型）／機密マスキング設計／文脈エンジンと第二の脳の運用ノウハウ</td>
+            <td>財務・カレンダーデータ向けのマスキング項目（氏名・金額・取引先名）の洗い出し</td>
           </tr>
           <tr>
-            <td>設計・調査</td>
-            <td>組織設計／5+9本の記事・事例調査／実行計画6ステップ／参考資料4件の評価</td>
-            <td>フレームワークの1枚化（Step 1）＝次回ミーティングの土台</td>
+            <td>4エージェント設計</td>
+            <td>役割の定義（批判的・中立・推進的・調整）と合議の位置づけ</td>
+            <td>各AGのプロンプト設計、調整AGの統合ロジック、意見が割れたときの扱い</td>
           </tr>
           <tr>
-            <td>文脈エンジン</td>
-            <td>設計と実装レシピ（Claude×Obsidian方式）の特定。個人側で同構造を先行運用中</td>
-            <td>knowledge/ の実装、ループ定義書（Step 5）、Obsidianビューアの装着</td>
+            <td>データ接続</td>
+            <td>（なし・新規領域）</td>
+            <td>カレンダーデータの取得方法、過去の財務データの形式・入手経路</td>
           </tr>
           <tr>
-            <td>観察・話題性</td>
-            <td>勝ち筋の特定（観察できる舞台）。レポートサイトという発信基盤</td>
-            <td>観察ダッシュボード（Step 4）、観察日誌の習慣化（Step 6）</td>
+            <td>検証・観察</td>
+            <td>観察ダッシュボードの設計思想（面白さ×新規性調査より）</td>
+            <td>バックテスト方法（過去データで予測→実績と比較して精度を測る）</td>
           </tr>
         </tbody>
       </table>
@@ -581,26 +595,26 @@
     <div class="steps" style="margin-bottom:24px;">
       <div class="step">
         <div class="snum">1</div>
-        <div class="scont"><h4>フレームワークを1枚に落とす（Step 1・今週）</h4><p>「課題→目的→手法」をOne Storyで埋めた1枚。これが次回ミーティングの議論の土台になる。</p></div>
+        <div class="scont"><h4>データソースを確定する（Step 1）</h4><p>カレンダーデータの取得方法（Google Calendar API／エクスポート）と、過去の財務データの形式・入手経路を決める。詳細は<a href="#plan" style="color:var(--accent);">実行計画</a>へ。</p></div>
       </div>
       <div class="step">
         <div class="snum">2</div>
-        <div class="scont"><h4>入口と出口を実装する（Step 2・数日）</h4><p>inboxフォルダ監視→既存リフレクションループ→ToDo.md／日報.md出力。ターミナル対話からの卒業。</p></div>
+        <div class="scont"><h4>マスキング対象を洗い出す（Step 2）</h4><p>氏名・金額・取引先名など、クラウドに送る前に伏字化すべき項目をリスト化する。既存の門番エージェント設計を財務ドメインに合わせて拡張。</p></div>
       </div>
       <div class="step">
         <div class="snum">3</div>
-        <div class="scont"><h4>Obsidianを導入する（決定済み・約30分）</h4><p>knowledge/ をvaultとして開き、エージェントの入出力先にする。手順は<a href="#plan" style="color:var(--accent);">実行計画のObsidian導入手順</a>へ。</p></div>
+        <div class="scont"><h4>4エージェントのプロンプトを設計する（Step 3）</h4><p>批判的・中立・推進的の3視点をどう差別化するか、調整AGが何を根拠に最終予測を決めるかを言語化する。</p></div>
       </div>
       <div class="step">
         <div class="snum">4</div>
-        <div class="scont"><h4>次回ミーティングに3点を持ち込む</h4><p>①動くデモ（議事録→朝刊） ②本レポートURL ③決めたい論点リスト（観察日誌の公開範囲・課金トリガーの承認・連携先の優先順位）。</p></div>
+        <div class="scont"><h4>合議の決め方を意思決定ボードで確定する</h4><p>3体が食い違ったときに調整AGが決めるのか、閾値超えで人間にエスカレーションするのか。<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>で判断する。</p></div>
       </div>
     </div>
 
     <div class="callout c-tip">
       <div class="callout-icon">🧭</div>
       <div>
-        <p><strong>ひとことで：</strong> 調査と設計のフェーズは完了した。結論は「性能ではなく観察で勝つ」「¥0のまま6ステップを完走できる」。ここから先にやるべきことは調査の追加ではなく、<strong>Step 1（1枚化）とStep 2（入口と出口）の実装</strong>である。</p>
+        <p><strong>ひとことで：</strong> 財務予測エージェントへ軌足を変更した。基盤アーキテクチャ（司令官・合議ループ・マスキング）は流用できるため、ゼロからの構築ではない。次にやるべきはデータ接続とプロンプト設計であり、合議の決め方（意思決定ボード論点1）が最初の分岐点になる。</p>
       </div>
     </div>
   </div>
@@ -612,21 +626,21 @@
     <div class="sec-head">
       <div class="sec-tag">Project Overview</div>
       <h2 class="sec-title">プロジェクト概要</h2>
-      <p class="sec-sub">業務にAIエージェントを導入することで、AI × 人間のシステムの体系化を進め、人間側のリソースの有効活用をはかる。</p>
+      <p class="sec-sub">複数のAIエージェントに財務予測をさせることで、AI × 人間のシステムの体系化を進め、人間側のリソースの有効活用をはかる。（2026-07-08 方針転換：旧「タスク管理の自動化」路線からドメインを変更）</p>
     </div>
 
     <div class="card-grid">
       <div class="card">
-        <div class="card-icon">🎯</div>
-        <h3>タスク管理の自動化</h3>
-        <p>Google Meetの議事録を自動読み込みし、To Doリストの作成・リマインドを実施。カレンダー連携・要項・報告書の自動作成も含む。</p>
+        <div class="card-icon">⚖️</div>
+        <h3>財務予測（4エージェント合議）</h3>
+        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AGが根拠ごと1本にまとめる。社員のカレンダー活動量と過去の財務データを入力に使う。</p>
         <span class="badge bb">優先度：高</span>
       </div>
       <div class="card">
-        <div class="card-icon">🔍</div>
-        <h3>自動リサーチ</h3>
-        <p>特定テーマの情報収集を自動化。複数AIが分担して最新ニュース・特定サイトのスクレイピング・資料整理を行う。</p>
-        <span class="badge bg">実装中</span>
+        <div class="card-icon">🔗</div>
+        <h3>カレンダー・財務データ連携</h3>
+        <p>Google Calendar等のカレンダーAPIと、会計・経費データの取得経路を検討中。Gemini単体では実現不可能な外部システム連携が必須になる領域。</p>
+        <span class="badge bo">検討中</span>
       </div>
       <div class="card">
         <div class="card-icon">💻</div>
@@ -635,9 +649,9 @@
         <span class="badge bo">検討中</span>
       </div>
       <div class="card">
-        <div class="card-icon">🔗</div>
+        <div class="card-icon">🛡️</div>
         <h3>システムモデル</h3>
-        <p>Obsidianかクラウドファイル（共有性のため）でナレッジ管理。複数LLMを並列活用。MCPx非同期連携。現在はGroq無料APIでプロトタイプを検証中。Geminiも候補として調査済み。今後使用するAPIは引き続き検討中。</p>
+        <p>財務・カレンダーデータは議事録より機微性が高いため、機密マスキング設計の重要度が上がった。Obsidianでのナレッジ管理・複数LLM並列活用は継続。現在はGroq無料APIでプロトタイプを検証中。使用APIは引き続き検討中。</p>
         <span class="badge bp">設計中</span>
       </div>
     </div>
@@ -651,6 +665,13 @@
       <div class="sec-tag">Meeting Notes</div>
       <h2 class="sec-title">打ち合わせメモ — プロジェクトの方向性議論</h2>
       <p class="sec-sub">Yuma Kaminaga・Nobuyuki Ishikawa・Koki Matanoによる議論。コスト感・目的設計・人間とAIの役割分担について共有された内容を整理。</p>
+    </div>
+
+    <div class="callout c-info" style="margin-bottom:24px;">
+      <div class="callout-icon">📜</div>
+      <div>
+        <p><strong>歴史的記録として保存：</strong> このメモは2026-06-30時点の議論の記録であり、内容（コスト観・役割分担・話題性の方針）は2026-07-08の財務予測への方針転換後も<strong>方針レベルでは有効</strong>。ユースケース（議事録処理）だけが財務予測に差し替わった。</p>
+      </div>
     </div>
 
     <div class="card-grid" style="margin-bottom:24px;">
@@ -790,14 +811,30 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/8</div>
+        <div class="log-content">
+          <h4>方針転換 — 財務予測エージェントへ軌足を変更</h4>
+          <ul class="log-items">
+            <li>ユースケースを「議事録→ToDo/日報」から「財務予測」へ完全に切り替え</li>
+            <li>批判的AG・中立AG・推進的AGの3体が独立予測→調整AGが統合する4体構成を採用</li>
+            <li>入力データはカレンダー（活動量シグナル）＋過去の財務データの2系統</li>
+            <li>旧One Story・実行計画6ステップ・意思決定ボード初期3論点をアーカイブ</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> Python司令官・合議ループ・機密マスキングという基盤アーキテクチャはドメインを問わず流用できた。ゼロからの作り直しではなく<strong>ドメイン特化の書き換え</strong>で済んでいる。一方、財務・カレンダーデータは議事録より機微性が高く、マスキング設計の優先度が上がった。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
           <ul class="log-items">
-            <li>コア機能の充実（ファイル入出力・会話履歴・並列処理）</li>
-            <li>Geminiキー問題の解消（無課金アカウントでキー再作成）</li>
-            <li>トリガーの実装（Slack Bot・フォルダ監視など）</li>
-            <li>マスキング＆復元処理の精度検証（Mac mini導入後）</li>
+            <li>カレンダー・財務データの取得経路を確定</li>
+            <li>財務ドメイン向けマスキング項目（氏名・金額・取引先名）の洗い出し</li>
+            <li>4エージェントのプロンプト設計</li>
+            <li>バックテスト方法の設計（過去データで予測→実績と比較）</li>
           </ul>
         </div>
       </div>
@@ -811,77 +848,75 @@
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Execution Plan</div>
-      <h2 class="sec-title">実行計画 — 要件を満たす最短ルート</h2>
-      <p class="sec-sub">打ち合わせで出た要件を棚卸しすると、7割は既存の資産（プロトタイプ＋本レポート）で満たせる状態にある。埋まっていない最大のギャップは「ストーリーの一本化」。ここでは要件を貫く一本の物語を固定し、無料枠のまま到達できる6段階の計画に落とす。</p>
+      <h2 class="sec-title">実行計画 — 財務予測エージェントを動かすまで</h2>
+      <p class="sec-sub">2026-07-08、プロジェクトの軸足を財務予測へ変更した。基盤（Python司令官・合議ループ・マスキング）は流用できるため、ここではドメイン固有の3つ——データ接続・4エージェント設計・検証方法——に絞った計画を立てる。旧計画は末尾にアーカイブしてある。</p>
     </div>
 
     <!-- ストーリー -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:30px 34px;margin:0 0 20px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">One Story</div>
-      <p style="font-family:var(--serif);font-size:clamp(17px,2.6vw,23px);font-weight:700;line-height:1.9;color:var(--text);">「会議が終わったら、人間はもう何もしない。<br>翌朝、ToDoと日報が届いている」</p>
-      <p style="font-size:13.5px;color:var(--text2);margin-top:14px;line-height:2;">この一文が打ち合わせの要件をすべて同時に満たす。課題は議事録処理というルーチンワーク（＝役割分担テーマそのもの）。Gemini単体では実現不可能（フォルダ監視・通知というAPI連携が必須）。「朝スマホに届く」という体験の実感。そして既存のPython司令官＋リフレクションループの延長で作れるため、速さ優先の合意にも沿う。</p>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Core Loop</div>
+      <p style="font-family:var(--serif);font-size:clamp(17px,2.6vw,23px);font-weight:700;line-height:1.9;color:var(--text);">「3人の専門家が別々に予測し、1人の調整役が最終判断を書く」</p>
+      <p style="font-size:13.5px;color:var(--text2);margin-top:14px;line-height:2;">批判的AGは楽観バイアスを疑い、予測外れの実績や季節性を重視する。中立AGは統計的なベースライン予測を出す。推進的AGはカレンダーの活動量シグナル（商談件数・稼働予定）を積極的に織り込む。3体の予測と根拠を調整AGが読み、最終予測値・信頼区間・「なぜこの値か」を1本にまとめる——これは既存の合議ループの構成をそのまま踏襲している。</p>
     </div>
 
     <!-- 要件マッピング -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">要件の棚卸し — 何が満たせていて、何が欠けているか</h3>
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">要件の棚卸し — 財務予測ドメインで何が変わるか</h3>
     <div class="tbl-wrap" style="margin-bottom:36px;">
       <table>
-        <thead><tr><th>打ち合わせの要件</th><th>現状</th><th>この計画での対応</th></tr></thead>
+        <thead><tr><th>観点</th><th>旧ドメイン（議事録）</th><th>新ドメイン（財務予測）</th></tr></thead>
         <tbody>
-          <tr><td>無料枠→検証後に有料化</td><td><span class="ok">満たせている</span> — Groqで稼働中</td><td>全4段階を¥0のまま実行。課金は既存の判断基準が来たときのみ</td></tr>
-          <tr><td>課題特定→目的→手法の整理</td><td><span class="tri">部品はあるが未統合</span></td><td>Step 1 の「1枚化」で回収</td></tr>
-          <tr><td>効率化を超えたストーリー</td><td><span class="ng" style="font-weight:600;">最大の欠落</span></td><td>上記の One Story に固定</td></tr>
-          <tr><td>Gemini単体でできない外部連携</td><td><span class="ng" style="font-weight:600;">連携ゼロ</span> — ターミナル対話のみ</td><td>Step 2〜3（フォルダ監視＋Discord通知）</td></tr>
-          <tr><td>「活用している」実感・独自体験</td><td><span class="tri">ループは動くが実感が薄い</span></td><td>Step 3 の「朝刊がスマホに届く」体験</td></tr>
-          <tr><td>話題性・面白いレポート</td><td><span class="ok">方向性は確定済み</span> — 本サイト＋面白さ×新規性調査</td><td>Step 6 の観察日誌で継続的に回収</td></tr>
-          <tr><td>速さ優先・おもちゃとして楽しむ</td><td><span class="ok">合意済み</span></td><td>各Stepを数日単位に分割。あとは実行</td></tr>
+          <tr><td>入力データ</td><td>Google Meet議事録（テキスト）</td><td>カレンダー（予定件数・稼働）＋過去の財務データ（数値）</td></tr>
+          <tr><td>機密性</td><td>会議内容・参加者名</td><td><span class="ng" style="font-weight:600;">より高い</span> — 給与・契約金額・取引先名を含みうる</td></tr>
+          <tr><td>合議の目的</td><td>文章の品質向上（QA）</td><td>予測値の精度向上（3視点のバイアス相殺）</td></tr>
+          <tr><td>成功の測り方</td><td>読みやすさ・網羅性</td><td><span class="tri">未設計</span> — バックテスト（過去データでの的中率）が必要</td></tr>
+          <tr><td>基盤アーキテクチャ</td><td colspan="2" style="text-align:center;"><span class="ok">共通で流用</span> — Python司令官・合議ループ・マスキング設計</td></tr>
         </tbody>
       </table>
     </div>
 
     <!-- 4段階 -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 20px;">6段階ロードマップ — すべて無料枠のまま</h3>
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 20px;">当面のロードマップ — すべて無料枠のまま</h3>
     <div class="steps" style="margin-bottom:36px;">
       <div class="step">
         <div class="snum">1</div>
         <div class="scont">
-          <h4>今週：フレームワークを1枚に落とす</h4>
-          <p>「課題の特定 → 目的の明確化 → 手法の選定」を One Story で埋めた1枚を作る。課題＝議事録処理・タスク管理のルーチン／目的＝人間は判断だけに集中する環境／手法＝既存Python司令官の拡張。これが次回ミーティングの土台になる。</p>
+          <h4>データソースを確定する</h4>
+          <p>カレンダーはGoogle Calendar API（読み取り専用スコープ）を軸に検討。財務データは既存の会計ソフト・スプレッドシートからのCSVエクスポートを想定し、社員ごとの予定件数と過去の売上・コスト実績を月次で突き合わせられる形にする。</p>
         </div>
       </div>
       <div class="step">
         <div class="snum">2</div>
         <div class="scont">
-          <h4>数日：入口と出口をつける</h4>
-          <p>フォルダ監視（inboxに議事録mdを置くと自動処理が走る）＋出力（ToDo.md・日報.mdの生成）。ターミナル対話からの卒業がそのまま「エージェントを使っている実感」に変わる。既存のリフレクションループはそのまま中身として使う。</p>
+          <h4>マスキング対象を洗い出す</h4>
+          <p>氏名・金額・取引先名・案件名をマスク対象として定義し、既存の門番エージェント（ローカルで伏字化→クラウド送信→復元）を財務・カレンダー入力向けに拡張する。復元マップは暗号化して保存する既存ルールを踏襲。</p>
         </div>
       </div>
       <div class="step">
         <div class="snum">3</div>
         <div class="scont">
-          <h4>1週間：外部連携を1つだけ足す</h4>
-          <p>最初はDiscordのWebhook通知が最適——無料・審査なし・数行のコードで「朝刊がスマホに届く」体験が完成する。Googleカレンダー連携は認証（OAuth）が重いので2番手に回す。これで「Gemini単体でできないこと」の要件を具体物で証明できる。</p>
+          <h4>4エージェントのプロンプトを設計する</h4>
+          <p>批判的・中立・推進的の3視点が実際に異なる予測を出すよう、それぞれのシステムプロンプトに明確な役割制約を書く（例: 批判的AGは必ず「外れた場合のダウンサイド」を数値化する等）。調整AGは3体の根拠を比較し、対立点を明示した上で最終値を出す。</p>
         </div>
       </div>
       <div class="step">
         <div class="snum">4</div>
         <div class="scont">
-          <h4>数日：観察ダッシュボードを立てる</h4>
-          <p>各エージェントの「いま誰が・何を考え・何をしたか」をログファイルに落とし、それを読むだけの1枚のHTML画面で表示する。かんばん（未着手→作業中→ブロック→完了）と直近の行動ログが並ぶだけで経営シミュレーション感が出る。ガガロットAIのデモが示したとおり、<strong>可視化そのものが話題性になる</strong>。次回ミーティングのデモ映えも段違いになる。</p>
+          <h4>合議の決め方を確定する（意思決定ボード論点1）</h4>
+          <p>3体が一定以上食い違ったときに調整AGが決めるのか、閾値超えで人間にエスカレーションするのか。この設計判断が最初の分岐点になる。詳細は<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>へ。</p>
         </div>
       </div>
       <div class="step">
         <div class="snum">5</div>
         <div class="scont">
-          <h4>1週間：タスクをループ定義書にする</h4>
-          <p>議事録処理・リサーチ・掃除の各タスクを「トリガー／指示／検証／停止条件／権限境界」の5部構成（Loop Library形式）で knowledge/loops/ にmdとして書く。エスカレーションルールは権限境界として明文化。ここまで揃うと文脈エンジン（Phase 2）の中身が実質完成する。</p>
+          <h4>バックテストで精度を検証する</h4>
+          <p>過去の財務データを使い、「その時点までの情報だけで予測させたら実績とどれだけ合っていたか」を検証する。単一AGの予測と4体合議の予測を比較し、合議が本当に精度を上げているかを確認する。</p>
         </div>
       </div>
       <div class="step">
         <div class="snum">6</div>
         <div class="scont">
           <h4>継続：観察日誌をつける</h4>
-          <p>動かした結果を失敗込みで本レポートに追記していく。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で確認したとおり、Project VendもAI Villageも価値の中心は性能ではなく観察記録だった。「話題性」「面白いレポート」の要件はこの習慣だけで回収できる。</p>
+          <p>予測の的中・外れを含め、失敗込みで本レポートに追記していく。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で確認したとおり、価値の中心は性能ではなく観察記録という発見はドメインが変わっても有効。</p>
         </div>
       </div>
     </div>
@@ -889,7 +924,7 @@
     <div class="callout c-purple">
       <div class="callout-icon">🧠</div>
       <div>
-        <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。さらに<strong>Obsidianをknowledge/のビューアとして被せる</strong>と、GUI・グラフ表示・スマホからのメモ投入（当初構想のインボックス）が追加コスト0円で手に入る。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
+        <p><strong>文脈エンジン＝チーム版・第二の脳：</strong> Step 5 で作る knowledge/ は、個人の知識リポジトリ（brain/）と同じ設計パターンのチーム共有版である。まず個人のMarkdownリポジトリで同じ構造（episodic／semantic／procedural＋ルーチンスキル）を回して検証し、うまくいった構造を knowledge/ へ移植すると失敗が少ない。財務予測では過去の予測・バックテスト結果もepisodicに蓄積すると、なぜその予測を出したかを後から追跡できる。さらに<strong>Obsidianをknowledge/のビューアとして被せる</strong>と、GUI・グラフ表示・スマホからのメモ投入が追加コスト0円で手に入る。詳細は<a href="#frontier" style="color:var(--accent);">面白さ×新規性の追補調査</a>を参照。</p>
       </div>
     </div>
 
@@ -915,7 +950,7 @@
       </div>
       <div class="step">
         <div class="snum">5</div>
-        <div class="scont"><h4>（任意）スマホ連携で「歩きながらメモ投入」</h4><p>Obsidianモバイル＋iCloud/OneDrive等の同期でvaultをスマホから開けるようにすると、6月の組織設計で構想した「CEOがスマホからインボックスにメモを投入する」フローがそのまま実現する。</p></div>
+        <div class="scont"><h4>（任意）スマホ連携で「歩きながらメモ投入」</h4><p>Obsidianモバイル＋iCloud/OneDrive等の同期でvaultをスマホから開けるようにすると、6月の組織設計で構想した「CEOがスマホからインボックスにメモを投入する」フローがそのまま実現する（ドメインが財務予測に変わっても、この入出力設計自体は共通）。</p></div>
       </div>
     </div>
 
@@ -923,16 +958,27 @@
     <div class="callout c-tip">
       <div class="callout-icon">🎒</div>
       <div>
-        <p><strong>次回ミーティングへの持ち物（宿題「各自調査して深掘り」への回答）：</strong> ①動くデモ——議事録を放り込むと朝刊が出てくるまでの一連の流れ。②本レポートサイトのURL——調査成果としてそのまま提示できる。③3人で決めたい論点リスト——観察日誌の公開範囲、課金トリガーの承認、次に足す連携先の優先順位。この3点が揃えば担当分としては十分な形になる。</p>
+        <p><strong>次回ミーティングへの持ち物：</strong> ①4エージェント合議の設計メモ（批判的・中立・推進的・調整の役割定義）。②本レポートサイトのURL。③3人で決めたい論点リスト——合議の決め方（意思決定ボード論点1）、財務データの入手経路、バックテストの基準期間。</p>
       </div>
     </div>
 
     <div class="callout c-info">
       <div class="callout-icon">💰</div>
       <div>
-        <p><strong>コスト確認：</strong> この計画は全段階で¥0（Groq無料枠＋Discord Webhook＋GitHub Pages）。有料化の検討は、<a href="#local-vs-cloud" style="color:var(--accent);">ローカルLLM比較</a>に記載した既存の判断基準（無料枠の枯渇・レート制限で詰まる等）が実際に来たときに初めて行えばよい。</p>
+        <p><strong>コスト確認：</strong> この計画も全段階¥0（Groq無料枠＋GitHub Pages）で進められる。有料化の検討は、<a href="#local-vs-cloud" style="color:var(--accent);">ローカルLLM比較</a>に記載した既存の判断基準（機密データ業務の発生・無料枠の枯渇・レート制限の詰まり）が実際に来たときに初めて行えばよい——財務データを扱う以上、①の「機密データ業務の発生」条件は既に満たしている可能性が高く、優先的に検討すべき。</p>
       </div>
     </div>
+
+    <!-- アーカイブ：旧方針 -->
+    <details class="archive">
+      <summary>アーカイブ：旧方針「議事録→ToDo/日報」（〜2026-07-08）</summary>
+      <div class="archive-body">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--text2);margin-bottom:10px;">旧 One Story</div>
+        <p style="font-family:var(--serif);font-size:15px;font-weight:700;line-height:1.8;color:var(--text2);margin-bottom:16px;">「会議が終わったら、人間はもう何もしない。翌朝、ToDoと日報が届いている」</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:16px;">打ち合わせの要件（役割分担・API連携・体験の実感・速さ優先）を1文で貫くストーリーとして固定していた。フォルダ監視での入口・ToDo/日報の出口・Discord通知・観察ダッシュボード・ループ定義書・観察日誌という6段階ロードマップを設計していたが、2026-07-08にドメインを財務予測へ変更したため凍結した。</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;">Obsidian導入手順（下記）・文脈エンジンの設計思想・「観察できる舞台」という結論など、<strong style="color:var(--text);">ドメイン非依存の部分は現行計画に引き継いでいる</strong>。旧計画の全文はgit履歴（2026-07-02〜07-07のコミット）で確認できる。</p>
+      </div>
+    </details>
   </div>
 </section>
 
@@ -945,25 +991,32 @@
       <p class="sec-sub">AIが定期的に最新動向を調査し、本レポートの内容と突き合わせて議論した結果、「人間が決めるべき論点」だけをここに起票する。Yumaはこのボードを見て方針・ゴールを決めればよい。決定されたら本文に反映し、ステータスを更新する。運用: 🟢裏付け＝根拠追記 / 🟡更新＝数値差し替え / 🔴矛盾＝両論併記して起票 / ⚪欠落＝新規追記か要否確認。</p>
     </div>
 
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">🔀</div>
+      <div>
+        <p><strong>2026-07-08 方針転換：</strong> 論点1は財務予測エージェントの核心設計（3体合議の是非）に書き換えた。論点2・3はインフラの一般論のためそのまま有効。論点4・5は財務ドメイン固有の新規論点として追加した。</p>
+      </div>
+    </div>
+
     <!-- サイクル#1 サマリー -->
     <div class="callout c-info">
       <div class="callout-icon">🔄</div>
       <div>
-        <p><strong>ディスカッションサイクル #1（2026-07-02実施）：</strong> 🟢裏付け1件・🟡更新2件・🔴矛盾1件・⚪欠落1件。最大の発見は、<strong>2025年の「single vs multi論争」が2026年に収束し、現行のPython司令官設計が業界の収束形とほぼ一致していた</strong>こと。一方、クラウド側の「Claude + GPT-4o + Gemini によるリフレクション構想」は脆いとされたピア型に近く、論点として起票した（論点1）。</p>
+        <p><strong>ディスカッションサイクル #1（2026-07-02実施）：</strong> 🟢裏付け1件・🟡更新2件・🔴矛盾1件・⚪欠落1件。最大の発見は、<strong>2025年の「single vs multi論争」が2026年に収束し、現行のPython司令官設計が業界の収束形とほぼ一致していた</strong>こと。一方、財務予測で採用したい「批判的×中立×推進的の3体合議」はピア型に近く、業界の収束形（司令官＋使い捨てサブエージェント）とは逆方向にある。この矛盾を論点1として再構成した。</p>
       </div>
     </div>
 
     <!-- 論点1 -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 1 ｜ 🔴 矛盾 ｜ ステータス: 未決</div>
-      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">クラウド側のリフレクション構成を「司令官＋使い捨てサブエージェント」型に寄せるか</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> Cognitionは2025年6月の「<a href="https://cognition.com/blog/dont-build-multi-agents" style="color:var(--accent);">Don't Build Multi-Agents</a>」で対等な複数エージェント協調（ピア型）は脆いと主張したが、2026年3月に自ら管理者型マルチ（Devinが複数のDevinを管理）へ転換。業界は「<strong>単一エージェントが全体の文脈を保持し、使い捨てのサブエージェントが個別タスクを実行して要約だけを返す</strong>」形に収束した（<a href="https://niteagent.com/blog/multi-agent-production-2026/" style="color:var(--accent);">本番導入で生き残ったパターン調査</a>、2026-07-02取得）。現行のPython司令官はこの収束形と一致する一方、<a href="#free-api" style="color:var(--accent);">無料API</a>セクションの「草案Gemini／品質GPT-4o／修正Groq」というピア型リフレクション構想は脆いとされた形に近い。</p>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">3体合議（批判的×中立×推進的）は業界の収束形と逆行するが、それでも採用するか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> Cognitionは2025年6月の「<a href="https://cognition.com/blog/dont-build-multi-agents" style="color:var(--accent);">Don't Build Multi-Agents</a>」で対等な複数エージェント協調（ピア型）は脆いと主張し、2026年には業界全体が「<strong>単一エージェントが全体の文脈を保持し、使い捨てのサブエージェントが個別タスクを実行して要約だけを返す</strong>」管理者型に収束した（<a href="https://niteagent.com/blog/multi-agent-production-2026/" style="color:var(--accent);">本番導入で生き残ったパターン調査</a>）。一方、財務予測で採用したい「批判的AG・中立AG・推進的AGが対等に予測を出し合う」設計は、まさにこの<strong>脆いとされたピア型そのもの</strong>。ただし<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で見た「ディベートがハルシネーションを減らす」研究は、複数視点の対立にこそ価値がある場合があることも示している。管理者型の効率と、ピア型ディベートの多角性、どちらを優先するかが本論点。</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
-          <tr><td><strong>A（AI推奨）</strong></td><td>クラウド側も「司令官がサブエージェントを都度起動→要約回収」に統一</td><td>業界収束形と一致。Token Gobblerリスク（トークン3〜10倍消費）も抑制</td></tr>
-          <tr><td>B</td><td>ピア型リフレクションをあえて維持し、比較を観察日誌のネタにする</td><td>話題性はあるがトークン消費が重い</td></tr>
-          <tr><td>C</td><td>両方作って同一タスクで比較実験</td><td>面白いが工数増。Step 2〜3完了後なら現実的</td></tr>
+          <tr><td><strong>A（AI推奨）</strong></td><td>3体を「ピア型」ではなく「調整AG（管理者）が3体のサブエージェントに個別発注し、要約だけ回収して統合する」構成にする</td><td>業界収束形と一致しつつ3視点の多角性も残せる。Token Gobblerリスクも抑制</td></tr>
+          <tr><td>B</td><td>3体を対等なピア型のまま維持し、掲示板形式で議論させてから調整AGが読む</td><td>ディベート効果は最大化するが、トークン消費・不安定性のリスクは業界の警告どおり</td></tr>
+          <tr><td>C</td><td>まずBで試作し、精度・コストで問題が出たらAへ移行する基準を先に決めておく</td><td>実験としての面白さと実用性のバランスを取れる。基準の明文化が必要</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -972,7 +1025,7 @@
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 2 ｜ ⚪ 欠落 ｜ ステータス: 未決</div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">フレームワーク（LangGraph等）をいつ導入するか</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。財務予測の4体合議は状態管理（3体の予測結果を保持して調整AGに渡す）が絡むため、乗り換え基準の重要度はむしろ上がっている。</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
@@ -998,6 +1051,36 @@
       </table></div>
     </div>
 
+    <!-- 論点4 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 4 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">財務・カレンダーデータのマスキング範囲をどこまで広げるか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 議事録は「発言内容」の機密性だったが、財務データは<strong>数値そのものが機密</strong>（給与・契約金額・取引先名）。カレンダーも参加者名や案件名が実質的な機密情報になりうる。6/20に設計した門番エージェント（ローカルで伏字化→クラウド送信→復元）は議事録向けの粒度で設計されており、財務データに転用する際の項目定義がまだない。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>金額・氏名・取引先名・案件名の4項目を最小マスキングセットとして定義し、Step 2で実装</td><td>過剰マスキングによる予測精度低下を避けつつ、最重要リスクは押さえる</td></tr>
+          <tr><td>B</td><td>数値・日付以外の固有名詞をすべてマスク</td><td>安全側だが、AGが文脈を失い予測精度が落ちる可能性</td></tr>
+          <tr><td>C</td><td>マスキングなしでローカルLLMのみで処理する（Mac mini導入後）</td><td>最も安全だが導入コスト・時期の制約あり</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- 論点5 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 5 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">「予測が正確になった」をどう検証するか（バックテスト基準）</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 4体合議の目的は「財務予測を正確にしていく」ことだが、正確さを測る基準がまだない。単一AGの予測と4体合議の予測を同じ過去データで比較しないと、合議に価値があるかどうか判断できない。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>直近6〜12ヶ月の財務データで「N ヶ月前時点の情報だけで予測→実績と比較」を機械的に実行するバックテストスクリプトを作る</td><td>データが揃い次第すぐ着手できる。単一AG比較も同時に取れる</td></tr>
+          <tr><td>B</td><td>今後の実績を待って月次で答え合わせする</td><td>検証に時間がかかるが、実データでの精度がそのまま分かる</td></tr>
+          <tr><td>C</td><td>当面は検証を後回しにし、まず動くものを作ることを優先</td><td>速さ優先の方針とは合うが、精度向上の裏付けが取れないリスク</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
     <div class="callout c-tip">
       <div class="callout-icon">✅</div>
       <div>
@@ -1016,8 +1099,8 @@
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Hybrid Architecture</div>
-      <h2 class="sec-title">マルチエージェント設計（参考動画ベース）</h2>
-      <p class="sec-sub">YouTubeの設計思想を最大限パクった構成。CEO（Yuma/Koki）+ 文脈エンジン + タスクボード + 4チーム体制。現フェーズはクラウドAPIのみ、Mac mini導入後にローカル層を追加。</p>
+      <h2 class="sec-title">財務予測エージェント設計（参考動画ベース）</h2>
+      <p class="sec-sub">組織設計の枠組み（CEO + 文脈エンジン + タスクボード）は維持しつつ、専門チーム層を財務予測の4エージェント合議に置き換えた（2026-07-08）。現フェーズはクラウドAPIのみ、Mac mini導入後にローカル層を追加。</p>
     </div>
 
     <!-- 全体アーキテクチャ -->
@@ -1072,93 +1155,109 @@
         </div>
       </div>
 
+      <!-- データ入力層 -->
+      <div class="arch-zone bridge" style="border-color:var(--pink);">
+        <div class="arch-zone-label" style="color:var(--pink);">📥 データ入力層（マスキング経由）</div>
+        <div class="arch-row">
+          <div class="arch-node" style="min-width:110px;">
+            <div class="n-icon">📅</div>
+            <div class="n-name">カレンダーデータ</div>
+            <div class="n-sub">社員の予定件数・<br/>稼働シグナル</div>
+          </div>
+          <div class="arch-node" style="min-width:110px;">
+            <div class="n-icon">💹</div>
+            <div class="n-name">過去の財務データ</div>
+            <div class="n-sub">売上・コスト・<br/>会計実績</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-orange">
+            <div class="n-icon">🛡️</div>
+            <div class="n-name">門番AG（マスキング）</div>
+            <div class="n-sub">氏名・金額・取引先名を<br/>伏字化してから送信</div>
+          </div>
+        </div>
+      </div>
+
       <!-- チーム層 -->
       <div class="arch-zone cloud" style="border-color:var(--green);">
-        <div class="arch-zone-label" style="color:var(--green);">🤖 専門チーム層（計4チーム）</div>
+        <div class="arch-zone-label" style="color:var(--green);">🤖 財務予測チーム（4エージェント合議）</div>
 
         <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
 
-          <!-- インフラ運用チーム -->
-          <div style="background:rgba(46,160,67,.08);border:1px solid var(--teal);border-radius:8px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--teal);margin-bottom:8px;">🔧 インフラ運用チーム ★最重要</div>
+          <!-- 批判的AG -->
+          <div style="background:rgba(211,71,71,.06);border:1px solid var(--red);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:4px;">🔴 批判的AG</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">楽観バイアスを疑う。予測外れの実績・季節性を重視</div>
             <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
               <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">⏰</div>
-                <div class="n-name" style="font-size:10px;">タスクディスパッチャー</div>
-                <div class="n-sub" style="font-size:9px;">inbox定期スキャン<br/>→ボード自動登録</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">🗑️</div>
-                <div class="n-name" style="font-size:10px;">掃除エージェント</div>
-                <div class="n-sub" style="font-size:9px;">不要ファイル削除<br/>tmp/ の自動整理</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">🧪</div>
-                <div class="n-name" style="font-size:10px;">夜間テスト</div>
-                <div class="n-sub" style="font-size:9px;">深夜に自動実行<br/>品質チェック</div>
+                <div class="n-icon" style="font-size:14px;">📉</div>
+                <div class="n-name" style="font-size:10px;">ダウンサイド分析</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>外れた場合の下振れ幅</div>
               </div>
             </div>
           </div>
 
-          <!-- リサーチチーム -->
+          <!-- 中立AG -->
           <div style="background:rgba(88,166,255,.06);border:1px solid var(--accent);border-radius:8px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">🔍 リサーチチーム</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B） ＋ アドバイザーAI（戦略判断時のみ）</div>
+            <div style="font-size:11px;font-weight:700;color:var(--accent);margin-bottom:4px;">⚪ 中立AG</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">統計的ベースライン予測を出す</div>
             <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
               <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">📡</div>
-                <div class="n-name" style="font-size:10px;">情報収集AG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>リサーチ・調査</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">📄</div>
-                <div class="n-name" style="font-size:10px;">レポート生成AG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>MD形式で出力</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">✅</div>
-                <div class="n-name" style="font-size:10px;">QA AG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>品質・事実確認</div>
+                <div class="n-icon" style="font-size:14px;">📊</div>
+                <div class="n-name" style="font-size:10px;">時系列ベースライン</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>過去実績からの延長予測</div>
               </div>
             </div>
           </div>
 
-          <!-- コンテンツチーム -->
-          <div style="background:rgba(188,140,255,.06);border:1px solid var(--purple);border-radius:8px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;">✍️ コンテンツチーム</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B）</div>
+          <!-- 推進的AG -->
+          <div style="background:rgba(63,185,80,.06);border:1px solid var(--green);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">🟢 推進的AG</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">カレンダーの活動量シグナルを積極的に織り込む</div>
             <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
               <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">📝</div>
-                <div class="n-name" style="font-size:10px;">議事録整理AG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>要約・構造化</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">🎯</div>
-                <div class="n-name" style="font-size:10px;">ブランドチェックAG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>文体・品質統一</div>
+                <div class="n-icon" style="font-size:14px;">📈</div>
+                <div class="n-name" style="font-size:10px;">先行指標分析</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>商談件数→売上を先読み</div>
               </div>
             </div>
           </div>
 
-          <!-- タスク管理チーム -->
-          <div style="background:rgba(227,179,65,.06);border:1px solid var(--yellow);border-radius:8px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:4px;">💼 タスク管理チーム</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">リーダーAI（Llama 3.3 70B）</div>
+          <!-- 調整AG -->
+          <div style="background:rgba(227,179,65,.08);border:2px solid var(--yellow);border-radius:8px;padding:12px;">
+            <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:4px;">🟡 調整AG ★最重要</div>
+            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">3体の予測・根拠を読み最終判断を書く</div>
             <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
               <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">🔀</div>
-                <div class="n-name" style="font-size:10px;">優先度整理AG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>タスク分類・整列</div>
-              </div>
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">🚫</div>
-                <div class="n-name" style="font-size:10px;">フィルタリングAG</div>
-                <div class="n-sub" style="font-size:9px;">Groq 8B<br/>低品質タスクの排除</div>
+                <div class="n-icon" style="font-size:14px;">⚖️</div>
+                <div class="n-name" style="font-size:10px;">統合・信頼区間</div>
+                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>最終予測＋根拠を出力</div>
               </div>
             </div>
           </div>
 
+        </div>
+      </div>
+
+      <!-- 運用チーム -->
+      <div class="arch-zone local" style="border-color:var(--teal);">
+        <div class="arch-zone-label" style="color:var(--teal);">🔧 運用チーム</div>
+        <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
+          <div class="arch-node" style="min-width:100px;padding:8px;">
+            <div class="n-icon" style="font-size:14px;">⏰</div>
+            <div class="n-name" style="font-size:10px;">タスクディスパッチャー</div>
+            <div class="n-sub" style="font-size:9px;">データ到着を検知して<br/>予測サイクルを起動</div>
+          </div>
+          <div class="arch-node" style="min-width:100px;padding:8px;">
+            <div class="n-icon" style="font-size:14px;">🗑️</div>
+            <div class="n-name" style="font-size:10px;">掃除エージェント</div>
+            <div class="n-sub" style="font-size:9px;">中間ファイル削除<br/>tmp/ の自動整理</div>
+          </div>
+          <div class="arch-node" style="min-width:100px;padding:8px;">
+            <div class="n-icon" style="font-size:14px;">🧪</div>
+            <div class="n-name" style="font-size:10px;">バックテスト</div>
+            <div class="n-sub" style="font-size:9px;">定期的に過去データで<br/>精度を検証</div>
+          </div>
         </div>
       </div>
     </div>
@@ -1172,34 +1271,34 @@
         </thead>
         <tbody>
           <tr>
-            <td><strong>リーダーAI</strong>（各チームの司令塔）</td>
+            <td><strong>批判的AG</strong></td>
             <td>Groq Llama 3.3 70B</td>
-            <td>タスク分析・専門AGへの振り分け・日常処理</td>
+            <td>下振れリスク・過去の予測外れの分析</td>
             <td><span class="ok">無料</span></td>
           </tr>
           <tr>
-            <td><strong>専門AG</strong>（実作業担当）</td>
+            <td><strong>中立AG</strong></td>
             <td>Groq Llama 3.3 70B</td>
-            <td>リサーチ・草案生成・レポート作成</td>
+            <td>統計的ベースライン予測</td>
             <td><span class="ok">無料</span></td>
           </tr>
           <tr>
-            <td><strong>QA / レビューAG</strong></td>
-            <td>Groq Llama 3.1 8B</td>
-            <td>品質チェック・事実確認・文体統一（高速）</td>
+            <td><strong>推進的AG</strong></td>
+            <td>Groq Llama 3.3 70B</td>
+            <td>カレンダー活動量からの先行指標分析</td>
             <td><span class="ok">無料</span></td>
           </tr>
           <tr>
-            <td><strong>アドバイザーAI</strong>（戦略判断のみ）</td>
+            <td><strong>調整AG</strong>（統合担当）</td>
             <td>Groq Llama 3.3 70B（深いプロンプト）</td>
-            <td>高度な設計判断・アーキテクチャ決定時のみ呼ぶ</td>
-            <td><span class="ok">無料（スポット利用）</span></td>
+            <td>3体の予測・根拠を比較し最終予測＋信頼区間を出力</td>
+            <td><span class="ok">無料</span></td>
           </tr>
           <tr>
-            <td><strong>プライバシーマスキング</strong>（Phase 4〜）</td>
-            <td>Qwen 2.5 7B（ローカル・Mac mini）</td>
-            <td>機密情報の伏字化・復元。クラウドに送る前に処理</td>
-            <td><span class="tri">Mac mini購入後</span></td>
+            <td><strong>門番AG</strong>（マスキング）</td>
+            <td>Groq Llama 3.1 8B（将来: Qwen 2.5 7B ローカル）</td>
+            <td>氏名・金額・取引先名の伏字化・復元</td>
+            <td><span class="ok">無料</span> / <span class="tri">Mac mini購入後はローカル</span></td>
           </tr>
         </tbody>
       </table>
@@ -1215,10 +1314,10 @@
       <div>
         <p style="font-weight:700;margin-bottom:8px;">フェーズ別の実装状況</p>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-          <div><span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官 ＋ Groq 2モデル構成でリフレクションループ稼働。文脈エンジン・タスクボード・引き継ぎ書は未実装。</div>
-          <div><span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 2</span>文脈エンジン（knowledge/）・タスクボード（kanban.md）・引き継ぎ書出力を実装。</div>
-          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>タスクディスパッチャーの自動化・夜間スケジューラー実装。</div>
-          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。Qwen 2.5 7B でプライバシーマスキング層を追加。完全ハイブリッド構成へ。</div>
+          <div><span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官・合議ループの基盤は稼働済み（旧ドメインで検証済み）。財務・カレンダーデータ接続、4エージェントのプロンプト設計はこれから。</div>
+          <div><span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 2</span>データソース接続（カレンダーAPI・財務データエクスポート）とマスキング拡張を実装。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>4エージェント合議の本実装とバックテストスクリプトの構築。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。財務データのマスキングをローカルLLM（Qwen 2.5 7B）へ移行し、完全ハイブリッド構成へ。</div>
         </div>
       </div>
     </div>
@@ -1235,39 +1334,39 @@
 <section id="reflection">
   <div class="container">
     <div class="sec-head">
-      <div class="sec-tag">Reflection Agent</div>
-      <h2 class="sec-title">リフレクション型マルチエージェント</h2>
-      <p class="sec-sub">PDFで「最新型」と記載されていたリフレクション型の仕組みと、トークンコストの課題について整理。</p>
+      <div class="sec-tag">Multi-Perspective Debate</div>
+      <h2 class="sec-title">3視点合議 — 財務予測の中核メカニズム</h2>
+      <p class="sec-sub">旧「リフレクション型（Generator⇄Critic）」の仕組みを、財務予測の核心である「批判的×中立×推進的の3視点合議」に転用した。仕組み自体は同じ合議パターンであり、ドメインが変わっても有効。</p>
     </div>
 
-    <!-- Reflection flow -->
+    <!-- 合議フロー -->
     <div style="margin-bottom:24px;">
-      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px; color:var(--text2);">基本フロー（Self-Reflection Loop）</h3>
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px; color:var(--text2);">基本フロー（3視点合議ループ）</h3>
       <div class="reflection-flow" style="gap:2px;">
         <div class="rf-step active">
           <div class="rf-num">1</div>
-          <div class="rf-label">初回生成</div>
-          <div class="rf-sub">Generatorが初回回答を生成</div>
+          <div class="rf-label">並列予測</div>
+          <div class="rf-sub">批判的・中立・推進的の3体が同時に独立予測</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">2</div>
-          <div class="rf-label">自己評価</div>
-          <div class="rf-sub">ReflectorがCritiqueを出力</div>
+          <div class="rf-label">根拠比較</div>
+          <div class="rf-sub">調整AGが3体の根拠を並べて比較</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">3</div>
-          <div class="rf-label">改善指示</div>
-          <div class="rf-sub">問題点・改善案を特定</div>
+          <div class="rf-label">対立点抽出</div>
+          <div class="rf-sub">意見が割れている箇所を特定</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">4</div>
-          <div class="rf-label">再生成</div>
-          <div class="rf-sub">改善版を生成（n回繰り返し）</div>
+          <div class="rf-label">統合判断</div>
+          <div class="rf-sub">合意できれば統合、割れが大きければ人間へ</div>
         </div>
         <div class="rf-step active">
           <div class="rf-num">5</div>
           <div class="rf-label">最終出力</div>
-          <div class="rf-sub">品質基準クリアで完了</div>
+          <div class="rf-sub">予測値＋信頼区間＋根拠を出力</div>
         </div>
       </div>
     </div>
@@ -1276,61 +1375,61 @@
       <div class="card">
         <div class="card-icon">✅</div>
         <h3>メリット</h3>
-        <p>推論精度が大幅に向上。長文・複雑な分析タスクで一貫性が増す。ChatGPTのo1シリーズやClaudeのChain-of-Thoughtと同様のアプローチ。マルチLLMで行うと「第三者視点」の批評が入る。</p>
-        <span class="badge bg">品質向上</span>
+        <p>単一AGの予測より<strong>バイアスが相殺</strong>される。批判的AGが楽観を疑い、推進的AGが保守を疑うことで、調整AGはより幅の広い根拠から判断できる。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で見た「ディベートがハルシネーションを減らす」研究とも整合する。</p>
+        <span class="badge bg">精度向上</span>
       </div>
       <div class="card">
         <div class="card-icon">⚠️</div>
-        <h3>デメリット（PDF記載）</h3>
-        <p><strong>トークン消費が激しい</strong>（1タスクに対して3〜5回分の処理が走る）。<strong>ファイルごみがたまる</strong>問題（中間生成物の管理が必要）。コスト最適化のためリフレクション回数の上限設定が必須。</p>
+        <h3>デメリット（要注意）</h3>
+        <p><strong>トークン消費が激しい</strong>（1タスクに対して4体分の処理が走る）。<strong>ピア型合議は業界の収束形と逆行する</strong>という指摘もあり、<a href="#decisions" style="color:var(--accent);">意思決定ボード論点1</a>で扱っている。合議回数の上限設定も必須。</p>
         <span class="badge bo">要注意</span>
       </div>
       <div class="card">
         <div class="card-icon">🔧</div>
         <h3>コスト最適化の設計方針（例）</h3>
-        <p>例として「草案生成にGemini Flash、品質チェックにGPT-4o、修正提案にGroq」を割り当てる構成が考えられる。最大リフレクション回数を<strong>3回</strong>に制限する方針は変わらないが、各役割に使うAPIは未確定。</p>
+        <p>3体の並列予測にはGroq Llama 3.3 70Bを想定。調整AGは深いプロンプトで同モデルを使う想定だが、各役割に使うAPIは<strong>未確定</strong>。合議回数は<strong>1回（並列予測→統合）</strong>を基本とし、意見が割れた場合のみ人間にエスカレーション。</p>
         <span class="badge bb">推奨設計</span>
       </div>
       <div class="card">
         <div class="card-icon">📁</div>
         <h3>ファイル管理対策</h3>
-        <p>中間ファイルは<code>/tmp/</code>に保存し、完了後に自動削除。ローカルの執事エージェント（MCP filesystem）が不要ファイルを定期的に掃除する役割を担う。</p>
+        <p>各AGの予測・根拠は中間ファイルとして<code>/tmp/</code>に保存し、完了後に自動削除。最終予測とその根拠のみ<code>memory/episodic/</code>に永続化し、後から「なぜその予測を出したか」を追跡できるようにする。</p>
         <span class="badge bp">ローカルエージェント活用</span>
       </div>
     </div>
 
-    <!-- クラウドマルチLLMリフレクション -->
+    <!-- クラウドマルチLLM合議 -->
     <div style="margin-top:28px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px;">
-      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">クラウド複数LLMによる並列リフレクション（PDF 6/20の設計）</h3>
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">4エージェント合議の役割分担（設計）</h3>
       <div class="tbl-wrap">
         <table>
           <thead>
-            <tr><th>役割</th><th>担当LLM</th><th>処理内容</th><th>コスト感</th></tr>
+            <tr><th>役割</th><th>視点</th><th>処理内容</th><th>コスト感</th></tr>
           </thead>
           <tbody>
             <tr>
-              <td>草案作成</td>
-              <td>Claude 3.5 Sonnet / Gemini Flash</td>
-              <td>マスク済みデータから初回ドキュメント生成</td>
-              <td><span class="ok">低〜中</span></td>
-            </tr>
-            <tr>
-              <td>品質チェック</td>
-              <td>ChatGPT GPT-4o</td>
-              <td>激しいディスカッション・問題点の指摘</td>
-              <td><span class="tri">中〜高</span></td>
-            </tr>
-            <tr>
-              <td>修正提案</td>
-              <td>Gemini 1.5 Pro</td>
-              <td>具体的な修正案を出力</td>
+              <td>批判的AG</td>
+              <td>ダウンサイド重視</td>
+              <td>予測外れの実績・季節性から下振れリスクを分析</td>
               <td><span class="ok">低（無料枠内）</span></td>
             </tr>
             <tr>
-              <td>最終統合</td>
-              <td>ローカルLLM or Python</td>
-              <td>クラウドの結果を受け取り復元・レポート化</td>
-              <td><span class="ok">ゼロ（ローカル）</span></td>
+              <td>中立AG</td>
+              <td>統計ベースライン</td>
+              <td>過去実績からの時系列延長予測</td>
+              <td><span class="ok">低（無料枠内）</span></td>
+            </tr>
+            <tr>
+              <td>推進的AG</td>
+              <td>先行指標重視</td>
+              <td>カレンダー活動量から売上・コストを先読み</td>
+              <td><span class="ok">低（無料枠内）</span></td>
+            </tr>
+            <tr>
+              <td>調整AG</td>
+              <td>統合・裁定</td>
+              <td>3体の根拠を比較し最終予測＋信頼区間を出力</td>
+              <td><span class="tri">中（深いプロンプト）</span></td>
             </tr>
           </tbody>
         </table>
@@ -1973,7 +2072,7 @@
       <div class="card">
         <div class="card-icon">📓</div>
         <h3>案1：AI会社の「観察日誌」を運営する</h3>
-        <p>議事録処理・リサーチを行う小さなAI会社を実際に回し、成功も失敗もそのまま日誌として公開する。Project Vendが証明したように、<strong>失敗の記録は成功のデモより読まれる</strong>。すでにあるPython司令官＋リフレクションループの上に「日報生成AG」を1体足すだけで始められる。</p>
+        <p>財務予測を出す小さなAI会社を実際に回し、当たった予測も外れた予測もそのまま日誌として公開する。Project Vendが証明したように、<strong>失敗の記録は成功のデモより読まれる</strong>。すでにあるPython司令官＋合議ループの上に「予測日誌生成AG」を1体足すだけで始められる。</p>
         <span class="badge bb">Project Vend型 / 実装コスト小</span>
       </div>
       <div class="card">
@@ -2011,7 +2110,7 @@
       <div class="card">
         <div class="card-icon">🔄</div>
         <h3>Loop Library（Forward Future / Matthew Berman）</h3>
-        <p>実戦投入されたエージェント用ループ26本のキュレーション集。価値は個々のループより<strong>「トリガー→指示→検証→停止条件→権限境界」の5部構成フォーマット</strong>にある。現行のリフレクションループ（品質スコア0.85で早期終了・最大3回で強制停止）は既にこの形式を満たしており、議事録処理・リサーチ・掃除もループ定義書として書けばPhase 2の文脈エンジン（knowledge/）にそのまま収まる。「判断に迷ったら人間へ」の絶対ルールは⑤権限境界そのもの。</p>
+        <p>実戦投入されたエージェント用ループ26本のキュレーション集。価値は個々のループより<strong>「トリガー→指示→検証→停止条件→権限境界」の5部構成フォーマット</strong>にある。現行の合議ループ（3体並列予測→調整AGが統合）は既にこの形式を満たしており、財務予測・バックテスト・掃除もループ定義書として書けばPhase 2の文脈エンジン（knowledge/）にそのまま収まる。「判断に迷ったら人間へ」の絶対ルールは⑤権限境界そのもの。</p>
         <span class="badge bb">実行計画 Step 5 に採用</span>
       </div>
       <div class="card">
@@ -2040,7 +2139,7 @@
     <div class="sec-head">
       <div class="sec-tag">Implementation</div>
       <h2 class="sec-title">実装ガイド</h2>
-      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。<strong>コードはGroq/Geminiを用いた現プロトタイプ（2026年6月時点）に基づく実装例であり、採用するAPIは今後変更になる可能性があります。</strong></p>
+      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。財務予測ドメインに合わせて更新（2026-07-08）。<strong>コードはGroqを用いた現プロトタイプに基づく実装例であり、採用するAPIは今後変更になる可能性があります。</strong></p>
     </div>
 
     <div class="steps" style="margin-bottom:28px;">
@@ -2087,55 +2186,54 @@ genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEM
         <span class="cc"># タスクタイプで分岐（LLM不使用→高速・決定論的）</span>
         task_type <span class="co">=</span> task.get(<span class="cs">"type"</span>, <span class="cs">""</span>)
 
-        <span class="ck">if</span> task_type <span class="co">==</span> <span class="cs">"meeting_minutes"</span>:
-            <span class="ck">return</span> self.handle_meeting_minutes(task)
-        <span class="ck">elif</span> task_type <span class="co">==</span> <span class="cs">"research"</span>:
-            <span class="ck">return</span> self.handle_research(task)
-        <span class="ck">elif</span> task_type <span class="co">==</span> <span class="cs">"report"</span>:
-            <span class="ck">return</span> self.handle_report_with_reflection(task)
+        <span class="ck">if</span> task_type <span class="co">==</span> <span class="cs">"financial_forecast"</span>:
+            <span class="ck">return</span> self.handle_forecast_with_debate(task)
+        <span class="ck">elif</span> task_type <span class="co">==</span> <span class="cs">"backtest"</span>:
+            <span class="ck">return</span> self.handle_backtest(task)
         <span class="ck">else</span>:
             <span class="ck">return</span> self.handle_general(task)
 
-    <span class="ck">def</span> <span class="cf">handle_meeting_minutes</span>(self, task):
-        <span class="cc"># Step1: ローカルLLMでマスキング</span>
-        masked <span class="co">=</span> self.local_mask(task[<span class="cs">"content"</span>])
-        <span class="cc"># Step2: Groqで高速要約（無料API）</span>
-        summary <span class="co">=</span> self.groq_summarize(masked)
-        <span class="cc"># Step3: ローカルで復元</span>
-        <span class="ck">return</span> self.local_unmask(summary, task[<span class="cs">"mask_map"</span>])
+    <span class="ck">def</span> <span class="cf">handle_forecast_with_debate</span>(self, task):
+        <span class="cc"># Step1: ローカルLLMでマスキング（氏名・金額・取引先名）</span>
+        masked <span class="co">=</span> self.local_mask(task[<span class="cs">"calendar_data"</span>], task[<span class="cs">"financial_data"</span>])
 
-    <span class="ck">def</span> <span class="cf">handle_report_with_reflection</span>(self, task, max_iterations<span class="co">=</span><span class="cn">3</span>):
-        <span class="cc"># リフレクションループ（最大3回）</span>
-        masked_content <span class="co">=</span> self.local_mask(task[<span class="cs">"content"</span>])
-        draft <span class="co">=</span> self.gemini_generate(masked_content)
+        <span class="cc"># Step2: 批判的・中立・推進的の3体が並列予測</span>
+        critical <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"critical"</span>)
+        neutral  <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"neutral"</span>)
+        advocate <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"advocate"</span>)
 
-        <span class="ck">for</span> i <span class="ck">in</span> <span class="cy">range</span>(max_iterations):
-            quality_score <span class="co">=</span> self.groq_quality_check(draft)
-            <span class="ck">if</span> quality_score <span class="co">>=</span> <span class="cn">0.85</span>:  <span class="cc"># 品質基準クリアで早期終了</span>
-                <span class="ck">break</span>
-            critique <span class="co">=</span> self.groq_critique(draft)
-            draft <span class="co">=</span> self.gemini_revise(draft, critique)
+        <span class="cc"># Step3: 調整AGが3体の根拠を比較し統合</span>
+        result <span class="co">=</span> self.groq_arbitrate([critical, neutral, advocate])
+        <span class="ck">if</span> result.disagreement_score <span class="co">></span> <span class="cn">0.3</span>:  <span class="cc"># 意見の割れが大きい場合は人間へ</span>
+            <span class="ck">return</span> self.escalate_to_human(result, task)
 
-        <span class="ck">return</span> self.local_unmask(draft, task[<span class="cs">"mask_map"</span>])
+        <span class="cc"># Step4: ローカルで復元し、根拠つき予測を返す</span>
+        <span class="ck">return</span> self.local_unmask(result, task[<span class="cs">"mask_map"</span>])
 
-    <span class="ck">def</span> <span class="cf">local_mask</span>(self, text: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">tuple</span>:
+    <span class="ck">def</span> <span class="cf">local_mask</span>(self, calendar_data, financial_data) <span class="co">-></span> <span class="cy">tuple</span>:
         <span class="cc"># Ollama（Qwen 2.5 7B）でローカルマスキング</span>
-        <span class="cc"># 固有名詞・金額・社名を [PERSON_1], [AMOUNT_1] 等で置換</span>
-        <span class="cc"># mask_map: {"[PERSON_1]": "田中社長"} を返す</span>
+        <span class="cc"># 氏名・金額・取引先名・案件名を [PERSON_1], [AMOUNT_1] 等で置換</span>
+        <span class="cc"># mask_map: {"[PERSON_1]": "田中部長"} を返す</span>
         <span class="ck">pass</span>
 
-    <span class="ck">def</span> <span class="cf">groq_summarize</span>(self, masked_text: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">str</span>:
+    <span class="ck">def</span> <span class="cf">groq_forecast</span>(self, masked_data: <span class="cy">str</span>, stance: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">dict</span>:
+        stance_prompt <span class="co">=</span> {
+            <span class="cs">"critical"</span>: <span class="cs">"下振れリスクと予測外れの実績を重視して予測せよ"</span>,
+            <span class="cs">"neutral"</span>:  <span class="cs">"統計的なベースライン予測を出せ"</span>,
+            <span class="cs">"advocate"</span>: <span class="cs">"カレンダーの活動量シグナルを積極的に織り込め"</span>,
+        }[stance]
         resp <span class="co">=</span> groq_client.chat.completions.create(
             model<span class="co">=</span><span class="cs">"llama-3.3-70b-versatile"</span>,
-            messages<span class="co">=</span>[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: masked_text}],
+            messages<span class="co">=</span>[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cf">f</span><span class="cs">"{stance_prompt}\n\n{masked_data}"</span>}],
             max_tokens<span class="co">=</span><span class="cn">2000</span>
         )
-        <span class="ck">return</span> resp.choices[<span class="cn">0</span>].message.content
+        <span class="ck">return</span> {<span class="cs">"stance"</span>: stance, <span class="cs">"content"</span>: resp.choices[<span class="cn">0</span>].message.content}
 
 orchestrator <span class="co">=</span> PythonOrchestrator()
 result <span class="co">=</span> orchestrator.route_task({
-    <span class="cs">"type"</span>: <span class="cs">"report"</span>,
-    <span class="cs">"content"</span>: <span class="cs">"Google Meet議事録の内容..."</span>
+    <span class="cs">"type"</span>: <span class="cs">"financial_forecast"</span>,
+    <span class="cs">"calendar_data"</span>: <span class="cs">"今月の商談・稼働予定..."</span>,
+    <span class="cs">"financial_data"</span>: <span class="cs">"過去12ヶ月の売上・コスト実績..."</span>
 })</pre>
     </div>
 
@@ -2164,11 +2262,11 @@ gateway_agent <span class="co">=</span> client.beta.agents.create(
     tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
 )
 
-<span class="cc"># 3. リサーチ&ライターエージェント</span>
-research_agent <span class="co">=</span> client.beta.agents.create(
-    name<span class="co">=</span><span class="cs">"Research Writer"</span>,
+<span class="cc"># 3. 調整（統合）エージェント</span>
+arbiter_agent <span class="co">=</span> client.beta.agents.create(
+    name<span class="co">=</span><span class="cs">"Forecast Arbiter"</span>,
     model<span class="co">=</span><span class="cs">"claude-sonnet-4-6"</span>,
-    system<span class="co">=</span><span class="cs">"マスク済みデータを受け取り、高品質なレポートを生成する。mdファイル形式で出力。"</span>,
+    system<span class="co">=</span><span class="cs">"批判的・中立・推進的の3つの予測と根拠を比較し、最終予測値と信頼区間を出力する。意見の割れが大きい場合は人間へエスカレーションする。"</span>,
     tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
 )
 
@@ -2180,15 +2278,15 @@ orchestrator <span class="co">=</span> client.beta.agents.create(
     tools<span class="co">=</span>[{<span class="cs">"type"</span>: <span class="cs">"agent_toolset_20260401"</span>}],
     multiagent<span class="co">=</span>{
         <span class="cs">"type"</span>: <span class="cs">"coordinator"</span>,
-        <span class="cs">"agents"</span>: [gateway_agent.id, research_agent.id],
+        <span class="cs">"agents"</span>: [gateway_agent.id, arbiter_agent.id],
     },
 )
 
-<span class="cc"># 5. セッション実行（毎回）</span>
+<span class="cc"># 5. セッション実行（毎サイクル）</span>
 session <span class="co">=</span> client.beta.sessions.create(
     agent<span class="co">=</span>orchestrator.id,
     environment_id<span class="co">=</span>env.id,
-    title<span class="co">=</span><span class="cs">"Google Meet議事録処理"</span>,
+    title<span class="co">=</span><span class="cs">"月次財務予測サイクル"</span>,
 )
 
 <span class="ck">with</span> client.beta.sessions.events.stream(session.id) <span class="ck">as</span> stream:
@@ -2197,7 +2295,7 @@ session <span class="co">=</span> client.beta.sessions.create(
         events<span class="co">=</span>[{
             <span class="cs">"type"</span>: <span class="cs">"user.message"</span>,
             <span class="cs">"content"</span>: [{<span class="cs">"type"</span>: <span class="cs">"text"</span>,
-              <span class="cs">"text"</span>: <span class="cs">"以下の議事録を処理してください:\n{meeting_content}"</span>}]
+              <span class="cs">"text"</span>: <span class="cs">"以下のカレンダー・財務データから来月の予測を出してください:\n{finance_content}"</span>}]
         }]
     )
     <span class="ck">for</span> event <span class="ck">in</span> stream:
@@ -2247,7 +2345,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="card">
         <div class="card-icon">🔌</div>
         <h3>MCP活用ポイント</h3>
-        <p>執事エージェントのMCP filesystemでファイル操作を自動化。Google DriveのMCPサーバーを使えば議事録の自動取得も可能。MCPx非同期での複数サーバー同時接続を検討。</p>
+        <p>執事エージェントのMCP filesystemでファイル操作を自動化。Google CalendarのMCPサーバーを使えばカレンダーデータの自動取得も可能。会計ソフトとの連携はAPI有無を要確認。</p>
       </div>
     </div>
 
