@@ -834,7 +834,6 @@
             <li>意思決定ボード論点1が決着：3体は独立判断のみ、直接議論はさせず、上位エージェント（調整AG）が集約する方式に決定</li>
             <li>データ収集専用AG（Gemini等）を加えた5体構成（上位1＋データ収集1＋役割別3）を検討開始</li>
             <li>3体それぞれに異なる性格（プロンプト）を与え、思考が得意なモデル（Claude等）を活用する案が浮上</li>
-            <li>財務予測の具体例で合議プロセスを検証：楽観¥10,000／中立¥15,000／悲観¥20,000 → 統合¥13,000</li>
             <li>事業方向：外部SaaS提供（各社が自前でAPIキーを設定）を検討しつつ、当面は自社利用を優先</li>
             <li>大阪大学のインターン生（8-9月）にはシステム根幹に触れないGoogle Workspace推進タスクを割り当てる方針</li>
           </ul>
@@ -1047,16 +1046,7 @@
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>経緯：</strong> AI側は、業界の管理者型収束（Cognition）と2026年の合議研究（同一データ上の議論は収束が正解に近づく保証がなく、収束＝確信という錯覚を生む）から「独立並列予測＋単一の調整役」を推奨していた。7/9の打ち合わせで、Yuma Kaminaga氏はこれと同じ懸念——「複数のAIエージェントに議論させて結論を出させる従来のアプローチは望ましくない」——に<strong>独立に</strong>気づき、Koki Matano氏と協議のうえ同じ結論に達した。AIの分析とチームの実地判断が一致したため、選択肢Aで決定とする。</p>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;">
         <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">採用した設計</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:10px;">批判的AG・中立AG・推進的AGは<strong>互いに議論せず独立に</strong>予測を出す。上位エージェント（調整AG）がその3つの数字と根拠を読み、最終値を導く。例として打ち合わせで挙がった試算：</p>
-        <div class="tbl-wrap" style="margin-bottom:0;"><table>
-          <thead><tr><th>AG</th><th>予測（10人×週1h稼働のコスト例）</th></tr></thead>
-          <tbody>
-            <tr><td>推進的AG（楽観）</td><td>¥10,000</td></tr>
-            <tr><td>中立AG</td><td>¥15,000</td></tr>
-            <tr><td>批判的AG（残業込みの悲観）</td><td>¥20,000</td></tr>
-            <tr><td><strong>調整AG（最終）</strong></td><td><strong>¥13,000</strong></td></tr>
-          </tbody>
-        </table></div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;">批判的AG・中立AG・推進的AGは<strong>互いに議論せず独立に</strong>予測を出す。上位エージェント（調整AG）がその3つの数字と根拠を読み、最終値を導く。</p>
       </div>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>今後の検討（構成案）：</strong> 情報の互換性を考慮し、<strong>データ収集専用AG</strong>（Gemini等）を追加する案が浮上。上位1体＋データ収集1体＋役割別3体＝<strong>計5体構成</strong>になる可能性がある。また3体それぞれに異なる性格（プロンプト）を与えることで、思考が得意なモデル（Claude等）を活用できるとの指摘もあった——モデル選定は<a href="#pricing" style="color:var(--accent);">API料金比較</a>と合わせて別途検討する。</p>
     </div>
