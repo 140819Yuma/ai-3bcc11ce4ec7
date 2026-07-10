@@ -614,7 +614,7 @@
     <div class="callout c-tip">
       <div class="callout-icon">🧭</div>
       <div>
-        <p><strong>ひとことで：</strong> 財務予測エージェントへ軌足を変更した。基盤アーキテクチャ（司令官・合議ループ・マスキング）は流用できるため、ゼロからの構築ではない。次にやるべきはデータ接続とプロンプト設計であり、合議の決め方（意思決定ボード論点1）が最初の分岐点になる。</p>
+        <p><strong>ひとことで：</strong> 財務予測エージェントへ軌足を変更した。基盤アーキテクチャ（司令官・合議ループ・マスキング）は流用できるため、ゼロからの構築ではない。合議の決め方（意思決定ボード論点1）は7/9の打ち合わせで<strong>決定済み</strong>（独立判断＋上位AGが集約）。次にやるべきはデータ接続とマスキング範囲（論点3）の確定である。</p>
       </div>
     </div>
   </div>
@@ -827,6 +827,25 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/9</div>
+        <div class="log-content">
+          <h4>打ち合わせ（Yuma・Koki Matano）— 合議方式の決定と事業方向の議論</h4>
+          <ul class="log-items">
+            <li>意思決定ボード論点1が決着：3体は独立判断のみ、直接議論はさせず、上位エージェント（調整AG）が集約する方式に決定</li>
+            <li>データ収集専用AG（Gemini等）を加えた5体構成（上位1＋データ収集1＋役割別3）を検討開始</li>
+            <li>3体それぞれに異なる性格（プロンプト）を与え、思考が得意なモデル（Claude等）を活用する案が浮上</li>
+            <li>財務予測の具体例で合議プロセスを検証：楽観¥10,000／中立¥15,000／悲観¥20,000 → 統合¥13,000</li>
+            <li>事業方向：外部SaaS提供（各社が自前でAPIキーを設定）を検討しつつ、当面は自社利用を優先</li>
+            <li>大阪大学のインターン生（8-9月）にはシステム根幹に触れないGoogle Workspace推進タスクを割り当てる方針</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> Yuma氏が「複数のAIエージェントに議論させて結論を出させるのは望ましくない」とAIの分析と<strong>独立に同じ結論</strong>に到達した。人間側の実地判断とAI側の文献調査が一致したことで、論点1の決定に高い確度が持てる。<br>
+            <strong>📌 次のステップ：</strong> 石川さんに財務予測の検証方法（バックテスト基準）とマスキングの必要性について相談する（論点3・4は保留のまま）。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
@@ -901,8 +920,8 @@
       <div class="step">
         <div class="snum">4</div>
         <div class="scont">
-          <h4>合議の決め方を確定する（意思決定ボード論点1）</h4>
-          <p>3体が一定以上食い違ったときに調整AGが決めるのか、閾値超えで人間にエスカレーションするのか。この設計判断が最初の分岐点になる。詳細は<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>へ。</p>
+          <h4>合議の決め方は決定済み（意思決定ボード論点1）</h4>
+          <p>7/9の打ち合わせで「3体は独立判断のみ、直接議論はさせず上位AGが集約する」方式に決定した。データ収集専用AGを加えた5体構成の検討も始まっている。詳細は<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>へ。</p>
         </div>
       </div>
       <div class="step">
@@ -958,7 +977,7 @@
     <div class="callout c-tip">
       <div class="callout-icon">🎒</div>
       <div>
-        <p><strong>次回ミーティングへの持ち物：</strong> ①4エージェント合議の設計メモ（批判的・中立・推進的・調整の役割定義）。②本レポートサイトのURL。③3人で決めたい論点リスト——合議の決め方（意思決定ボード論点1）、財務データの入手経路、バックテストの基準期間。</p>
+        <p><strong>次回ミーティングへの持ち物：</strong> ①5体構成案の設計メモ（データ収集AG＋批判的・中立・推進的・調整の役割定義）。②本レポートサイトのURL。③石川さんに相談する2点——財務予測の検証方法（論点4）とマスキングの必要性（論点3）。</p>
       </div>
     </div>
 
@@ -998,6 +1017,13 @@
       </div>
     </div>
 
+    <div class="callout c-tip" style="margin-bottom:16px;">
+      <div class="callout-icon">✅</div>
+      <div>
+        <p><strong>2026-07-09 打ち合わせ反映（Yuma・Koki Matano）：</strong> 論点1は<strong>決定</strong>——チームが独立に「直接議論させず、3体が独立判断→上位エージェントが集約」という結論に到達し、AI側の分析（Cognitionの脆さの論拠・2026年の合議研究）と一致した。論点2は保留のまま、5体構成案という新しい根拠を背景に追記。論点3（Groq TPMボトルネック）は削除——現行の合議設計では優先度が下がったため。論点4・5は「石川さんに相談」という次のステップが打ち合わせで確認されたのみで、引き続き未決。</p>
+      </div>
+    </div>
+
     <!-- サイクル#1 サマリー -->
     <div class="callout c-info">
       <div class="callout-icon">🔄</div>
@@ -1006,26 +1032,41 @@
       </div>
     </div>
 
-    <!-- 論点1 -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 1 ｜ 🔴 矛盾 ｜ ステータス: 未決</div>
-      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">3体合議（批判的×中立×推進的）は業界の収束形と逆行するが、それでも採用するか</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> Cognitionは2025年6月の「<a href="https://cognition.com/blog/dont-build-multi-agents" style="color:var(--accent);">Don't Build Multi-Agents</a>」で対等な複数エージェント協調（ピア型）は脆いと主張し、2026年には業界全体が「<strong>単一エージェントが全体の文脈を保持し、使い捨てのサブエージェントが個別タスクを実行して要約だけを返す</strong>」管理者型に収束した（<a href="https://niteagent.com/blog/multi-agent-production-2026/" style="color:var(--accent);">本番導入で生き残ったパターン調査</a>）。一方、財務予測で採用したい「批判的AG・中立AG・推進的AGが対等に予測を出し合う」設計は、まさにこの<strong>脆いとされたピア型そのもの</strong>。ただし<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で見た「ディベートがハルシネーションを減らす」研究は、複数視点の対立にこそ価値がある場合があることも示している。管理者型の効率と、ピア型ディベートの多角性、どちらを優先するかが本論点。</p>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
-        <tbody>
-          <tr><td><strong>A（AI推奨）</strong></td><td>3体を「ピア型」ではなく「調整AG（管理者）が3体のサブエージェントに個別発注し、要約だけ回収して統合する」構成にする</td><td>業界収束形と一致しつつ3視点の多角性も残せる。Token Gobblerリスクも抑制</td></tr>
-          <tr><td>B</td><td>3体を対等なピア型のまま維持し、掲示板形式で議論させてから調整AGが読む</td><td>ディベート効果は最大化するが、トークン消費・不安定性のリスクは業界の警告どおり</td></tr>
-          <tr><td>C</td><td>まずBで試作し、精度・コストで問題が出たらAへ移行する基準を先に決めておく</td><td>実験としての面白さと実用性のバランスを取れる。基準の明文化が必要</td></tr>
-        </tbody>
-      </table></div>
+    <!-- サイクル#2 サマリー -->
+    <div class="callout c-info">
+      <div class="callout-icon">🔄</div>
+      <div>
+        <p><strong>ディスカッションサイクル #2（2026-07-09 打ち合わせ）：</strong> 論点1が人間側の議論で自然決着した珍しいケース。Yumaさんは「複数のAIエージェントに結論を出させる従来のアプローチは望ましくない」という点にAIの分析と同じタイミングで独立に気づき、Koki Matano氏と「独立判断＋上位エージェントが集約」で合意した。さらに、データ収集専用AGを加えた5体構成の検討や、外部SaaS提供という新しい事業方向も議題に上った（詳細は<a href="#log" style="color:var(--accent);">進捗ログ7/9</a>）。</p>
+      </div>
+    </div>
+
+    <!-- 論点1（決定） -->
+    <div style="background:var(--bg2);border:2px solid var(--green);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:10px;">論点 1 ｜ 🔴 矛盾 → ✅ 決定（2026-07-09）</div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">3体合議は「独立判断＋上位エージェントが集約」に決定</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>経緯：</strong> AI側は、業界の管理者型収束（Cognition）と2026年の合議研究（同一データ上の議論は収束が正解に近づく保証がなく、収束＝確信という錯覚を生む）から「独立並列予測＋単一の調整役」を推奨していた。7/9の打ち合わせで、Yuma Kaminaga氏はこれと同じ懸念——「複数のAIエージェントに議論させて結論を出させる従来のアプローチは望ましくない」——に<strong>独立に</strong>気づき、Koki Matano氏と協議のうえ同じ結論に達した。AIの分析とチームの実地判断が一致したため、選択肢Aで決定とする。</p>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">採用した設計</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:10px;">批判的AG・中立AG・推進的AGは<strong>互いに議論せず独立に</strong>予測を出す。上位エージェント（調整AG）がその3つの数字と根拠を読み、最終値を導く。例として打ち合わせで挙がった試算：</p>
+        <div class="tbl-wrap" style="margin-bottom:0;"><table>
+          <thead><tr><th>AG</th><th>予測（10人×週1h稼働のコスト例）</th></tr></thead>
+          <tbody>
+            <tr><td>推進的AG（楽観）</td><td>¥10,000</td></tr>
+            <tr><td>中立AG</td><td>¥15,000</td></tr>
+            <tr><td>批判的AG（残業込みの悲観）</td><td>¥20,000</td></tr>
+            <tr><td><strong>調整AG（最終）</strong></td><td><strong>¥13,000</strong></td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>今後の検討（構成案）：</strong> 情報の互換性を考慮し、<strong>データ収集専用AG</strong>（Gemini等）を追加する案が浮上。上位1体＋データ収集1体＋役割別3体＝<strong>計5体構成</strong>になる可能性がある。また3体それぞれに異なる性格（プロンプト）を与えることで、思考が得意なモデル（Claude等）を活用できるとの指摘もあった——モデル選定は<a href="#pricing" style="color:var(--accent);">API料金比較</a>と合わせて別途検討する。</p>
     </div>
 
     <!-- 論点2 -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 2 ｜ ⚪ 欠落 ｜ ステータス: 未決</div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">フレームワーク（LangGraph等）をいつ導入するか</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。財務予測の4体合議は状態管理（3体の予測結果を保持して調整AGに渡す）が絡むため、乗り換え基準の重要度はむしろ上がっている。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-09更新：</strong> 論点1の決定により構成が具体化し、状態管理の必要性がより明確になった——上位1体＋データ収集1体＋役割別3体（検討中）という5体構成では、データ収集AGの出力を3体に渡し、3体の出力を調整AGが受け取るという<strong>複数段の状態受け渡し</strong>が発生する。さらに打ち合わせでは外部SaaS提供（各社が自前でAPIキーを設定する形式）も検討課題として挙がっており、外部提供を見据えるなら状態管理・エラー処理の堅牢性がより重要になる。<strong>これは選択肢Aの移行基準「状態の永続化が必要になった時点」に近づきつつあるサインと解釈できる</strong>が、現時点ではまだ実験段階（打ち合わせでも「自社利用を優先」と確認）のため、判断は保留のままにする。</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
@@ -1036,26 +1077,12 @@
       </table></div>
     </div>
 
-    <!-- 論点3 -->
+    <!-- 論点3（旧論点4） -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 3 ｜ 🟡 更新 ｜ ステータス: 未決</div>
-      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">Groq TPMボトルネック対策 — Gemini再導入のタイミング</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景（数値更新）：</strong> Groq無料枠の llama-3.3-70b-versatile は <strong>30 RPM / 1,000 RPD / 12,000 TPM / 100,000 TPD</strong>（2026年6月時点、<a href="https://console.groq.com/docs/rate-limits" style="color:var(--accent);">公式ドキュメント</a>）。リフレクションループは1タスクでトークンを3〜10倍消費するため、実質の壁はRPDではなく<strong>TPM 12,000</strong>。一方Geminiは2025年12月の無料枠削減のあと、2026年5月7日にFlash系の上限が引き上げられ、Flash無料枠は <strong>10 RPM / 250,000 TPM / 1,500 RPD</strong>（<a href="https://ai.google.dev/gemini-api/docs/rate-limits" style="color:var(--accent);">公式レート制限</a>、2026-07-02取得）。TPMはGroqの20倍以上あり、トークン重量級タスクの逃し先として有力。</p>
-      <div class="tbl-wrap"><table>
-        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
-        <tbody>
-          <tr><td><strong>A（AI推奨）</strong></td><td>無課金アカウントでGeminiキーを再作成し、長文タスクをGeminiへ逃す2プロバイダ体制</td><td>既存の「継続中」タスクと一致。¥0方針を維持</td></tr>
-          <tr><td>B</td><td>Groq単体のままプロンプト圧縮・履歴要約で耐える</td><td>工数小だが根本解決ではない</td></tr>
-          <tr><td>C</td><td>少額課金でGroq Devプランへ</td><td>課金判断基準（無料枠枯渇）にまだ達していない</td></tr>
-        </tbody>
-      </table></div>
-    </div>
-
-    <!-- 論点4 -->
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 4 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 3 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">財務・カレンダーデータのマスキング範囲をどこまで広げるか</h3>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 議事録は「発言内容」の機密性だったが、財務データは<strong>数値そのものが機密</strong>（給与・契約金額・取引先名）。カレンダーも参加者名や案件名が実質的な機密情報になりうる。6/20に設計した門番エージェント（ローカルで伏字化→クラウド送信→復元）は議事録向けの粒度で設計されており、財務データに転用する際の項目定義がまだない。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-09更新：</strong> 打ち合わせでも同じ論点が確認された——AIに渡すデータの粒度（損失額のみか、1年間の数字の流れ全体か）が未定であること、外部提供を視野に入れる場合は案件名などのマスキング範囲を別途検討する必要があることの2点。石川さんに相談する次のステップが決まっている。<strong>この論点自体は打ち合わせでも未決のまま。</strong></p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
@@ -1066,11 +1093,12 @@
       </table></div>
     </div>
 
-    <!-- 論点5 -->
+    <!-- 論点4（旧論点5） -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 5 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 4 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">「予測が正確になった」をどう検証するか（バックテスト基準）</h3>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 4体合議の目的は「財務予測を正確にしていく」ことだが、正確さを測る基準がまだない。単一AGの予測と4体合議の予測を同じ過去データで比較しないと、合議に価値があるかどうか判断できない。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-09更新：</strong> 打ち合わせでも「予測の正確性をどう検証するか」が次のステップとして確認され、石川さんに相談する予定。<strong>この論点自体は打ち合わせでも未決のまま。</strong></p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
@@ -1084,7 +1112,7 @@
     <div class="callout c-tip">
       <div class="callout-icon">✅</div>
       <div>
-        <p><strong>決め方：</strong> 各論点について「A/B/C＋ひとこと理由」をClaude Codeに伝えるだけでよい（例:「論点1はA、論点3もAで進めて」）。決定はステータス欄に反映され、次のディスカッションサイクルで本文・実行計画に組み込まれる。<strong>🟢裏付けの反映済み事項：</strong> Python司令官のif/thenルーティング設計は2026年の業界収束形（司令官＋使い捨てサブエージェント）と一致することを確認。設計変更の必要なし。</p>
+        <p><strong>決め方：</strong> 各論点について「A/B/C＋ひとこと理由」をClaude Codeに伝えるだけでよい（例:「論点3はA、論点4もAで進めて」）。決定はステータス欄に反映され、次のディスカッションサイクルで本文・実行計画に組み込まれる。<strong>✅ 決定済み：</strong> 論点1（合議は独立判断＋上位AGが集約）。<strong>🟢裏付けの反映済み事項：</strong> Python司令官のif/thenルーティング設計は2026年の業界収束形（司令官＋使い捨てサブエージェント）と一致することを確認。設計変更の必要なし。</p>
       </div>
     </div>
   </div>
@@ -1381,7 +1409,7 @@
       <div class="card">
         <div class="card-icon">⚠️</div>
         <h3>デメリット（要注意）</h3>
-        <p><strong>トークン消費が激しい</strong>（1タスクに対して4体分の処理が走る）。<strong>ピア型合議は業界の収束形と逆行する</strong>という指摘もあり、<a href="#decisions" style="color:var(--accent);">意思決定ボード論点1</a>で扱っている。合議回数の上限設定も必須。</p>
+        <p><strong>トークン消費が激しい</strong>（1タスクに対して4体分の処理が走る）。ピア型（直接議論させる）は業界の収束形と逆行し、同一データ上の議論は正答率が改善しない研究結果もあるため、<strong>3体は独立判断のみで直接議論はさせない</strong>方式に決定済み（<a href="#decisions" style="color:var(--accent);">意思決定ボード論点1</a>）。合議回数の上限設定も必須。</p>
         <span class="badge bo">要注意</span>
       </div>
       <div class="card">
