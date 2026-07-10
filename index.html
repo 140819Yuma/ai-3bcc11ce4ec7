@@ -529,7 +529,7 @@
       <div class="card">
         <div class="card-icon">⚖️</div>
         <h3>① 物語 — 3視点の合議で予測する</h3>
-        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AGが3つを読んで最終予測＋根拠を1本にまとめる。社員のカレンダー（活動量シグナル）と過去の財務データの両方を入力に使う。→ <a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a></p>
+        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AIが3つを読んで最終予測＋根拠を1本にまとめる。社員のカレンダー（活動量シグナル）と過去の財務データの両方を入力に使う。→ <a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a></p>
       </div>
       <div class="card">
         <div class="card-icon">♻️</div>
@@ -539,7 +539,7 @@
       <div class="card">
         <div class="card-icon">🧪</div>
         <h3>③ 未決 — 合議方式とバックテスト</h3>
-        <p>3体の意見が割れたときの決め方（調整AG／平均／人間判断）と、「予測が本当に正確になったか」を検証するバックテスト方法は<strong>まだ設計途中</strong>。→ <a href="#decisions" style="color:var(--accent);">意思決定ボード</a></p>
+        <p>3体の意見が割れたときの決め方（調整AI／平均／人間判断）と、「予測が本当に正確になったか」を検証するバックテスト方法は<strong>まだ設計途中</strong>。→ <a href="#decisions" style="color:var(--accent);">意思決定ボード</a></p>
       </div>
     </div>
 
@@ -572,9 +572,9 @@
             <td>財務・カレンダーデータ向けのマスキング項目（氏名・金額・取引先名）の洗い出し</td>
           </tr>
           <tr>
-            <td>4エージェント設計</td>
+            <td>5エージェント設計</td>
             <td>役割の定義（批判的・中立・推進的・調整）と合議の位置づけ</td>
-            <td>各AGのプロンプト設計、調整AGの統合ロジック、意見が割れたときの扱い</td>
+            <td>各AGのプロンプト設計、調整AIの統合ロジック、意見が割れたときの扱い</td>
           </tr>
           <tr>
             <td>データ接続</td>
@@ -603,11 +603,11 @@
       </div>
       <div class="step">
         <div class="snum">3</div>
-        <div class="scont"><h4>4エージェントのプロンプトを設計する（Step 3）</h4><p>批判的・中立・推進的の3視点をどう差別化するか、調整AGが何を根拠に最終予測を決めるかを言語化する。</p></div>
+        <div class="scont"><h4>5エージェントのプロンプトを設計する（Step 3）</h4><p>データ収集AGの収集範囲、批判的・中立・推進的の3視点をどう差別化するか、調整AIが何を根拠に最終予測を決めるかを言語化する。</p></div>
       </div>
       <div class="step">
         <div class="snum">4</div>
-        <div class="scont"><h4>合議の決め方を意思決定ボードで確定する</h4><p>3体が食い違ったときに調整AGが決めるのか、閾値超えで人間にエスカレーションするのか。<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>で判断する。</p></div>
+        <div class="scont"><h4>合議の決め方を意思決定ボードで確定する</h4><p>3体が食い違ったときに調整AIが決めるのか、閾値超えで人間にエスカレーションするのか。<a href="#decisions" style="color:var(--accent);">意思決定ボード</a>で判断する。</p></div>
       </div>
     </div>
 
@@ -632,8 +632,8 @@
     <div class="card-grid">
       <div class="card">
         <div class="card-icon">⚖️</div>
-        <h3>財務予測（4エージェント合議）</h3>
-        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AGが根拠ごと1本にまとめる。社員のカレンダー活動量と過去の財務データを入力に使う。</p>
+        <h3>財務予測（5エージェント構成）</h3>
+        <p>批判的AG・中立AG・推進的AGがそれぞれ独立に財務予測を出し、調整AIが根拠ごと1本にまとめる。社員のカレンダー活動量と過去の財務データを入力に使う。</p>
         <span class="badge bb">優先度：高</span>
       </div>
       <div class="card">
@@ -845,13 +845,28 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/10</div>
+        <div class="log-content">
+          <h4>5エージェント構成の確定 — データ収集AG＋調整AI（司令塔）</h4>
+          <ul class="log-items">
+            <li>Yumaさんの提案を検討：批判的・中立・推進的の3体＋データ収集AGの上位に、調整AIを単一の司令塔として置く構成を確定</li>
+            <li>7/9に「浮上」扱いだった5体構成を正式に採用。調整AIが①データ収集発注→②マスキング→③3体へ並列発注→④統合・出力、まで一括管理する形に整理</li>
+            <li>ハイブリッド設計図・リフレクションの合議フロー・実装コードサンプルを5エージェント構成に更新</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> データ収集（I/O）と推論（3視点予測）と裁定（統合）を別エージェントに分離したことで、責務がはっきりした。Python司令官（タスク種別のルーティング）と調整AI（財務予測パイプライン内部の司令塔）は<strong>別の層</strong>として扱う——前者はLLMを使わない外側のルーター、後者はLLMベースの内側のオーケストレーター。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
           <ul class="log-items">
             <li>カレンダー・財務データの取得経路を確定</li>
             <li>財務ドメイン向けマスキング項目（氏名・金額・取引先名）の洗い出し</li>
-            <li>4エージェントのプロンプト設計</li>
+            <li>5エージェントのプロンプト設計</li>
             <li>バックテスト方法の設計（過去データで予測→実績と比較）</li>
           </ul>
         </div>
@@ -867,14 +882,14 @@
     <div class="sec-head">
       <div class="sec-tag">Execution Plan</div>
       <h2 class="sec-title">実行計画 — 財務予測エージェントを動かすまで</h2>
-      <p class="sec-sub">2026-07-08、プロジェクトの軸足を財務予測へ変更した。基盤（Python司令官・合議ループ・マスキング）は流用できるため、ここではドメイン固有の3つ——データ接続・4エージェント設計・検証方法——に絞った計画を立てる。旧計画は末尾にアーカイブしてある。</p>
+      <p class="sec-sub">2026-07-08、プロジェクトの軸足を財務予測へ変更した。基盤（Python司令官・合議ループ・マスキング）は流用できるため、ここではドメイン固有の3つ——データ接続・5エージェント設計・検証方法——に絞った計画を立てる。旧計画は末尾にアーカイブしてある。</p>
     </div>
 
     <!-- ストーリー -->
     <div style="background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:30px 34px;margin:0 0 20px;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;">Core Loop</div>
       <p style="font-family:var(--serif);font-size:clamp(17px,2.6vw,23px);font-weight:700;line-height:1.9;color:var(--text);">「3人の専門家が別々に予測し、1人の調整役が最終判断を書く」</p>
-      <p style="font-size:13.5px;color:var(--text2);margin-top:14px;line-height:2;">批判的AGは楽観バイアスを疑い、予測外れの実績や季節性を重視する。中立AGは統計的なベースライン予測を出す。推進的AGはカレンダーの活動量シグナル（商談件数・稼働予定）を積極的に織り込む。3体の予測と根拠を調整AGが読み、最終予測値・信頼区間・「なぜこの値か」を1本にまとめる——これは既存の合議ループの構成をそのまま踏襲している。</p>
+      <p style="font-size:13.5px;color:var(--text2);margin-top:14px;line-height:2;">批判的AGは楽観バイアスを疑い、予測外れの実績や季節性を重視する。中立AGは統計的なベースライン予測を出す。推進的AGはカレンダーの活動量シグナル（商談件数・稼働予定）を積極的に織り込む。3体の予測と根拠を調整AIが読み、最終予測値・信頼区間・「なぜこの値か」を1本にまとめる——これは既存の合議ループの構成をそのまま踏襲している。</p>
     </div>
 
     <!-- 要件マッピング -->
@@ -912,8 +927,8 @@
       <div class="step">
         <div class="snum">3</div>
         <div class="scont">
-          <h4>4エージェントのプロンプトを設計する</h4>
-          <p>批判的・中立・推進的の3視点が実際に異なる予測を出すよう、それぞれのシステムプロンプトに明確な役割制約を書く（例: 批判的AGは必ず「外れた場合のダウンサイド」を数値化する等）。調整AGは3体の根拠を比較し、対立点を明示した上で最終値を出す。</p>
+          <h4>5エージェントのプロンプトを設計する</h4>
+          <p>データ収集AGの収集範囲を定義し、批判的・中立・推進的の3視点が実際に異なる予測を出すよう、それぞれのシステムプロンプトに明確な役割制約を書く（例: 批判的AGは必ず「外れた場合のダウンサイド」を数値化する等）。調整AIは3体の根拠を比較し、対立点を明示した上で最終値を出す。この構成は2026-07-10に確定した。</p>
         </div>
       </div>
       <div class="step">
@@ -927,7 +942,7 @@
         <div class="snum">5</div>
         <div class="scont">
           <h4>バックテストで精度を検証する</h4>
-          <p>過去の財務データを使い、「その時点までの情報だけで予測させたら実績とどれだけ合っていたか」を検証する。単一AGの予測と4体合議の予測を比較し、合議が本当に精度を上げているかを確認する。</p>
+          <p>過去の財務データを使い、「その時点までの情報だけで予測させたら実績とどれだけ合っていたか」を検証する。単一AGの予測と5体構成の予測を比較し、合議が本当に精度を上げているかを確認する。</p>
         </div>
       </div>
       <div class="step">
@@ -1045,10 +1060,10 @@
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">3体合議は「独立判断＋上位エージェントが集約」に決定</h3>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>経緯：</strong> AI側は、業界の管理者型収束（Cognition）と2026年の合議研究（同一データ上の議論は収束が正解に近づく保証がなく、収束＝確信という錯覚を生む）から「独立並列予測＋単一の調整役」を推奨していた。7/9の打ち合わせで、Yuma Kaminaga氏はこれと同じ懸念——「複数のAIエージェントに議論させて結論を出させる従来のアプローチは望ましくない」——に<strong>独立に</strong>気づき、Koki Matano氏と協議のうえ同じ結論に達した。AIの分析とチームの実地判断が一致したため、選択肢Aで決定とする。</p>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;">
-        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">採用した設計</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;">批判的AG・中立AG・推進的AGは<strong>互いに議論せず独立に</strong>予測を出す。上位エージェント（調整AG）がその3つの数字と根拠を読み、最終値を導く。</p>
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">採用した設計（2026-07-10 構成確定）</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;">批判的AG・中立AG・推進的AGと<strong>データ収集AG</strong>（Gemini想定）の計4体を、<strong>調整AI（司令塔）</strong>が統括する5エージェント構成に確定した。調整AIがデータ収集を発注→マスキング→3体へ並列発注（互いに議論させない）→根拠を回収して統合、まで一貫して発注・回収する唯一の統合点になる。詳細な構成図は<a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a>を参照。</p>
       </div>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>今後の検討（構成案）：</strong> 情報の互換性を考慮し、<strong>データ収集専用AG</strong>（Gemini等）を追加する案が浮上。上位1体＋データ収集1体＋役割別3体＝<strong>計5体構成</strong>になる可能性がある。また3体それぞれに異なる性格（プロンプト）を与えることで、思考が得意なモデル（Claude等）を活用できるとの指摘もあった——モデル選定は<a href="#pricing" style="color:var(--accent);">API料金比較</a>と合わせて別途検討する。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>継続検討：</strong> 3体それぞれに異なる性格（プロンプト）を与えることで、思考が得意なモデル（Claude等）を活用できるとの指摘があった——モデル選定は<a href="#pricing" style="color:var(--accent);">API料金比較</a>と合わせて別途検討する。</p>
     </div>
 
     <!-- 論点2 -->
@@ -1056,7 +1071,7 @@
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 2 ｜ ⚪ 欠落 ｜ ステータス: 未決</div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">フレームワーク（LangGraph等）をいつ導入するか</h3>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 2026年時点でLangGraphが本番運用の事実上の標準（v0.4でチェックポイント・人間承認フローを強化）、CrewAIは最速プロトタイプ向けという整理が定着（<a href="https://www.langchain.com/resources/ai-agent-frameworks" style="color:var(--accent);">フレームワーク比較</a>、2026-07-02取得）。同一モデルでもフレームワーク選択でベンチマーク最大30ポイント差の報告もある。現行は自作Python司令官で、本レポートにはこの「いつ乗り換えるか」の基準がなかった。</p>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-09更新：</strong> 論点1の決定により構成が具体化し、状態管理の必要性がより明確になった——上位1体＋データ収集1体＋役割別3体（検討中）という5体構成では、データ収集AGの出力を3体に渡し、3体の出力を調整AGが受け取るという<strong>複数段の状態受け渡し</strong>が発生する。さらに打ち合わせでは外部SaaS提供（各社が自前でAPIキーを設定する形式）も検討課題として挙がっており、外部提供を見据えるなら状態管理・エラー処理の堅牢性がより重要になる。<strong>これは選択肢Aの移行基準「状態の永続化が必要になった時点」に近づきつつあるサインと解釈できる</strong>が、現時点ではまだ実験段階（打ち合わせでも「自社利用を優先」と確認）のため、判断は保留のままにする。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-10更新：</strong> 論点1の決定を受け、調整AI（司令塔）＋データ収集AG＋役割別3体の<strong>5エージェント構成が確定</strong>した。調整AIがデータ収集AGを発注→マスキング→3体へ並列発注→根拠回収・統合、という<strong>複数段の状態受け渡し</strong>を一括管理する構造になり、状態管理の必要性はより明確になった。さらに打ち合わせでは外部SaaS提供（各社が自前でAPIキーを設定する形式）も検討課題として挙がっており、外部提供を見据えるなら状態管理・エラー処理の堅牢性がより重要になる。<strong>これは選択肢Aの移行基準「状態の永続化が必要になった時点」に近づきつつあるサインと解釈できる</strong>が、現時点ではまだ実験段階（打ち合わせでも「自社利用を優先」と確認）のため、判断は保留のままにする。</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
@@ -1087,7 +1102,7 @@
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 4 ｜ ⚪ 欠落 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規</span></div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">「予測が正確になった」をどう検証するか（バックテスト基準）</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 4体合議の目的は「財務予測を正確にしていく」ことだが、正確さを測る基準がまだない。単一AGの予測と4体合議の予測を同じ過去データで比較しないと、合議に価値があるかどうか判断できない。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 5エージェント構成の目的は「財務予測を正確にしていく」ことだが、正確さを測る基準がまだない。単一AGの予測と5体構成の予測を同じ過去データで比較しないと、合議に価値があるかどうか判断できない。</p>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>2026-07-09更新：</strong> 打ち合わせでも「予測の正確性をどう検証するか」が次のステップとして確認され、石川さんに相談する予定。<strong>この論点自体は打ち合わせでも未決のまま。</strong></p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
@@ -1118,7 +1133,7 @@
     <div class="sec-head">
       <div class="sec-tag">Hybrid Architecture</div>
       <h2 class="sec-title">財務予測エージェント設計（参考動画ベース）</h2>
-      <p class="sec-sub">組織設計の枠組み（CEO + 文脈エンジン + タスクボード）は維持しつつ、専門チーム層を財務予測の4エージェント合議に置き換えた（2026-07-08）。現フェーズはクラウドAPIのみ、Mac mini導入後にローカル層を追加。</p>
+      <p class="sec-sub">組織設計の枠組み（CEO + 文脈エンジン + タスクボード）は維持しつつ、専門チーム層を財務予測の5エージェント構成に置き換えた（2026-07-08策定・2026-07-10確定）。調整AIを唯一の司令塔とし、データ収集→マスキング→3視点並列予測→統合、を一気通貫で発注する。現フェーズはクラウドAPIのみ、Mac mini導入後にローカル層を追加。</p>
     </div>
 
     <!-- 全体アーキテクチャ -->
@@ -1173,19 +1188,36 @@
         </div>
       </div>
 
-      <!-- データ入力層 -->
-      <div class="arch-zone bridge" style="border-color:var(--pink);">
-        <div class="arch-zone-label" style="color:var(--pink);">📥 データ入力層（マスキング経由）</div>
+      <!-- 財務予測パイプライン -->
+      <div class="arch-zone cloud" style="border-color:var(--yellow);">
+        <div class="arch-zone-label" style="color:var(--yellow);">🎯 財務予測パイプライン（司令塔：調整AI）</div>
+
         <div class="arch-row">
-          <div class="arch-node" style="min-width:110px;">
-            <div class="n-icon">📅</div>
-            <div class="n-name">カレンダーデータ</div>
-            <div class="n-sub">社員の予定件数・<br/>稼働シグナル</div>
+          <div class="arch-node" style="border:2px solid var(--yellow);background:rgba(227,179,65,.1);min-width:240px;">
+            <div class="n-icon">🟡</div>
+            <div class="n-name">調整AI（司令塔）</div>
+            <div class="n-sub">①データ収集を発注 → ②マスキング<br/>③3体へ並列発注 → ④統合・出力<br/>4体すべての唯一の統合点</div>
           </div>
-          <div class="arch-node" style="min-width:110px;">
-            <div class="n-icon">💹</div>
-            <div class="n-name">過去の財務データ</div>
-            <div class="n-sub">売上・コスト・<br/>会計実績</div>
+        </div>
+
+        <div class="arch-arr down">↓ ①データ収集を発注</div>
+
+        <div class="arch-row" style="flex-wrap:wrap;">
+          <div class="arch-node" style="min-width:96px;padding:8px;">
+            <div class="n-icon" style="font-size:14px;">📅</div>
+            <div class="n-name" style="font-size:10px;">カレンダー</div>
+            <div class="n-sub" style="font-size:9px;">予定件数・稼働</div>
+          </div>
+          <div class="arch-node" style="min-width:96px;padding:8px;">
+            <div class="n-icon" style="font-size:14px;">💹</div>
+            <div class="n-name" style="font-size:10px;">財務データ</div>
+            <div class="n-sub" style="font-size:9px;">売上・コスト実績</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node">
+            <div class="n-icon">📡</div>
+            <div class="n-name">データ収集AG</div>
+            <div class="n-sub">Gemini（情報互換性重視）<br/>カレンダー・財務データを収集</div>
           </div>
           <div class="arch-arr">→</div>
           <div class="arch-node hl-orange">
@@ -1194,13 +1226,10 @@
             <div class="n-sub">氏名・金額・取引先名を<br/>伏字化してから送信</div>
           </div>
         </div>
-      </div>
 
-      <!-- チーム層 -->
-      <div class="arch-zone cloud" style="border-color:var(--green);">
-        <div class="arch-zone-label" style="color:var(--green);">🤖 財務予測チーム（4エージェント合議）</div>
+        <div class="arch-arr down">↓ ③マスク済みデータを3体へ<strong>並列発注</strong>（互いに直接会話しない）</div>
 
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
 
           <!-- 批判的AG -->
           <div style="background:rgba(211,71,71,.06);border:1px solid var(--red);border-radius:8px;padding:12px;">
@@ -1241,19 +1270,16 @@
             </div>
           </div>
 
-          <!-- 調整AG -->
-          <div style="background:rgba(227,179,65,.08);border:2px solid var(--yellow);border-radius:8px;padding:12px;">
-            <div style="font-size:11px;font-weight:700;color:var(--yellow);margin-bottom:4px;">🟡 調整AG ★最重要</div>
-            <div style="font-size:10px;color:var(--text2);margin-bottom:8px;">3体の予測・根拠を読み最終判断を書く</div>
-            <div class="arch-row" style="flex-wrap:wrap;gap:6px;justify-content:center;">
-              <div class="arch-node" style="min-width:90px;padding:8px;">
-                <div class="n-icon" style="font-size:14px;">⚖️</div>
-                <div class="n-name" style="font-size:10px;">統合・信頼区間</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>最終予測＋根拠を出力</div>
-              </div>
-            </div>
-          </div>
+        </div>
 
+        <div class="arch-arr down">↓ ④3体の予測・根拠を回収</div>
+
+        <div class="arch-row">
+          <div class="arch-node" style="border:2px solid var(--yellow);background:rgba(227,179,65,.1);min-width:240px;">
+            <div class="n-icon">⚖️</div>
+            <div class="n-name">調整AIが統合</div>
+            <div class="n-sub">最終予測＋信頼区間を出力<br/>意見の割れが大きければ人間へエスカレーション</div>
+          </div>
         </div>
       </div>
 
@@ -1289,6 +1315,24 @@
         </thead>
         <tbody>
           <tr>
+            <td><strong>調整AI</strong>（司令塔）</td>
+            <td>Groq Llama 3.3 70B（深いプロンプト）</td>
+            <td>データ収集の発注〜3体並列発注〜統合まで一括管理</td>
+            <td><span class="ok">無料</span></td>
+          </tr>
+          <tr>
+            <td><strong>データ収集AG</strong></td>
+            <td>Gemini（情報互換性重視）</td>
+            <td>カレンダー・過去の財務データを取得</td>
+            <td><span class="ok">無料</span></td>
+          </tr>
+          <tr>
+            <td><strong>門番AG</strong>（マスキング）</td>
+            <td>Groq Llama 3.1 8B（将来: Qwen 2.5 7B ローカル）</td>
+            <td>氏名・金額・取引先名の伏字化・復元</td>
+            <td><span class="ok">無料</span> / <span class="tri">Mac mini購入後はローカル</span></td>
+          </tr>
+          <tr>
             <td><strong>批判的AG</strong></td>
             <td>Groq Llama 3.3 70B</td>
             <td>下振れリスク・過去の予測外れの分析</td>
@@ -1306,18 +1350,6 @@
             <td>カレンダー活動量からの先行指標分析</td>
             <td><span class="ok">無料</span></td>
           </tr>
-          <tr>
-            <td><strong>調整AG</strong>（統合担当）</td>
-            <td>Groq Llama 3.3 70B（深いプロンプト）</td>
-            <td>3体の予測・根拠を比較し最終予測＋信頼区間を出力</td>
-            <td><span class="ok">無料</span></td>
-          </tr>
-          <tr>
-            <td><strong>門番AG</strong>（マスキング）</td>
-            <td>Groq Llama 3.1 8B（将来: Qwen 2.5 7B ローカル）</td>
-            <td>氏名・金額・取引先名の伏字化・復元</td>
-            <td><span class="ok">無料</span> / <span class="tri">Mac mini購入後はローカル</span></td>
-          </tr>
         </tbody>
       </table>
     </div>
@@ -1332,9 +1364,9 @@
       <div>
         <p style="font-weight:700;margin-bottom:8px;">フェーズ別の実装状況</p>
         <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;">
-          <div><span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官・合議ループの基盤は稼働済み（旧ドメインで検証済み）。財務・カレンダーデータ接続、4エージェントのプロンプト設計はこれから。</div>
+          <div><span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官・合議ループの基盤は稼働済み（旧ドメインで検証済み）。財務・カレンダーデータ接続、5エージェント（データ収集AG＋調整AI＋3視点）のプロンプト設計はこれから。</div>
           <div><span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 2</span>データソース接続（カレンダーAPI・財務データエクスポート）とマスキング拡張を実装。</div>
-          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>4エージェント合議の本実装とバックテストスクリプトの構築。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>5エージェント構成の本実装とバックテストスクリプトの構築。</div>
           <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。財務データのマスキングをローカルLLM（Qwen 2.5 7B）へ移行し、完全ハイブリッド構成へ。</div>
         </div>
       </div>
@@ -1354,7 +1386,7 @@
     <div class="sec-head">
       <div class="sec-tag">Multi-Perspective Debate</div>
       <h2 class="sec-title">3視点合議 — 財務予測の中核メカニズム</h2>
-      <p class="sec-sub">旧「リフレクション型（Generator⇄Critic）」の仕組みを、財務予測の核心である「批判的×中立×推進的の3視点合議」に転用した。仕組み自体は同じ合議パターンであり、ドメインが変わっても有効。</p>
+      <p class="sec-sub">旧「リフレクション型（Generator⇄Critic）」の仕組みを、財務予測の核心である「批判的×中立×推進的の3視点合議」に転用した。データ収集AGと調整AIを加えた<strong>5エージェント構成</strong>として2026-07-10に確定。仕組み自体は同じ合議パターンであり、ドメインが変わっても有効。</p>
     </div>
 
     <!-- 合議フロー -->
@@ -1363,18 +1395,18 @@
       <div class="reflection-flow" style="gap:2px;">
         <div class="rf-step active">
           <div class="rf-num">1</div>
-          <div class="rf-label">並列予測</div>
-          <div class="rf-sub">批判的・中立・推進的の3体が同時に独立予測</div>
+          <div class="rf-label">データ収集</div>
+          <div class="rf-sub">データ収集AGがカレンダー・財務データを取得→門番AGがマスキング</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">2</div>
-          <div class="rf-label">根拠比較</div>
-          <div class="rf-sub">調整AGが3体の根拠を並べて比較</div>
+          <div class="rf-label">並列予測</div>
+          <div class="rf-sub">批判的・中立・推進的の3体が同時に独立予測（互いに議論しない）</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">3</div>
-          <div class="rf-label">対立点抽出</div>
-          <div class="rf-sub">意見が割れている箇所を特定</div>
+          <div class="rf-label">根拠比較</div>
+          <div class="rf-sub">調整AIが3体の根拠と対立点を比較</div>
         </div>
         <div class="rf-step">
           <div class="rf-num">4</div>
@@ -1393,19 +1425,19 @@
       <div class="card">
         <div class="card-icon">✅</div>
         <h3>メリット</h3>
-        <p>単一AGの予測より<strong>バイアスが相殺</strong>される。批判的AGが楽観を疑い、推進的AGが保守を疑うことで、調整AGはより幅の広い根拠から判断できる。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で見た「ディベートがハルシネーションを減らす」研究とも整合する。</p>
+        <p>単一AGの予測より<strong>バイアスが相殺</strong>される。批判的AGが楽観を疑い、推進的AGが保守を疑うことで、調整AIはより幅の広い根拠から判断できる。<a href="#frontier" style="color:var(--accent);">面白さ×新規性の調査</a>で見た「ディベートがハルシネーションを減らす」研究とも整合する。</p>
         <span class="badge bg">精度向上</span>
       </div>
       <div class="card">
         <div class="card-icon">⚠️</div>
         <h3>デメリット（要注意）</h3>
-        <p><strong>トークン消費が激しい</strong>（1タスクに対して4体分の処理が走る）。ピア型（直接議論させる）は業界の収束形と逆行し、同一データ上の議論は正答率が改善しない研究結果もあるため、<strong>3体は独立判断のみで直接議論はさせない</strong>方式に決定済み（<a href="#decisions" style="color:var(--accent);">意思決定ボード論点1</a>）。合議回数の上限設定も必須。</p>
+        <p><strong>トークン消費が激しい</strong>（1タスクに対して5体分の処理が走る）。ピア型（直接議論させる）は業界の収束形と逆行し、同一データ上の議論は正答率が改善しない研究結果もあるため、<strong>3体は独立判断のみで直接議論はさせない</strong>方式に決定済み（<a href="#decisions" style="color:var(--accent);">意思決定ボード論点1</a>）。合議回数の上限設定も必須。</p>
         <span class="badge bo">要注意</span>
       </div>
       <div class="card">
         <div class="card-icon">🔧</div>
         <h3>コスト最適化の設計方針（例）</h3>
-        <p>3体の並列予測にはGroq Llama 3.3 70Bを想定。調整AGは深いプロンプトで同モデルを使う想定だが、各役割に使うAPIは<strong>未確定</strong>。合議回数は<strong>1回（並列予測→統合）</strong>を基本とし、意見が割れた場合のみ人間にエスカレーション。</p>
+        <p>3体の並列予測にはGroq Llama 3.3 70Bを想定。データ収集AGは情報互換性を考慮しGeminiを想定。調整AIは深いプロンプトで判断する役割だが、各役割に使うAPIは<strong>未確定</strong>。合議回数は<strong>1回（並列予測→統合）</strong>を基本とし、意見が割れた場合のみ人間にエスカレーション。</p>
         <span class="badge bb">推奨設計</span>
       </div>
       <div class="card">
@@ -1418,13 +1450,19 @@
 
     <!-- クラウドマルチLLM合議 -->
     <div style="margin-top:28px; background:var(--bg2); border:1px solid var(--border); border-radius:12px; padding:24px;">
-      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">4エージェント合議の役割分担（設計）</h3>
+      <h3 style="font-size:14px; font-weight:700; margin-bottom:14px;">5エージェント構成の役割分担（設計）</h3>
       <div class="tbl-wrap">
         <table>
           <thead>
             <tr><th>役割</th><th>視点</th><th>処理内容</th><th>コスト感</th></tr>
           </thead>
           <tbody>
+            <tr>
+              <td>データ収集AG</td>
+              <td>情報収集</td>
+              <td>カレンダー・財務データを取得（Gemini想定）</td>
+              <td><span class="ok">低（無料枠内）</span></td>
+            </tr>
             <tr>
               <td>批判的AG</td>
               <td>ダウンサイド重視</td>
@@ -1444,9 +1482,9 @@
               <td><span class="ok">低（無料枠内）</span></td>
             </tr>
             <tr>
-              <td>調整AG</td>
+              <td>調整AI（司令塔）</td>
               <td>統合・裁定</td>
-              <td>3体の根拠を比較し最終予測＋信頼区間を出力</td>
+              <td>データ収集〜3体の並列発注〜統合まで一括で発注・回収</td>
               <td><span class="tri">中（深いプロンプト）</span></td>
             </tr>
           </tbody>
@@ -2128,7 +2166,7 @@
       <div class="card">
         <div class="card-icon">🔄</div>
         <h3>Loop Library（Forward Future / Matthew Berman）</h3>
-        <p>実戦投入されたエージェント用ループ26本のキュレーション集。価値は個々のループより<strong>「トリガー→指示→検証→停止条件→権限境界」の5部構成フォーマット</strong>にある。現行の合議ループ（3体並列予測→調整AGが統合）は既にこの形式を満たしており、財務予測・バックテスト・掃除もループ定義書として書けばPhase 2の文脈エンジン（knowledge/）にそのまま収まる。「判断に迷ったら人間へ」の絶対ルールは⑤権限境界そのもの。</p>
+        <p>実戦投入されたエージェント用ループ26本のキュレーション集。価値は個々のループより<strong>「トリガー→指示→検証→停止条件→権限境界」の5部構成フォーマット</strong>にある。現行の合議ループ（3体並列予測→調整AIが統合）は既にこの形式を満たしており、財務予測・バックテスト・掃除もループ定義書として書けばPhase 2の文脈エンジン（knowledge/）にそのまま収まる。「判断に迷ったら人間へ」の絶対ルールは⑤権限境界そのもの。</p>
         <span class="badge bb">実行計画 Step 5 に採用</span>
       </div>
       <div class="card">
@@ -2212,23 +2250,34 @@ genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEM
             <span class="ck">return</span> self.handle_general(task)
 
     <span class="ck">def</span> <span class="cf">handle_forecast_with_debate</span>(self, task):
-        <span class="cc"># Step1: ローカルLLMでマスキング（氏名・金額・取引先名）</span>
-        masked <span class="co">=</span> self.local_mask(task[<span class="cs">"calendar_data"</span>], task[<span class="cs">"financial_data"</span>])
+        <span class="cc"># この関数全体が「調整AI（司令塔）」の振る舞い。</span>
+        <span class="cc"># データ収集→マスキング→3体並列発注→統合を一括で発注・回収する。</span>
 
-        <span class="cc"># Step2: 批判的・中立・推進的の3体が並列予測</span>
+        <span class="cc"># Step1: データ収集AG（Gemini）がカレンダー・財務データを収集</span>
+        raw_data <span class="co">=</span> self.gemini_collect_data(task[<span class="cs">"sources"</span>])
+
+        <span class="cc"># Step2: ローカルLLMでマスキング（氏名・金額・取引先名）</span>
+        masked <span class="co">=</span> self.local_mask(raw_data)
+
+        <span class="cc"># Step3: 批判的・中立・推進的の3体が並列発注（互いに議論させない）</span>
         critical <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"critical"</span>)
         neutral  <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"neutral"</span>)
         advocate <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"advocate"</span>)
 
-        <span class="cc"># Step3: 調整AGが3体の根拠を比較し統合</span>
+        <span class="cc"># Step4: 調整AI自身が3体の根拠を比較し統合</span>
         result <span class="co">=</span> self.groq_arbitrate([critical, neutral, advocate])
         <span class="ck">if</span> result.disagreement_score <span class="co">></span> <span class="cn">0.3</span>:  <span class="cc"># 意見の割れが大きい場合は人間へ</span>
             <span class="ck">return</span> self.escalate_to_human(result, task)
 
-        <span class="cc"># Step4: ローカルで復元し、根拠つき予測を返す</span>
+        <span class="cc"># Step5: ローカルで復元し、根拠つき予測を返す</span>
         <span class="ck">return</span> self.local_unmask(result, task[<span class="cs">"mask_map"</span>])
 
-    <span class="ck">def</span> <span class="cf">local_mask</span>(self, calendar_data, financial_data) <span class="co">-></span> <span class="cy">tuple</span>:
+    <span class="ck">def</span> <span class="cf">gemini_collect_data</span>(self, sources: <span class="cy">dict</span>) <span class="co">-></span> <span class="cy">tuple</span>:
+        <span class="cc"># データ収集AG：Google Calendar・会計データソースから生データを取得</span>
+        <span class="cc"># 情報の互換性を考慮しGeminiを想定（Groq/Claude等への差し替えも可）</span>
+        <span class="ck">pass</span>
+
+    <span class="ck">def</span> <span class="cf">local_mask</span>(self, raw_data) <span class="co">-></span> <span class="cy">tuple</span>:
         <span class="cc"># Ollama（Qwen 2.5 7B）でローカルマスキング</span>
         <span class="cc"># 氏名・金額・取引先名・案件名を [PERSON_1], [AMOUNT_1] 等で置換</span>
         <span class="cc"># mask_map: {"[PERSON_1]": "田中部長"} を返す</span>
@@ -2250,8 +2299,7 @@ genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEM
 orchestrator <span class="co">=</span> PythonOrchestrator()
 result <span class="co">=</span> orchestrator.route_task({
     <span class="cs">"type"</span>: <span class="cs">"financial_forecast"</span>,
-    <span class="cs">"calendar_data"</span>: <span class="cs">"今月の商談・稼働予定..."</span>,
-    <span class="cs">"financial_data"</span>: <span class="cs">"過去12ヶ月の売上・コスト実績..."</span>
+    <span class="cs">"sources"</span>: {<span class="cs">"calendar"</span>: <span class="cs">"..."</span>, <span class="cs">"accounting"</span>: <span class="cs">"..."</span>}
 })</pre>
     </div>
 
