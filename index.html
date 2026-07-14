@@ -475,6 +475,7 @@
   <a href="#org-design">運用フロー</a>
 </div>
 <div class="sub-nav-bar" data-tab="research">
+  <a href="#expense-forecast">支出予測</a><span class="sub-sep"> · </span>
   <a href="#free-api">無料API</a><span class="sub-sep"> · </span>
   <a href="#pricing">API料金比較</a><span class="sub-sep"> · </span>
   <a href="#agent-services">サービス比較</a><span class="sub-sep"> · </span>
@@ -860,6 +861,24 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/14</div>
+        <div class="log-content">
+          <h4>予測対象を「支出（経費）」に明確化 — 実務手法の調査を実施</h4>
+          <ul class="log-items">
+            <li>予測対象を人件費・事業費などの<strong>支出（経費）</strong>に明確化（売上ではなく経費側にフォーカス）</li>
+            <li>経費予測の実務手法を調査：固変分解→費目タイプ別（固定費＝転記／人件費＝人数×単価ドライバー／事業費＝先行指標）に手法を変えて合算するのが定石と判明</li>
+            <li>NeurIPS 2024論文で「LLMは数値の時系列外挿が統計モデルに劣る」ことを確認 → 中立AGの実装方式を論点5として起票</li>
+            <li>データ要件を確定：会計ソフトの勘定科目別月次推移CSV（24ヶ月推奨）＋人員計画表＋契約台帳＋カレンダー。API開発が必須なのはカレンダーのみ</li>
+            <li>バックテスト基準の材料を収集：rolling-origin方式・WAPE指標・季節ナイーブ超えを最低ライン（論点4の判断材料）</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> 支出は「組織の意思決定で決まる部分」が大きく、費目分解すれば売上より予測しやすい。LLMの価値は数字当てではなく<strong>統計モデルが読めない文脈（採用計画・賞与月・案件予定）の解釈と補正</strong>にある——TradingAgents論文（多視点役割分担の有効性を実証）もこの方向を支持。<br>
+            <strong>📌 次のステップ：</strong> ①勘定科目別月次CSVのエクスポートと固変分解（データの棚卸し）、②論点5（中立AGの実装方式）の判断、③石川さん相談（論点3・4）に論点5とWAPE基準の材料を追加。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
@@ -914,7 +933,7 @@
         <div class="snum">1</div>
         <div class="scont">
           <h4>データソースを確定する</h4>
-          <p>カレンダーはGoogle Calendar API（読み取り専用スコープ）を軸に検討。財務データは既存の会計ソフト・スプレッドシートからのCSVエクスポートを想定し、社員ごとの予定件数と過去の売上・コスト実績を月次で突き合わせられる形にする。</p>
+          <p>カレンダーはGoogle Calendar API（読み取り専用スコープ）を軸に検討。財務データは既存の会計ソフト・スプレッドシートからのCSVエクスポートを想定し、社員ごとの予定件数と過去の売上・コスト実績を月次で突き合わせられる形にする。経費側の具体的なデータ要件（勘定科目別月次推移・人員計画表・契約台帳）は<a href="#expense-forecast" style="color:var(--accent);">支出予測の実務調査</a>（2026-07-14）で整理済み。</p>
         </div>
       </div>
       <div class="step">
@@ -1110,6 +1129,21 @@
           <tr><td><strong>A（AI推奨）</strong></td><td>直近6〜12ヶ月の財務データで「N ヶ月前時点の情報だけで予測→実績と比較」を機械的に実行するバックテストスクリプトを作る</td><td>データが揃い次第すぐ着手できる。単一AG比較も同時に取れる</td></tr>
           <tr><td>B</td><td>今後の実績を待って月次で答え合わせする</td><td>検証に時間がかかるが、実データでの精度がそのまま分かる</td></tr>
           <tr><td>C</td><td>当面は検証を後回しにし、まず動くものを作ることを優先</td><td>速さ優先の方針とは合うが、精度向上の裏付けが取れないリスク</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+
+    <!-- 論点5 -->
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 5 ｜ 🔴 矛盾 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規（2026-07-14起票）</span></div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">中立AGの実装方式 — LLMに数値を外挿させるか、Python統計モデルに任せるか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AG（Groq 70B）が「過去実績からの延長予測」を担う。しかしNeurIPS 2024の検証論文（<a href="https://arxiv.org/abs/2406.16964" style="color:var(--accent);">arXiv:2406.16964</a>、2026-07-14取得）は、時系列予測からLLM部分を除去しても精度が落ちない（むしろ改善する場合が多い）ことを示しており、数値の外挿はARIMA・ETS等のクラシック手法が優位というのが研究の一致した結論。詳細は<a href="#expense-forecast" style="color:var(--accent);">支出予測の実務調査</a>を参照。</p>
+      <div class="tbl-wrap"><table>
+        <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
+        <tbody>
+          <tr><td><strong>A（AI推奨）</strong></td><td>季節ナイーブ・ETSをPythonで計算し、中立AGはその結果の「妥当性検証と解釈」を担当する</td><td>研究の裏付けが強く、実装も軽い（LLM API消費も減る）。5体構成の役割分担は変わらない</td></tr>
+          <tr><td>B</td><td>現行のままLLM（Groq 70B）に延長予測をさせる</td><td>実装変更ゼロだが、精度面の根拠が弱い</td></tr>
+          <tr><td>C</td><td>両方式を並走させ、論点4のバックテストで直接比較して決める</td><td>観察日誌の題材としては最も面白いが、工数は倍</td></tr>
         </tbody>
       </table></div>
     </div>
@@ -1702,6 +1736,178 @@
 </div><!-- /tab-pane design -->
 
 <div class="tab-pane" data-tab="research">
+
+<!-- ===== EXPENSE FORECAST RESEARCH ===== -->
+<section id="expense-forecast">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Expense Forecasting</div>
+      <h2 class="sec-title">支出予測の実務調査 — 人件費・事業費をどう予測するか</h2>
+      <p class="sec-sub">2026-07-14、予測対象を「支出（人件費・事業費などの経費）」に明確化したことを受けた調査。経費予測の実務手法、LLMと統計モデルの役割分担、必要なデータ、検証基準を整理した。（情報取得日: 2026-07-14）</p>
+    </div>
+
+    <div class="callout c-info" style="margin-bottom:28px;">
+      <div class="callout-icon">🎯</div>
+      <div>
+        <p><strong>対象の明確化：</strong> 予測対象は<strong>支出（経費）</strong>——人件費・事業費など——である。売上と違い、経費は「組織の意思決定（採用・案件実施・契約）でほぼ決まる部分」が大きく、<strong>費目を正しく分解すれば売上より予測しやすい</strong>。一方で給与額・取引先名など機微情報を直接含むため、マスキング（<a href="#decisions" style="color:var(--accent);">論点3</a>）の重要度はさらに上がる。</p>
+      </div>
+    </div>
+
+    <!-- 費目の3分類 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">経費は一枚岩ではない — 費目3分類と予測アプローチ</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">経費予測の実務では、まず費目を「固変分解」して性質別に扱うのが定石（<a href="https://www.freee.co.jp/kb/kb-accounting/fixed-costs/" target="_blank" style="color:var(--accent);">freee</a>・<a href="https://www.yayoi-kk.co.jp/kaikei/oyakudachi/fixed-cost_variable-cost/" target="_blank" style="color:var(--accent);">弥生</a>、2026-07-14取得）。全費目を1つのモデルで予測するのではなく、<strong>費目タイプごとに手法を変えて合算する</strong>方が精度も説明力も高い。</p>
+    <div class="tbl-wrap" style="margin-bottom:36px;">
+      <table>
+        <thead><tr><th style="width:30mm;">費目タイプ</th><th>例</th><th>性質</th><th>予測アプローチ</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>固定費</strong></td>
+            <td>家賃・サブスク・保険料・減価償却費</td>
+            <td>毎月ほぼ一定。契約で決まる</td>
+            <td><span class="ok">ルールベース</span> — 契約台帳から転記するだけ。LLMも統計も不要</td>
+          </tr>
+          <tr>
+            <td><strong>人件費</strong>（準固定）</td>
+            <td>給与・賞与・法定福利費</td>
+            <td>人員数×単価でほぼ決まる。賞与月に山、採用・退職で段差</td>
+            <td><span class="ok">ドライバー方式</span> — 人員計画 × 等級別単価 ＋ 法定福利費（給与の約15%で概算。<a href="https://www.trustpartners-sr.jp/page_jinkenhi.html" target="_blank" style="color:var(--accent);">社労士事務所の試算法</a>、2026-07-14取得）</td>
+          </tr>
+          <tr>
+            <td><strong>事業費・変動費</strong></td>
+            <td>イベント費・外注費・旅費交通費・広告費</td>
+            <td>案件・活動量に連動して増減</td>
+            <td><span class="tri">先行指標方式</span> — カレンダーの案件・イベント予定から読む。<strong>3視点AGの主戦場はここ</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🏭</div>
+      <div>
+        <p><strong>FP&amp;A業界の標準は「ドライバーベース予算」：</strong> AIを使う商用FP&amp;Aツール（Workday Adaptive Planning・Datarails等）も、経費を業績ドライバー（人員数・案件数・活動量）に紐づけて予測する方式が主流（<a href="https://www.workday.com/ja-jp/topics/fpa/ai-in-fpa.html" target="_blank" style="color:var(--accent);">Workday</a>・<a href="https://www.datarails.com/ai-budgeting-tools/" target="_blank" style="color:var(--accent);">Datarails</a>、2026-07-14取得）。共通する運用原則は2つ——①<strong>どのドライバーがその数字を生んだか説明できること</strong>（説明できないAIは役員会に出せない）、②<strong>AIはコパイロットであり、予算の承認責任は人間が持つこと</strong>（<a href="https://www.golimelight.com/blog/ai-forecasting-software" target="_blank" style="color:var(--accent);">Limelight</a>・<a href="https://aitoolsforbusiness.org/07-financial-forecasting" target="_blank" style="color:var(--accent);">AI Tools for Business</a>、2026-07-14取得）。これは本プロジェクトの「根拠ごと統合する調整AI」「人間へのエスカレーション」設計と一致する。</p>
+      </div>
+    </div>
+
+    <!-- LLMの役割分担 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">最重要の設計知見 — LLMに数値の外挿をさせない</h3>
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">⚠️</div>
+      <div>
+        <p><strong>研究の結論：</strong> NeurIPS 2024の検証論文「<a href="https://arxiv.org/abs/2406.16964" target="_blank" style="color:var(--accent);">Are Language Models Actually Useful for Time Series Forecasting?</a>」（2026-07-14取得）は、LLMベースの時系列予測手法からLLM部分を除去しても<strong>精度が落ちない（むしろ改善する場合が多い）</strong>ことを示した。日本語圏の検証でも、LLMの時系列予測はARIMA等のクラシック手法や深層学習に及ばないとの報告が一致している（<a href="https://zenn.dev/hogeticlab/articles/c32136c0a5e7a7" target="_blank" style="color:var(--accent);">Zenn</a>・<a href="https://www.mazin.tech/research/682177c9134bd6032726ed23" target="_blank" style="color:var(--accent);">MAZIN</a>、2026-07-14取得）。論文の提言は「LLMは<strong>テキストの推論が必要な場面</strong>に使うべき」。</p>
+      </div>
+    </div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">つまり<strong>数値の延長予測はPythonの統計モデルに、文脈の解釈はLLMに</strong>という役割分担が正解になる。これは5エージェント設計の否定ではなく精緻化である——3視点AGの価値は「数字を当てる」ことではなく、<strong>統計モデルが読めない文脈（採用計画・案件予定・過去の予算超過の癖）を読んで予測を補正すること</strong>にある。経費予測での各エージェントの役割を調査結果で具体化すると：</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:34mm;">エージェント</th><th>経費予測での具体的な役割（調査を踏まえた提案）</th></tr></thead>
+        <tbody>
+          <tr><td>データ収集AG</td><td>会計ソフトの勘定科目別月次推移＋人員計画・契約台帳・カレンダーを収集して構造化</td></tr>
+          <tr><td>中立AG</td><td>Pythonで計算済みの統計ベースライン（季節ナイーブ・ETS）を受け取り、<strong>妥当性の検証と解釈</strong>を担当——数値の外挿自体はLLMにさせない（上記論文の含意）</td></tr>
+          <tr><td>批判的AG</td><td>支出の<strong>上振れリスク</strong>を指摘——過去の予算外支出・単発コストの再発、賞与月・契約更新月の見落とし、採用遅延ならぬ前倒しの影響</td></tr>
+          <tr><td>推進的AG</td><td>活動計画から増える支出を先読み——「新規採用1名＝月給＋法定福利費約15%が翌月から」「カレンダー上のイベント＝事業費の先行指標」</td></tr>
+          <tr><td>調整AI</td><td><strong>費目タイプ別</strong>に3体の根拠を突き合わせ、費目合算で最終予測＋信頼区間を出力。割れが大きい費目だけ人間へエスカレーション</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:36px;">※ 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AGが「Groq 70Bで過去実績からの延長予測」となっており、この調査結果とは実装方式が食い違う。設計判断のため<a href="#decisions" style="color:var(--accent);">意思決定ボード論点5</a>に起票した（勝手に構成図は書き換えていない）。</p>
+
+    <!-- 先行研究 -->
+    <div class="callout c-purple" style="margin-bottom:36px;">
+      <div class="callout-icon">📄</div>
+      <div>
+        <p><strong>先行研究の裏付け — TradingAgents（2024–2025）：</strong> 金融ドメインで「強気／弱気の多視点アナリスト＋統合役」というLLMマルチエージェント構成が累積リターン・シャープレシオを改善することを実証した論文（<a href="https://arxiv.org/abs/2412.20138" target="_blank" style="color:var(--accent);">arXiv:2412.20138</a>・<a href="https://github.com/tauricresearch/tradingagents" target="_blank" style="color:var(--accent);">GitHub</a>、2026-07-14取得）。<strong>視点の異なる役割特化エージェント＋構造化された報告書（structured outputs）で情報を保持する</strong>という設計が鍵で、本プロジェクトの3視点合議の方向性を支持する。ただしTradingAgentsは討論（debate）型プロトコルであり、うちは独立判断型（<a href="#decisions" style="color:var(--accent);">論点1で決定済み</a>）——輸入するのは役割設計と構造化出力までで、討論プロトコルは輸入しない。</p>
+      </div>
+    </div>
+
+    <!-- データ要件 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">必要なデータと入手経路</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:34mm;">データ</th><th>入手経路</th><th>必要期間・粒度</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>勘定科目別の月次実績</strong></td>
+            <td>freee会計・マネーフォワード等の「月次推移」CSVエクスポート（freeeはUTF-8選択可・勘定科目コード付与可。<a href="https://support.freee.co.jp/hc/ja/articles/203293920" target="_blank" style="color:var(--accent);">freeeヘルプ</a>、2026-07-14取得）</td>
+            <td>最低12ヶ月。季節性・賞与月の把握には24〜36ヶ月が望ましい。勘定科目単位</td>
+          </tr>
+          <tr>
+            <td><strong>人件費ドライバー</strong></td>
+            <td>人員名簿・採用計画・給与テーブル（等級別単価）・賞与支給月（<a href="https://www.works-hi.co.jp/businesscolumn/manpowerplanning" target="_blank" style="color:var(--accent);">要員計画の立て方</a>、2026-07-14取得）</td>
+            <td>月次。法定福利費は給与総額の約15%で概算できる</td>
+          </tr>
+          <tr>
+            <td><strong>契約固定費の台帳</strong></td>
+            <td>家賃・サブスク・保険等の契約一覧（金額・支払月・更新月）——なければスプレッドシートで新規作成</td>
+            <td>契約単位。更新月と改定予定を含める</td>
+          </tr>
+          <tr>
+            <td><strong>活動量シグナル</strong></td>
+            <td>Google Calendar API（読み取り専用スコープ）・案件管理表</td>
+            <td>予定件数・イベント日程。事業費の先行指標として使用</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:36px;">経費側のデータは「会計ソフトのCSV＋2枚のスプレッドシート（人員計画・契約台帳）」で足りる見込みで、<strong>API開発が必須なのはカレンダーだけ</strong>。データ収集のハードルは売上予測より低い。ただし給与テーブル・人員名簿は最高機微データであり、クラウドへ渡す前のマスキング設計（論点3）を先に決める必要がある。</p>
+
+    <!-- バックテスト基準 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">検証（バックテスト）の実務基準 — 論点4の判断材料</h3>
+    <div class="card-grid" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-icon">🔁</div>
+        <h3>方式：rolling-origin</h3>
+        <p>「Nヶ月前時点までのデータだけで予測→実績と比較」を、起点をずらしながら繰り返す方式。1回きりの分割より信頼できる誤差推定になる（<a href="https://ccplanning.net/articles/forecast-accuracy-metrics.html" target="_blank" style="color:var(--accent);">forecast accuracy解説</a>、2026-07-14取得）。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📏</div>
+        <h3>指標：WAPE推奨</h3>
+        <p>MAPEは金額の小さい費目で誤差率が爆発する欠点がある。金額で重み付けするWAPEなら月次経費に向く（<a href="https://carlosvelasquezrada.com/2026/01/07/forecast-accuracy-engineering-mape-vs-wape-volatility/" target="_blank" style="color:var(--accent);">MAPE vs WAPE</a>、2026-07-14取得）。合計だけでなく<strong>勘定科目別のWAPE</strong>も見ると、どの費目でAIが価値を出しているか観察できる。</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🚧</div>
+        <h3>最低ライン：季節ナイーブ</h3>
+        <p>「前年同月と同じ値」という素朴予測（季節ナイーブ）に勝てないモデルは不採用——M-Competitions以来の定石（<a href="https://insightful-data-lab.com/2025/08/22/naive-baseline-forecast/" target="_blank" style="color:var(--accent);">Naïve Baseline解説</a>、2026-07-14取得）。5体構成 vs 単体AG vs 季節ナイーブの3者比較が検証の基本形になる。</p>
+      </div>
+    </div>
+
+    <!-- チェックリスト -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">開発に必要なことチェックリスト（着手順）</h3>
+    <div class="steps" style="margin-bottom:24px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>財務データの棚卸し</h4><p>会計ソフトから勘定科目別の月次推移CSVを24ヶ月分（最低12ヶ月）エクスポートし、費目一覧と欠損を確認する。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>固変分解（費目タイプの仕分け）</h4><p>各勘定科目を「固定費／人件費／事業費・変動費」の3タイプに仕分けし、金額構成比を見る。固定費の比率が高ければ、予測の難所は実質「人件費と事業費だけ」に絞れる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>ドライバー表2枚を作る</h4><p>人員計画表（人数・単価・賞与月・採用予定）と契約固定費台帳（金額・更新月）をスプレッドシートで作成。これが3視点AGに渡す文脈データになる。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>統計ベースラインをPythonで実装</h4><p>季節ナイーブ＋ETS（指数平滑法）を費目別に計算する小さなスクリプトを書く。これが中立AGへの入力であり、バックテストの比較基準にもなる。LLM API不要・無料。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">5</div>
+        <div class="scont"><h4>プロンプトに費目タイプ別の視点を組み込む</h4><p>3視点AGのシステムプロンプトへ「固定費は台帳転記・人件費はドライバー計算・事業費は先行指標」の分担と、批判的AG＝上振れリスク／推進的AG＝活動計画の織り込み、という経費固有の役割を書き込む。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">6</div>
+        <div class="scont"><h4>rolling-originバックテストで検証</h4><p>「6ヶ月前時点の情報だけで予測」を起点をずらして繰り返し、費目別WAPEで 5体構成 vs 単体AG vs 季節ナイーブ を比較する（論点4の決定後に着手）。</p></div>
+      </div>
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>ひとことで：</strong> 支出予測は「固定費＝転記、人件費＝人数×単価、事業費＝カレンダー先読み」に分解でき、LLMの仕事は数値の外挿ではなく<strong>文脈の解釈と補正</strong>に置くのが研究・実務の両面から正解。必要なデータは会計CSV＋スプレッドシート2枚＋カレンダーで揃い、検証は季節ナイーブ超えを最低ラインにWAPEで測る。未決の設計判断は論点5（中立AGの実装方式）として起票済み。</p>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ===== FREE API ===== -->
 <section id="free-api">
