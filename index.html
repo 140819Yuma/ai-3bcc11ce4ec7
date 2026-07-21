@@ -476,6 +476,7 @@
 </div>
 <div class="sub-nav-bar" data-tab="research">
   <a href="#expense-forecast">支出予測</a><span class="sub-sep"> · </span>
+  <a href="#api-selection">API選定</a><span class="sub-sep"> · </span>
   <a href="#free-api">無料API</a><span class="sub-sep"> · </span>
   <a href="#pricing">API料金比較</a><span class="sub-sep"> · </span>
   <a href="#agent-services">サービス比較</a><span class="sub-sep"> · </span>
@@ -503,7 +504,7 @@
       <span class="chip"><span class="dot dot-green"></span>ハイブリッド Local+Cloud</span>
       <span class="chip"><span class="dot dot-blue"></span>機密マスキング方式</span>
       <span class="chip"><span class="dot dot-purple"></span>合議型（批判×中立×推進）</span>
-      <span class="chip"><span class="dot dot-orange"></span>クラウドAPI 無料枠を検証中</span>
+      <span class="chip"><span class="dot dot-orange"></span>使用API・モデルは選定中</span>
     </div>
   </div>
 </div>
@@ -652,7 +653,7 @@
       <div class="card">
         <div class="card-icon">🛡️</div>
         <h3>システムモデル</h3>
-        <p>財務・カレンダーデータは議事録より機微性が高いため、機密マスキング設計の重要度が上がった。Obsidianでのナレッジ管理・複数LLM並列活用は継続。現在はGroq無料APIでプロトタイプを検証中。使用APIは引き続き検討中。</p>
+        <p>財務・カレンダーデータは議事録より機微性が高いため、機密マスキング設計の重要度が上がった。Obsidianでのナレッジ管理・複数LLM並列活用は継続。使用するAPI・モデルは2026-07-14に白紙化し、選定基準に基づいて改めて決定する（<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>）。</p>
         <span class="badge bp">設計中</span>
       </div>
     </div>
@@ -679,7 +680,7 @@
       <div class="card">
         <div class="card-icon">💰</div>
         <h3>コストの現実</h3>
-        <p>現在はGroqの無料枠でプロトタイプを作成中。Claude・Gemini・OpenAIなど複数サービスを組み合わせる将来的な拡張ではAPI利用料が課題に。一般的な利用事例では<strong>月額1〜2万円</strong>程度が目安との共有あり。</p>
+        <p>打ち合わせ時点では無料枠APIでプロトタイプを作成していた。Claude・Gemini・OpenAIなど複数サービスを組み合わせる将来的な拡張ではAPI利用料が課題に。一般的な利用事例では<strong>月額1〜2万円</strong>程度が目安との共有あり。</p>
         <span class="badge bo">課題</span>
       </div>
       <div class="card">
@@ -879,10 +880,28 @@
       </div>
 
       <div class="log-entry">
+        <div class="log-date">7/14</div>
+        <div class="log-content">
+          <h4>API選定を白紙化 — モデル非依存の開発体制へ切り替え</h4>
+          <ul class="log-items">
+            <li>「Groqを使う」等の特定API・モデルの想定を本レポート全体から消去（Yumaの決定）。過去の試作記録（6/19〜7/2のログ）は歴史的事実として保持</li>
+            <li>設計・実装ガイドをモデル非依存に書き換え：モデル表は「役割別の要件定義」へ、コードサンプルはLiteLLM（モデル名は環境変数）へ更新</li>
+            <li>API選定の判断材料を新セクションに集約：選定基準5項目（学習利用ポリシー＞構造化出力＞日本語＞推論力/コスト＞レート制限）と選定プロセス3ステップ</li>
+            <li><strong>重要発見</strong>：Gemini API無料枠は入力データが学習・人間レビューに使われる（有料枠は不使用）——「無料だから」でAPIを選べない裏付け</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> API選定は「今決める」必要がない。抽象化層（LiteLLM）を挟めば開発は止まらず、選定は論点4のバックテストに候補モデルを相乗りさせて<strong>実測（費目別WAPE×実コスト）で決められる</strong>。一方、データ学習利用ポリシーだけは後から直せない入口の基準なので、財務データを流す前に必ず確認する。<br>
+            <strong>📌 次のステップ：</strong> ①LiteLLMベースの骨組みへプロトタイプを移行、②候補モデルの書類選考（学習ポリシー・構造化出力）、③バックテスト設計（論点4）と統合したモデル比較実験の計画。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
         <div class="log-date">継続中</div>
         <div class="log-content">
           <h4>次のマイルストーン</h4>
           <ul class="log-items">
+            <li>API・モデルの選定（2026-07-14白紙化。選定基準で書類選考→バックテストで実測比較）</li>
             <li>カレンダー・財務データの取得経路を確定</li>
             <li>財務ドメイン向けマスキング項目（氏名・金額・取引先名）の洗い出し</li>
             <li>5エージェントのプロンプト設計</li>
@@ -1017,7 +1036,7 @@
     <div class="callout c-info">
       <div class="callout-icon">💰</div>
       <div>
-        <p><strong>コスト確認：</strong> この計画も全段階¥0（Groq無料枠＋GitHub Pages）で進められる。有料化の検討は、<a href="#local-vs-cloud" style="color:var(--accent);">ローカルLLM比較</a>に記載した既存の判断基準（機密データ業務の発生・無料枠の枯渇・レート制限の詰まり）が実際に来たときに初めて行えばよい——財務データを扱う以上、①の「機密データ業務の発生」条件は既に満たしている可能性が高く、優先的に検討すべき。</p>
+        <p><strong>コスト確認：</strong> 使用するAPI・モデルは白紙化したため（2026-07-14）、コスト見積もりはAPI選定後に確定する。開発はモデル非依存の抽象化層を挟んで進められるので選定待ちで止まらない（<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>）。有料化の判断基準（機密データ業務の発生・無料枠の枯渇・レート制限の詰まり）は従来どおりだが、財務データを扱う以上「機密データ業務の発生」条件は既に満たしており、<strong>データ学習利用ポリシーを選定の最優先基準</strong>にすべき。</p>
       </div>
     </div>
 
@@ -1080,7 +1099,7 @@
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>経緯：</strong> AI側は、業界の管理者型収束（Cognition）と2026年の合議研究（同一データ上の議論は収束が正解に近づく保証がなく、収束＝確信という錯覚を生む）から「独立並列予測＋単一の調整役」を推奨していた。7/9の打ち合わせで、Yuma Kaminaga氏はこれと同じ懸念——「複数のAIエージェントに議論させて結論を出させる従来のアプローチは望ましくない」——に<strong>独立に</strong>気づき、Koki Matano氏と協議のうえ同じ結論に達した。AIの分析とチームの実地判断が一致したため、選択肢Aで決定とする。</p>
       <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;">
         <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">採用した設計（2026-07-10 構成確定）</div>
-        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;">批判的AG・中立AG・推進的AGと<strong>データ収集AG</strong>（Gemini想定）の計4体を、<strong>調整AI（司令塔）</strong>が統括する5エージェント構成に確定した。調整AIがデータ収集を発注→マスキング→3体へ並列発注（互いに議論させない）→根拠を回収して統合、まで一貫して発注・回収する唯一の統合点になる。詳細な構成図は<a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a>を参照。</p>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;">批判的AG・中立AG・推進的AGと<strong>データ収集AG</strong>の計4体を、<strong>調整AI（司令塔）</strong>が統括する5エージェント構成に確定した。調整AIがデータ収集を発注→マスキング→3体へ並列発注（互いに議論させない）→根拠を回収して統合、まで一貫して発注・回収する唯一の統合点になる。詳細な構成図は<a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a>を参照。</p>
       </div>
       <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>継続検討：</strong> 3体それぞれに異なる性格（プロンプト）を与えることで、思考が得意なモデル（Claude等）を活用できるとの指摘があった——モデル選定は<a href="#pricing" style="color:var(--accent);">API料金比較</a>と合わせて別途検討する。</p>
     </div>
@@ -1137,12 +1156,12 @@
     <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:26px 30px;margin:20px 0;">
       <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">論点 5 ｜ 🔴 矛盾 ｜ ステータス: 未決 ｜ <span style="color:var(--orange);">財務ドメイン新規（2026-07-14起票）</span></div>
       <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">中立AGの実装方式 — LLMに数値を外挿させるか、Python統計モデルに任せるか</h3>
-      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AG（Groq 70B）が「過去実績からの延長予測」を担う。しかしNeurIPS 2024の検証論文（<a href="https://arxiv.org/abs/2406.16964" style="color:var(--accent);">arXiv:2406.16964</a>、2026-07-14取得）は、時系列予測からLLM部分を除去しても精度が落ちない（むしろ改善する場合が多い）ことを示しており、数値の外挿はARIMA・ETS等のクラシック手法が優位というのが研究の一致した結論。詳細は<a href="#expense-forecast" style="color:var(--accent);">支出予測の実務調査</a>を参照。</p>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AG（LLM）が「過去実績からの延長予測」を担う。しかしNeurIPS 2024の検証論文（<a href="https://arxiv.org/abs/2406.16964" style="color:var(--accent);">arXiv:2406.16964</a>、2026-07-14取得）は、時系列予測からLLM部分を除去しても精度が落ちない（むしろ改善する場合が多い）ことを示しており、数値の外挿はARIMA・ETS等のクラシック手法が優位というのが研究の一致した結論。詳細は<a href="#expense-forecast" style="color:var(--accent);">支出予測の実務調査</a>を参照。</p>
       <div class="tbl-wrap"><table>
         <thead><tr><th>選択肢</th><th>内容</th><th>備考</th></tr></thead>
         <tbody>
           <tr><td><strong>A（AI推奨）</strong></td><td>季節ナイーブ・ETSをPythonで計算し、中立AGはその結果の「妥当性検証と解釈」を担当する</td><td>研究の裏付けが強く、実装も軽い（LLM API消費も減る）。5体構成の役割分担は変わらない</td></tr>
-          <tr><td>B</td><td>現行のままLLM（Groq 70B）に延長予測をさせる</td><td>実装変更ゼロだが、精度面の根拠が弱い</td></tr>
+          <tr><td>B</td><td>現行のままLLMに延長予測をさせる（モデルは選定後に決定）</td><td>実装変更ゼロだが、精度面の根拠が弱い</td></tr>
           <tr><td>C</td><td>両方式を並走させ、論点4のバックテストで直接比較して決める</td><td>観察日誌の題材としては最も面白いが、工数は倍</td></tr>
         </tbody>
       </table></div>
@@ -1251,7 +1270,7 @@
           <div class="arch-node">
             <div class="n-icon">📡</div>
             <div class="n-name">データ収集AG</div>
-            <div class="n-sub">Gemini（情報互換性重視）<br/>カレンダー・財務データを収集</div>
+            <div class="n-sub">モデル未定<br/>カレンダー・財務データを収集</div>
           </div>
           <div class="arch-arr">→</div>
           <div class="arch-node hl-orange">
@@ -1273,7 +1292,7 @@
               <div class="arch-node" style="min-width:90px;padding:8px;">
                 <div class="n-icon" style="font-size:14px;">📉</div>
                 <div class="n-name" style="font-size:10px;">ダウンサイド分析</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>外れた場合の下振れ幅</div>
+                <div class="n-sub" style="font-size:9px;">モデル未定<br/>外れた場合の下振れ幅</div>
               </div>
             </div>
           </div>
@@ -1286,7 +1305,7 @@
               <div class="arch-node" style="min-width:90px;padding:8px;">
                 <div class="n-icon" style="font-size:14px;">📊</div>
                 <div class="n-name" style="font-size:10px;">時系列ベースライン</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>過去実績からの延長予測</div>
+                <div class="n-sub" style="font-size:9px;">モデル未定<br/>過去実績からの延長予測</div>
               </div>
             </div>
           </div>
@@ -1299,7 +1318,7 @@
               <div class="arch-node" style="min-width:90px;padding:8px;">
                 <div class="n-icon" style="font-size:14px;">📈</div>
                 <div class="n-name" style="font-size:10px;">先行指標分析</div>
-                <div class="n-sub" style="font-size:9px;">Groq 70B<br/>商談件数→売上を先読み</div>
+                <div class="n-sub" style="font-size:9px;">モデル未定<br/>商談件数→売上を先読み</div>
               </div>
             </div>
           </div>
@@ -1340,49 +1359,43 @@
       </div>
     </div>
 
-    <!-- モデル使い分け -->
-    <h3 style="font-size:15px;margin:28px 0 16px;color:var(--text);">LLMモデルの使い分け（コストコントロール）</h3>
-    <div class="tbl-wrap" style="margin-bottom:28px;">
+    <!-- 役割別モデル要件 -->
+    <h3 style="font-size:15px;margin:28px 0 16px;color:var(--text);">役割別のモデル要件 — 使用モデル・APIは白紙（2026-07-14）</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
       <table>
         <thead>
-          <tr><th>役割</th><th>モデル</th><th>用途</th><th>コスト</th></tr>
+          <tr><th>役割</th><th>用途</th><th>モデル選定で重視する能力</th></tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>調整AI</strong>（司令塔）</td>
-            <td>Groq Llama 3.3 70B（深いプロンプト）</td>
             <td>データ収集の発注〜3体並列発注〜統合まで一括管理</td>
-            <td><span class="ok">無料</span></td>
+            <td>深い推論・構造化出力（JSON）・長めのコンテキスト</td>
           </tr>
           <tr>
             <td><strong>データ収集AG</strong></td>
-            <td>Gemini（情報互換性重視）</td>
             <td>カレンダー・過去の財務データを取得</td>
-            <td><span class="ok">無料</span></td>
+            <td>外部ツール連携（function calling）・低コスト・高速</td>
           </tr>
           <tr>
             <td><strong>門番AG</strong>（マスキング）</td>
-            <td>Groq Llama 3.1 8B（将来: Qwen 2.5 7B ローカル）</td>
             <td>氏名・金額・取引先名の伏字化・復元</td>
-            <td><span class="ok">無料</span> / <span class="tri">Mac mini購入後はローカル</span></td>
+            <td>日本語の固有表現認識・将来ローカル実行できること</td>
           </tr>
           <tr>
             <td><strong>批判的AG</strong></td>
-            <td>Groq Llama 3.3 70B</td>
-            <td>下振れリスク・過去の予測外れの分析</td>
-            <td><span class="ok">無料</span></td>
+            <td>下振れ・予算超過リスクの分析</td>
+            <td>推論の深さ・数値の扱いの正確さ</td>
           </tr>
           <tr>
             <td><strong>中立AG</strong></td>
-            <td>Groq Llama 3.3 70B</td>
-            <td>統計的ベースライン予測</td>
-            <td><span class="ok">無料</span></td>
+            <td>統計ベースラインの検証・解釈（実装方式は論点5で検討中）</td>
+            <td>数値検証の堅実さ・構造化出力</td>
           </tr>
           <tr>
             <td><strong>推進的AG</strong></td>
-            <td>Groq Llama 3.3 70B</td>
             <td>カレンダー活動量からの先行指標分析</td>
-            <td><span class="ok">無料</span></td>
+            <td>文脈読解・日本語性能</td>
           </tr>
         </tbody>
       </table>
@@ -1390,7 +1403,7 @@
 
     <div class="callout c-warn" style="margin-bottom:16px;">
       <div class="callout-icon">⚠️</div>
-      <div style="font-size:13px;">上の構成図および下のモデル表に記載している <strong>Groq Llama 3.3 70B / 3.1 8B</strong> は、現在のプロトタイプで試用中の構成です。本番で採用するLLMサービス・モデルは<strong>未確定</strong>であり、今後変更になる可能性があります。</div>
+      <div style="font-size:13px;"><strong>2026-07-14 白紙化：</strong> それまで試用していた特定APIの想定をすべて破棄し、使用するLLMサービス・モデルは<strong>白紙から選定し直す</strong>ことにした。上の表は「どのモデルにするか」ではなく「各役割が何を要求するか」の定義。選定の判断材料（学習利用ポリシー・構造化出力・モデル非依存実装）は<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>を参照。</div>
     </div>
     <!-- フェーズ対応 -->
     <div class="callout c-info" style="margin-bottom:16px;">
@@ -1401,7 +1414,7 @@
           <div><span style="background:var(--green);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">現在</span>Python司令官・合議ループの基盤は稼働済み（旧ドメインで検証済み）。財務・カレンダーデータ接続、5エージェント（データ収集AG＋調整AI＋3視点）のプロンプト設計はこれから。</div>
           <div><span style="background:var(--accent);color:#fff;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 2</span>データソース接続（カレンダーAPI・財務データエクスポート）とマスキング拡張を実装。</div>
           <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 3</span>5エージェント構成の本実装とバックテストスクリプトの構築。</div>
-          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。財務データのマスキングをローカルLLM（Qwen 2.5 7B）へ移行し、完全ハイブリッド構成へ。</div>
+          <div><span style="background:var(--border);color:var(--text2);padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700;margin-right:8px;">Phase 4</span>Mac mini導入。財務データのマスキングをローカルLLMへ移行し（モデルは選定時に決定）、完全ハイブリッド構成へ。</div>
         </div>
       </div>
     </div>
@@ -1471,7 +1484,7 @@
       <div class="card">
         <div class="card-icon">🔧</div>
         <h3>コスト最適化の設計方針（例）</h3>
-        <p>3体の並列予測にはGroq Llama 3.3 70Bを想定。データ収集AGは情報互換性を考慮しGeminiを想定。調整AIは深いプロンプトで判断する役割だが、各役割に使うAPIは<strong>未確定</strong>。合議回数は<strong>1回（並列予測→統合）</strong>を基本とし、意見が割れた場合のみ人間にエスカレーション。</p>
+        <p>各役割に使うAPI・モデルは<strong>白紙から選定する</strong>（2026-07-14白紙化。判断材料は<a href="#api-selection" style="color:var(--accent);">API選定</a>）。調整AIは深いプロンプトで判断する役割のため推論力を、3体の並列予測はコスト効率を重視して選ぶ。合議回数は<strong>1回（並列予測→統合）</strong>を基本とし、意見が割れた場合のみ人間にエスカレーション。</p>
         <span class="badge bb">推奨設計</span>
       </div>
       <div class="card">
@@ -1494,26 +1507,26 @@
             <tr>
               <td>データ収集AG</td>
               <td>情報収集</td>
-              <td>カレンダー・財務データを取得（Gemini想定）</td>
-              <td><span class="ok">低（無料枠内）</span></td>
+              <td>カレンダー・財務データを取得</td>
+              <td><span class="ok">低（軽量タスク・モデル選定次第）</span></td>
             </tr>
             <tr>
               <td>批判的AG</td>
               <td>ダウンサイド重視</td>
               <td>予測外れの実績・季節性から下振れリスクを分析</td>
-              <td><span class="ok">低（無料枠内）</span></td>
+              <td><span class="ok">低（軽量タスク・モデル選定次第）</span></td>
             </tr>
             <tr>
               <td>中立AG</td>
               <td>統計ベースライン</td>
               <td>過去実績からの時系列延長予測</td>
-              <td><span class="ok">低（無料枠内）</span></td>
+              <td><span class="ok">低（軽量タスク・モデル選定次第）</span></td>
             </tr>
             <tr>
               <td>推進的AG</td>
               <td>先行指標重視</td>
               <td>カレンダー活動量から売上・コストを先読み</td>
-              <td><span class="ok">低（無料枠内）</span></td>
+              <td><span class="ok">低（軽量タスク・モデル選定次第）</span></td>
             </tr>
             <tr>
               <td>調整AI（司令塔）</td>
@@ -1810,7 +1823,7 @@
         </tbody>
       </table>
     </div>
-    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:36px;">※ 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AGが「Groq 70Bで過去実績からの延長予測」となっており、この調査結果とは実装方式が食い違う。設計判断のため<a href="#decisions" style="color:var(--accent);">意思決定ボード論点5</a>に起票した（勝手に構成図は書き換えていない）。</p>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:36px;">※ 現行の<a href="#hybrid" style="color:var(--accent);">構成図</a>では中立AGが「LLMで過去実績からの延長予測」となっており、この調査結果とは実装方式が食い違う。設計判断のため<a href="#decisions" style="color:var(--accent);">意思決定ボード論点5</a>に起票した（勝手に構成図は書き換えていない）。</p>
 
     <!-- 先行研究 -->
     <div class="callout c-purple" style="margin-bottom:36px;">
@@ -1909,13 +1922,108 @@
   </div>
 </section>
 
+<!-- ===== API SELECTION ===== -->
+<section id="api-selection">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">API Selection</div>
+      <h2 class="sec-title">API選定の判断材料 — モデル未定でも開発を止めない</h2>
+      <p class="sec-sub">2026-07-14、それまで試用していた特定APIの想定をすべて破棄し、使用するAPI・モデルを白紙から選定し直すことにした。選定を先送りしても開発が止まらない仕組み（モデル非依存実装）と、財務データを扱う本プロジェクト固有の選定基準をここに集約する。（情報取得日: 2026-07-14）</p>
+    </div>
+
+    <!-- 柱1: モデル非依存実装 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">柱① モデル非依存実装 — 「選んでから作る」ではなく「差し替え可能に作る」</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">APIが未定でも、抽象化層を1枚挟めばコードはそのまま書き進められる。モデル名は環境変数に持たせ、選定が終わったら<strong>設定1行の変更</strong>で本採用モデルに切り替わる。候補は2つ：</p>
+    <div class="card-grid" style="margin-bottom:16px;">
+      <div class="card">
+        <div class="card-icon">🔌</div>
+        <h3>LiteLLM（ライブラリ型）</h3>
+        <p>OpenAI形式の統一インターフェースで100以上のプロバイダ（OpenAI・Anthropic・Google・Bedrock・Ollama等）を呼べるOSS。<code>completion()</code>のmodel文字列を変えるだけでモデルを差し替えられ、リトライ・コスト追跡も備える（<a href="https://github.com/BerriAI/litellm" target="_blank" style="color:var(--accent);">GitHub</a>・<a href="https://docs.litellm.ai/docs/" target="_blank" style="color:var(--accent);">docs</a>、2026-07-14取得）。APIキーは各社と直接契約——<strong>データが仲介業者を経由しない</strong>。</p>
+        <span class="badge bb">AI推奨</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>OpenRouter（ゲートウェイ型）</h3>
+        <p>1つのAPIキー・1つのエンドポイントで500以上のモデルにアクセスでき、障害時の自動フォールバックも備えるゲートウェイサービス（<a href="https://openrouter.ai/docs/faq" target="_blank" style="color:var(--accent);">FAQ</a>・<a href="https://openrouter.ai/blog/insights/model-routing/" target="_blank" style="color:var(--accent);">routing解説</a>、2026-07-14取得）。ただし<strong>全リクエストが仲介業者のサーバーを経由する</strong>ため、財務データ用途では経由先のデータ取り扱い確認が追加で必要になる。</p>
+        <span class="badge bo">比較実験向き</span>
+      </div>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🧩</div>
+      <div>
+        <p><strong>使い分けの提案：</strong> 本体の実装は<strong>LiteLLM</strong>で抽象化（機微データが第三者ゲートウェイを経由しない）。モデル比較実験の段階だけOpenRouterを使うと、複数候補をキー1本で試せて便利——ただし実験にはマスキング済みデータのみを流す。<a href="#impl" style="color:var(--accent);">実装ガイド</a>のコードはLiteLLM前提に更新済み。</p>
+      </div>
+    </div>
+
+    <!-- 柱2: 選定基準 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">柱② 選定基準 — 財務データを扱うプロジェクトの優先順</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:10mm;">優先</th><th style="width:44mm;">基準</th><th>内容・なぜ重要か</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>データ学習利用ポリシー</strong></td><td>入力データが学習・人間レビューに使われないこと。財務・給与データを扱う以上、これを満たさないAPIは他がどれだけ優れていても不採用（下の比較表）</td></tr>
+          <tr><td>2</td><td><strong>構造化出力（JSONスキーマ準拠）</strong></td><td>調整AIが3体の予測・根拠を機械的に統合するため、決まった形式で確実に返せることが必須</td></tr>
+          <tr><td>3</td><td><strong>日本語性能</strong></td><td>勘定科目・費目名・日本語の固有表現（マスキング）を正しく扱えること</td></tr>
+          <tr><td>4</td><td><strong>推論の深さ／速度・コスト</strong></td><td>役割で要件が逆になる——調整AI・批判的AGは推論力、データ収集・門番AGは速度と低コスト（役割別要件は<a href="#hybrid" style="color:var(--accent);">設計セクションの表</a>）</td></tr>
+          <tr><td>5</td><td><strong>レート制限・無料枠</strong></td><td>検証フェーズの制約。ただし「無料」には下記の学習利用リスクが伴う場合があるため、基準1より優先しない</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 学習利用ポリシー比較 -->
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🚨</div>
+      <div>
+        <p><strong>無料枠の罠 — 「無料」はデータで支払っている場合がある：</strong> Gemini APIの<strong>無料枠</strong>では、送信したコンテンツがGoogle製品の改善（学習）に使われ、人間のレビュアーが入出力を読む可能性があると明記されている。<strong>有料枠</strong>に切り替えると学習には使われない（<a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" style="color:var(--accent);">Google公式Billingドキュメント</a>、2026-07-14取得）。財務データを扱う本プロジェクトでは、「無料だから」でAPIを選ぶとマスキング設計（論点3）の前提が崩れる。</p>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th>提供元（API利用時）</th><th>学習利用</th><th>備考（2026-07-14取得）</th></tr></thead>
+        <tbody>
+          <tr><td>Google Gemini API（無料枠）</td><td><span class="ng">あり</span></td><td>製品改善に利用・人間レビューの可能性あり（<a href="https://ai.google.dev/gemini-api/docs/billing" target="_blank" style="color:var(--accent);">公式Billing</a>）</td></tr>
+          <tr><td>Google Gemini API（有料枠）</td><td><span class="ok">なし</span></td><td>課金有効化で学習利用なしに切り替わる（同上）</td></tr>
+          <tr><td>OpenAI API</td><td><span class="ok">なし（デフォルト）</span></td><td>API経由データはデフォルトで学習に不使用。保持は不正利用監視目的で最大30日、ZDR（ゼロデータ保持）オプションあり（<a href="https://developers.openai.com/api/docs/guides/your-data" target="_blank" style="color:var(--accent);">公式Data Controls</a>）</td></tr>
+          <tr><td>Anthropic API</td><td><span class="ok">なし（デフォルト）</span></td><td>商用API入出力は学習に不使用。保持期間は限定的で、ZDR契約も提供（<a href="https://platform.claude.com/docs/en/manage-claude/api-and-data-retention" target="_blank" style="color:var(--accent);">公式Docs</a>）</td></tr>
+          <tr><td>ローカルLLM（Ollama等）</td><td><span class="ok">なし</span></td><td>データが手元から出ない。Phase 4のマスキング担当想定</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:36px;">※ 各社のポリシーは変更されうるため、<strong>契約・採用の直前に必ず原文を再確認する</strong>こと。その他のプロバイダ（Groq等の推論ホスティング事業者を含む）を候補にする場合も、同じ基準1から順に評価する。</p>
+
+    <!-- 選定プロセス -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">選定プロセス — カタログではなく実測で選ぶ</h3>
+    <div class="steps" style="margin-bottom:24px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>書類選考：基準1・2で足切り</h4><p>学習利用ポリシーと構造化出力対応で候補を2〜3モデルに絞る（この段階ではモデル名を決めない）。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>実技試験：バックテストに相乗りさせる</h4><p>論点4のバックテスト（rolling-origin）を回すとき、同一プロンプトで候補モデルを並走させ、費目別WAPE・実測コスト・構造化出力の安定性を記録する。<strong>モデル選定と精度検証が1回の実験で同時に済む</strong>。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>採用：環境変数を書き換えるだけ</h4><p>LiteLLM前提の実装なら、選定結果の反映は<code>MODEL_STANCE</code>等の環境変数の変更のみ。役割ごとに別モデルを割り当てることも自由。</p></div>
+      </div>
+    </div>
+
+    <div class="callout c-tip">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>ひとことで：</strong> API選定は「今決める」必要がない。LiteLLMで抽象化してモデル名を環境変数に逃がせば開発は止まらず、選定はバックテストに相乗りさせて実測で決められる。ただし<strong>学習利用ポリシーだけは最初から譲れない基準</strong>——無料枠は「データで支払う」契約になっている場合がある（Gemini無料枠が実例）。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== FREE API ===== -->
 <section id="free-api">
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Free API</div>
-      <h2 class="sec-title">無料APIの活用（Gemini &amp; Groq）</h2>
-      <p class="sec-sub">現在プロトタイプで使用中のGroqと、候補として調査したGemini APIの仕様を整理。本番で使用するAPIは未確定。</p>
+      <h2 class="sec-title">無料API調査記録（Gemini &amp; Groq）</h2>
+      <p class="sec-sub">候補として調査した無料APIの仕様の記録（選定材料として保存）。2026-07-14に使用APIの選定を白紙化したため、これは「採用予定」ではなく調査アーカイブ。選定基準は<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>へ——特に<strong>無料枠のデータ学習利用リスク</strong>に注意。</p>
     </div>
 
     <div class="api-grid">
@@ -2075,7 +2183,7 @@
     <div class="sec-head">
       <div class="sec-tag">Agent Services Research</div>
       <h2 class="sec-title">AIエージェントサービス比較（10選）</h2>
-      <p class="sec-sub">SIGNATEの比較記事をもとに、打ち合わせで話題になった「Manus」を含む主要サービスを整理。自社構築（Python司令官 + 現在はGroqで試験運用中）との比較軸として活用。</p>
+      <p class="sec-sub">SIGNATEの比較記事をもとに、打ち合わせで話題になった「Manus」を含む主要サービスを整理。自社構築（Python司令官方式）との比較軸として活用。</p>
     </div>
 
     <div class="card-grid" style="margin-bottom:24px;">
@@ -2116,7 +2224,7 @@
     </div>
     <div class="callout c-info" style="margin-bottom:28px;">
       <div class="callout-icon">📌</div>
-      <div style="font-size:13px;">プロジェクトの現状（Python司令官のif/thenルーティング＋Groq 2モデルのリフレクションループ）は<strong>レベル1〜2相当</strong>。文脈エンジン・タスクボード・引き継ぎ書を実装するPhase 2以降でレベル3に近づく設計。</div>
+      <div style="font-size:13px;">プロジェクトの現状（Python司令官のif/thenルーティング＋2モデル構成のリフレクションループ試作）は<strong>レベル1〜2相当</strong>。文脈エンジン・タスクボード・引き継ぎ書を実装するPhase 2以降でレベル3に近づく設計。</div>
     </div>
 
     <h3 style="font-size:15px;margin-bottom:16px;color:var(--text);">主要10サービス比較</h3>
@@ -2401,17 +2509,17 @@
     <div class="sec-head">
       <div class="sec-tag">Implementation</div>
       <h2 class="sec-title">実装ガイド</h2>
-      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。財務予測ドメインに合わせて更新（2026-07-08）。<strong>コードはGroqを用いた現プロトタイプに基づく実装例であり、採用するAPIは今後変更になる可能性があります。</strong></p>
+      <p class="sec-sub">Python司令官方式とマスキング処理のコードサンプル。財務予測ドメインに合わせて更新（2026-07-08）。<strong>2026-07-14より、使用API・モデルが未定のためLiteLLMによるモデル非依存の書き方に統一</strong>——モデル名は環境変数で持ち、選定後に設定1行で差し替えられる（<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>参照）。</p>
     </div>
 
     <div class="steps" style="margin-bottom:28px;">
       <div class="step">
         <div class="snum">1</div>
-        <div class="scont"><h4>環境準備</h4><p>Gemini / Groq の無料APIキーを取得。<code>pip install anthropic google-generativeai groq langchain-core</code></p></div>
+        <div class="scont"><h4>環境準備</h4><p>使用APIは未定のため、抽象化層LiteLLMを導入する。<code>pip install litellm</code>。選定したAPIのキーとモデル名は環境変数で渡す。</p></div>
       </div>
       <div class="step">
         <div class="snum">2</div>
-        <div class="scont"><h4>ローカルLLM導入</h4><p>Ollamaを使いLlama 3 8B / Qwen 2.5 7Bをローカルに展開。<code>ollama run llama3</code></p></div>
+        <div class="scont"><h4>ローカルLLM導入</h4><p>Ollamaでローカルモデルを展開（モデル未定・日本語の固有表現に強いものを選定）。LiteLLMはOllamaもそのまま呼べる。</p></div>
       </div>
       <div class="step">
         <div class="snum">3</div>
@@ -2434,12 +2542,12 @@
         <div class="lang">PYTHON — Python司令官（if/then ルーティング）</div>
       </div>
       <pre><span class="cc"># Python司令官：LLMを使わない高速・決定論的ルーティング</span>
+<span class="cc"># モデルはLiteLLM経由で呼び、名前は環境変数で差し替える（使用API・モデル未定のため）</span>
 <span class="ck">import</span> os
-<span class="ck">from</span> groq <span class="ck">import</span> Groq
-<span class="ck">import</span> google.generativeai <span class="ck">as</span> genai
+<span class="ck">from</span> litellm <span class="ck">import</span> completion
 
-groq_client <span class="co">=</span> Groq(api_key<span class="co">=</span>os.environ[<span class="cs">"GROQ_API_KEY"</span>])
-genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEMINI_API_KEY"</span>])
+MODEL_STANCE  <span class="co">=</span> os.environ.get(<span class="cs">"MODEL_STANCE"</span>, <span class="cs">"TBD"</span>)   <span class="cc"># 3視点AG用（選定後に設定）</span>
+MODEL_ARBITER <span class="co">=</span> os.environ.get(<span class="cs">"MODEL_ARBITER"</span>, <span class="cs">"TBD"</span>)  <span class="cc"># 調整AI用（選定後に設定）</span>
 
 <span class="ck">class</span> <span class="cf">PythonOrchestrator</span>:
     <span class="cc">"""Python if/then による軽量オーケストレーター"""</span>
@@ -2459,44 +2567,44 @@ genai.configure(api_key<span class="co">=</span>os.environ[<span class="cs">"GEM
         <span class="cc"># この関数全体が「調整AI（司令塔）」の振る舞い。</span>
         <span class="cc"># データ収集→マスキング→3体並列発注→統合を一括で発注・回収する。</span>
 
-        <span class="cc"># Step1: データ収集AG（Gemini）がカレンダー・財務データを収集</span>
-        raw_data <span class="co">=</span> self.gemini_collect_data(task[<span class="cs">"sources"</span>])
+        <span class="cc"># Step1: データ収集AGがカレンダー・財務データを収集（モデル未定）</span>
+        raw_data <span class="co">=</span> self.collect_data(task[<span class="cs">"sources"</span>])
 
         <span class="cc"># Step2: ローカルLLMでマスキング（氏名・金額・取引先名）</span>
         masked <span class="co">=</span> self.local_mask(raw_data)
 
         <span class="cc"># Step3: 批判的・中立・推進的の3体が並列発注（互いに議論させない）</span>
-        critical <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"critical"</span>)
-        neutral  <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"neutral"</span>)
-        advocate <span class="co">=</span> self.groq_forecast(masked, stance<span class="co">=</span><span class="cs">"advocate"</span>)
+        critical <span class="co">=</span> self.stance_forecast(masked, stance<span class="co">=</span><span class="cs">"critical"</span>)
+        neutral  <span class="co">=</span> self.stance_forecast(masked, stance<span class="co">=</span><span class="cs">"neutral"</span>)
+        advocate <span class="co">=</span> self.stance_forecast(masked, stance<span class="co">=</span><span class="cs">"advocate"</span>)
 
         <span class="cc"># Step4: 調整AI自身が3体の根拠を比較し統合</span>
-        result <span class="co">=</span> self.groq_arbitrate([critical, neutral, advocate])
+        result <span class="co">=</span> self.arbitrate([critical, neutral, advocate])  <span class="cc"># MODEL_ARBITERを使用</span>
         <span class="ck">if</span> result.disagreement_score <span class="co">></span> <span class="cn">0.3</span>:  <span class="cc"># 意見の割れが大きい場合は人間へ</span>
             <span class="ck">return</span> self.escalate_to_human(result, task)
 
         <span class="cc"># Step5: ローカルで復元し、根拠つき予測を返す</span>
         <span class="ck">return</span> self.local_unmask(result, task[<span class="cs">"mask_map"</span>])
 
-    <span class="ck">def</span> <span class="cf">gemini_collect_data</span>(self, sources: <span class="cy">dict</span>) <span class="co">-></span> <span class="cy">tuple</span>:
+    <span class="ck">def</span> <span class="cf">collect_data</span>(self, sources: <span class="cy">dict</span>) <span class="co">-></span> <span class="cy">tuple</span>:
         <span class="cc"># データ収集AG：Google Calendar・会計データソースから生データを取得</span>
-        <span class="cc"># 情報の互換性を考慮しGeminiを想定（Groq/Claude等への差し替えも可）</span>
+        <span class="cc"># モデルは未定。LiteLLM経由なので選定後に設定1行で差し替えられる</span>
         <span class="ck">pass</span>
 
     <span class="ck">def</span> <span class="cf">local_mask</span>(self, raw_data) <span class="co">-></span> <span class="cy">tuple</span>:
-        <span class="cc"># Ollama（Qwen 2.5 7B）でローカルマスキング</span>
+        <span class="cc"># Ollama（ローカルLLM・モデル未定）でマスキング</span>
         <span class="cc"># 氏名・金額・取引先名・案件名を [PERSON_1], [AMOUNT_1] 等で置換</span>
         <span class="cc"># mask_map: {"[PERSON_1]": "田中部長"} を返す</span>
         <span class="ck">pass</span>
 
-    <span class="ck">def</span> <span class="cf">groq_forecast</span>(self, masked_data: <span class="cy">str</span>, stance: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">dict</span>:
+    <span class="ck">def</span> <span class="cf">stance_forecast</span>(self, masked_data: <span class="cy">str</span>, stance: <span class="cy">str</span>) <span class="co">-></span> <span class="cy">dict</span>:
         stance_prompt <span class="co">=</span> {
             <span class="cs">"critical"</span>: <span class="cs">"下振れリスクと予測外れの実績を重視して予測せよ"</span>,
             <span class="cs">"neutral"</span>:  <span class="cs">"統計的なベースライン予測を出せ"</span>,
             <span class="cs">"advocate"</span>: <span class="cs">"カレンダーの活動量シグナルを積極的に織り込め"</span>,
         }[stance]
-        resp <span class="co">=</span> groq_client.chat.completions.create(
-            model<span class="co">=</span><span class="cs">"llama-3.3-70b-versatile"</span>,
+        resp <span class="co">=</span> completion(
+            model<span class="co">=</span>MODEL_STANCE,  <span class="cc"># 環境変数で差し替え（LiteLLMが各社API形式へ変換）</span>
             messages<span class="co">=</span>[{<span class="cs">"role"</span>: <span class="cs">"user"</span>, <span class="cs">"content"</span>: <span class="cf">f</span><span class="cs">"{stance_prompt}\n\n{masked_data}"</span>}],
             max_tokens<span class="co">=</span><span class="cn">2000</span>
         )
@@ -2592,7 +2700,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="card">
         <div class="card-icon">🛡️</div>
         <h3>マスキング精度の確保</h3>
-        <p>Qwen 2.5 7B（日本語が強い）をマスキング担当に推奨。人名・社名・金額だけでなく、プロジェクト固有の用語リストを事前に定義しておく。<strong>復元マップは暗号化して保存</strong>。</p>
+        <p>マスキング担当のローカルLLMは日本語の固有表現に強いモデルを選定する（モデル未定）。人名・社名・金額だけでなく、プロジェクト固有の用語リストを事前に定義しておく。<strong>復元マップは暗号化して保存</strong>。</p>
       </div>
       <div class="card">
         <div class="card-icon">📂</div>
@@ -2602,7 +2710,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="card">
         <div class="card-icon">💰</div>
         <h3>コスト管理</h3>
-        <p>現在使用中のAPI（Groq等）の無料枠を1日の処理上限として設定。超過しそうな場合はローカルLLMにフォールバック。<strong>リフレクション上限3回</strong>は絶対守る。</p>
+        <p>採用するAPIのレート制限・無料枠を1日の処理上限として設定。超過しそうな場合はローカルLLMにフォールバック。<strong>リフレクション上限3回</strong>は絶対守る。</p>
       </div>
       <div class="card">
         <div class="card-icon">🔄</div>
@@ -2624,7 +2732,7 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-tip" style="margin-top:24px;">
       <div class="callout-icon">✅</div>
       <div class="callout">
-        <p><strong>現在地と方針：</strong> Groqの無料APIキーで2エージェントのリフレクションループが動作確認済み（6/19試作）。どのAPIを本格採用するかは<strong>引き続き検討中</strong>。まずはGroqで機能を磨きつつ、Gemini・Sakana Fugu等と比較しながら確定していく方針。</p>
+        <p><strong>現在地と方針：</strong> 無料APIでの2エージェント・リフレクションループは動作確認済み（6/19試作）。2026-07-14、使用するAPI・モデルの選定を<strong>白紙化</strong>した。開発はLiteLLM等の抽象化層を挟んでモデル非依存のまま継続し、選定は<a href="#api-selection" style="color:var(--accent);">API選定の判断材料</a>の基準（学習利用ポリシー・構造化出力・日本語性能・コスト）＋バックテストでの実測比較で行う。</p>
       </div>
     </div>
   </div>
@@ -2785,7 +2893,7 @@ session <span class="co">=</span> client.beta.sessions.create(
           </tr>
           <tr>
             <td><strong>プライバシーマスキング</strong></td>
-            <td><span style="color:var(--green)">完全実装可能</span>（Qwen 2.5 7B が担当）</td>
+            <td><span style="color:var(--green)">完全実装可能</span>（ローカルLLMが担当・モデル未定）</td>
             <td><span style="color:var(--red)">実装不可</span>（マスキング担当がいない）</td>
           </tr>
         </tbody>
@@ -2858,11 +2966,11 @@ session <span class="co">=</span> client.beta.sessions.create(
         <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;">
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <span style="background:var(--green);color:#fff;font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">現在</span>
-            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 1-3（クラウドのみ）</strong> — Python司令官 + クラウドAPI（現在はGroqを試用中）でプロトタイプを完成させる。使用するAPIは未確定。機密情報は扱わない前提で開発。</span>
+            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 1-3（クラウドのみ）</strong> — Python司令官 + クラウドAPI（モデル非依存の抽象化層経由・使用APIは未定）でプロトタイプを完成させる。機密情報は扱わない前提で開発。</span>
           </div>
           <div style="display:flex;align-items:flex-start;gap:12px;">
             <span style="background:var(--border);color:var(--text2);font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap;margin-top:2px;">将来</span>
-            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 4（ハイブリッド）</strong> — Mac mini購入後、Qwen 2.5 7B でマスキングエージェントを追加。ローカル←→クラウドのハイブリッド構成へ移行。</span>
+            <span style="font-size:13px;color:var(--text2)"><strong style="color:var(--text)">Phase 4（ハイブリッド）</strong> — Mac mini購入後、ローカルLLM（モデル未定）でマスキングエージェントを追加。ローカル←→クラウドのハイブリッド構成へ移行。</span>
           </div>
         </div>
       </div>
