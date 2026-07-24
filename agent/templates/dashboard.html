@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>財務予測エージェント ダッシュボード</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:      #f9f9f7;
+    --surface:    #fcfcfb;
+    --ink:        #0b0b0b;
+    --ink-2:      #52514e;
+    --muted:      #898781;
+    --grid:       #e1e0d9;
+    --axis:       #c3c2b7;
+    --border:     rgba(11,11,11,0.10);
+    /* 3視点＝カテゴリカル3スロット（全ペア検証通過） */
+    --critical:   #eb6834;  /* 批判的AG = 橙 */
+    --neutral:    #2a78d6;  /* 中立AG   = 青 */
+    --advocate:   #1baf7a;  /* 推進的AG = アクア */
+    --history:    #52514e;  /* 実績線 = 副次インク（背景の文脈） */
+    --final:      #0b0b0b;  /* 調整AI最終 = プライマリインク（色でなく形で区別） */
+    --band:       rgba(11,11,11,0.06);
+    --crit-status:#d03b3b;  /* エスカレーション・予算超過 = ステータス赤 */
+    --warn-status:#fab219;
+    --good-status:#0ca30c;  /* 予算内 = ステータス緑 */
+  }
+  :root[data-theme="dark"], :root:where(:not([data-theme="light"])) {
+    /* 下のメディアクエリで上書き */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:    #0d0d0d;
+      --surface:  #1a1a19;
+      --ink:      #ffffff;
+      --ink-2:    #c3c2b7;
+      --muted:    #898781;
+      --grid:     #2c2c2a;
+      --axis:     #383835;
+      --border:   rgba(255,255,255,0.10);
+      --critical: #d95926;
+      --neutral:  #3987e5;
+      --advocate: #199e70;
+      --history:  #c3c2b7;
+      --final:    #ffffff;
+      --band:     rgba(255,255,255,0.08);
+      --crit-status:#e05656;
+      --warn-status:#fab219;
+      --good-status:#0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,0.10);
+    --critical:#d95926; --neutral:#3987e5; --advocate:#199e70; --history:#c3c2b7;
+    --final:#ffffff; --band:rgba(255,255,255,0.08); --crit-status:#e05656; --warn-status:#fab219;
+    --good-status:#0ca30c;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--plane); color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 26px clamp(20px, 4vw, 48px);
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap;
+  }
+  header h1 { font-size: 24px; margin: 0; font-weight: 650; }
+  header .sub { color: var(--ink-2); font-size: 15px; }
+  header .spacer { flex: 1; }
+  .btn {
+    font: inherit; font-size: 15px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--ink);
+    padding: 10px 18px; border-radius: 9px;
+  }
+  .btn:hover { border-color: var(--muted); }
+  .btn-primary { background: var(--neutral); color: #fff; border-color: transparent; }
+  .btn-primary:disabled { opacity: .55; cursor: default; }
+
+  main {
+    padding: clamp(20px, 4vw, 40px);
+    display: grid; gap: 28px;
+    grid-template-columns: 1fr;
+    max-width: 940px; margin: 0 auto;
+  }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 16px; padding: 24px 24px 16px;
+  }
+  .card-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .card-head h2 { font-size: 20px; margin: 0; font-weight: 650; }
+  .card-head .latest { color: var(--muted); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .card-actions { display: flex; align-items: center; gap: 12px; margin: 6px 0 14px; }
+  .status { font-size: 14px; color: var(--muted); }
+
+  svg { width: 100%; height: auto; display: block; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .axis-line { stroke: var(--axis); stroke-width: 1; }
+  .tick { fill: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  .hist-line { fill: none; stroke: var(--history); stroke-width: 2.5; }
+  .hist-dot { fill: var(--history); }
+  .band-rect { fill: var(--band); }
+  .final-line { stroke: var(--final); stroke-width: 2; stroke-dasharray: 5 4; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 10px 2px 2px; font-size: 14px; color: var(--ink-2); }
+  .legend .item { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 13px; height: 13px; border-radius: 3px; display: inline-block; }
+  .swatch.diamond { border-radius: 2px; transform: rotate(45deg); width: 11px; height: 11px; }
+
+  /* --- 予算パネル --- */
+  .budget { margin: 4px 0 18px; padding: 18px 20px; border: 1px solid var(--border); border-radius: 12px; background: color-mix(in srgb, var(--neutral) 5%, var(--surface)); }
+  .budget-title { font-size: 14px; font-weight: 650; margin: 0 0 14px; display: flex; align-items: baseline; gap: 8px; }
+  .budget-title .fy { color: var(--muted); font-size: 12px; font-weight: 400; }
+  .bstats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 16px; }
+  @media (max-width: 620px) { .bstats { grid-template-columns: repeat(2, 1fr); } }
+  .bstat { display: flex; flex-direction: column; gap: 3px; }
+  .blabel { font-size: 12px; color: var(--ink-2); }
+  .bval { font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .bsub { font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .bstat.landing .bval { color: var(--muted); }
+  .bstat.landing.done .bval { color: var(--ink); }
+  .bstat.over .bval, .bstat.over .bsub { color: var(--crit-status); }
+  .bstat.under .bval, .bstat.under .bsub { color: var(--good-status); }
+
+  .bbar-wrap { position: relative; }
+  .bbar { position: relative; height: 34px; border-radius: 7px; overflow: hidden;
+    background: color-mix(in srgb, var(--muted) 16%, transparent); }
+  .bseg { position: absolute; top: 0; height: 100%; }
+  .bseg.spent { background: var(--neutral); }
+  .bseg.fc { background: repeating-linear-gradient(135deg,
+      color-mix(in srgb, var(--neutral) 55%, transparent) 0 6px,
+      color-mix(in srgb, var(--neutral) 25%, transparent) 6px 12px); }
+  .bseg.fc-over { background: repeating-linear-gradient(135deg,
+      color-mix(in srgb, var(--crit-status) 70%, transparent) 0 6px,
+      color-mix(in srgb, var(--crit-status) 35%, transparent) 6px 12px); }
+  .bmarker { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+  .bmarker::after { content: '予算'; position: absolute; top: -16px; left: 50%; transform: translateX(-50%);
+    font-size: 10.5px; color: var(--ink-2); white-space: nowrap; }
+  .bbar-legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 20px; font-size: 12px; color: var(--ink-2); }
+  .bbar-legend .item { display: inline-flex; align-items: center; gap: 6px; }
+  .bbar-legend .sw { width: 13px; height: 13px; border-radius: 3px; }
+  .bbar-legend .sw.spent { background: var(--neutral); }
+  .bbar-legend .sw.fc { background: repeating-linear-gradient(135deg,
+      color-mix(in srgb, var(--neutral) 55%, transparent) 0 4px,
+      color-mix(in srgb, var(--neutral) 25%, transparent) 4px 8px); }
+
+  .result { margin-top: 16px; border-top: 1px solid var(--border); padding-top: 16px; display: none; }
+  .result.show { display: block; }
+  .final-box { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+  .final-num { font-size: 32px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .final-range { color: var(--ink-2); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .final-reason { color: var(--ink-2); font-size: 14.5px; line-height: 1.75; margin: 8px 0 14px; }
+  .escalate {
+    display: none; align-items: center; gap: 9px; font-size: 14.5px; font-weight: 600;
+    color: var(--crit-status); background: color-mix(in srgb, var(--crit-status) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--crit-status) 35%, transparent);
+    padding: 10px 14px; border-radius: 9px; margin-bottom: 12px;
+  }
+  .escalate.show { display: flex; }
+  .stances { display: grid; gap: 11px; }
+  .stance-row { display: grid; grid-template-columns: 96px auto; gap: 12px; align-items: start; font-size: 14.5px; }
+  .stance-name { display: inline-flex; align-items: center; gap: 7px; font-weight: 600; }
+  .stance-amt { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .stance-reason { color: var(--ink-2); line-height: 1.65; }
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 10; opacity: 0;
+    background: var(--ink); color: var(--surface); font-size: 13px;
+    padding: 5px 10px; border-radius: 7px; transform: translate(-50%, -130%);
+    font-variant-numeric: tabular-nums; white-space: nowrap; transition: opacity .08s;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>財務予測エージェント</h1>
+  <span class="sub">全費目を合算した総支出を、3視点の合議で翌月（{{ target_month }}）予測 · ダミーデータ</span>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-toggle" type="button">◐ テーマ</button>
+  <button class="btn btn-primary" id="run-all" type="button">すべて予測する</button>
+</header>
+
+<main id="grid"></main>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script id="history-data" type="application/json">{{ history | tojson }}</script>
+<script id="budget-data" type="application/json">{{ budget | tojson }}</script>
+<script>
+const HISTORY = JSON.parse(document.getElementById('history-data').textContent);
+const BUDGET = JSON.parse(document.getElementById('budget-data').textContent);
+const TARGET_MONTH = {{ target_month | tojson }};
+const STANCE_META = {
+  critical: { label: '批判的AG', varName: '--critical' },
+  neutral:  { label: '中立AG',   varName: '--neutral'  },
+  advocate: { label: '推進的AG', varName: '--advocate' },
+};
+const yen = n => (typeof n === 'number' ? n.toLocaleString('ja-JP') + '円' : '—');
+const cssVar = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+
+const W = 640, H = 340, PAD = { l: 72, r: 92, t: 22, b: 40 };
+const tooltip = document.getElementById('tooltip');
+
+function showTip(evt, text) {
+  tooltip.textContent = text;
+  tooltip.style.left = evt.clientX + 'px';
+  tooltip.style.top = evt.clientY + 'px';
+  tooltip.style.opacity = 1;
+}
+function hideTip() { tooltip.style.opacity = 0; }
+
+function svgEl(tag, attrs = {}) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  for (const [k, v] of Object.entries(attrs)) el.setAttribute(k, v);
+  return el;
+}
+
+// 費目ごとのチャートを描画。forecast があれば予測点・レンジも重ねる。
+function drawChart(container, rows, forecast) {
+  container.innerHTML = '';
+  const svg = svgEl('svg', { viewBox: `0 0 ${W} ${H}`, role: 'img' });
+
+  const amounts = rows.map(r => r.amount);
+  if (forecast) {
+    for (const s of forecast.stances) if (typeof s.forecast_amount === 'number') amounts.push(s.forecast_amount);
+    for (const k of ['final_amount', 'range_low', 'range_high'])
+      if (typeof forecast.final[k] === 'number') amounts.push(forecast.final[k]);
+  }
+  let yMin = Math.min(...amounts), yMax = Math.max(...amounts);
+  const padY = (yMax - yMin) * 0.12 || yMax * 0.1 || 1;
+  yMin = Math.max(0, yMin - padY); yMax = yMax + padY;
+
+  const n = rows.length;              // 実績月数
+  const slots = n + 1;                // + 予測月
+  const x = i => PAD.l + (slots <= 1 ? 0 : (W - PAD.l - PAD.r) * i / (slots - 1));
+  const y = v => PAD.t + (H - PAD.t - PAD.b) * (1 - (v - yMin) / (yMax - yMin || 1));
+
+  // y グリッド＋目盛
+  const TICKS = 4;
+  for (let i = 0; i <= TICKS; i++) {
+    const val = yMin + (yMax - yMin) * i / TICKS;
+    const yy = y(val);
+    svg.appendChild(svgEl('line', { class: 'grid-line', x1: PAD.l, y1: yy, x2: W - PAD.r, y2: yy }));
+    const t = svgEl('text', { class: 'tick', x: PAD.l - 10, y: yy + 4, 'text-anchor': 'end' });
+    t.textContent = Math.round(val / 10000) + '万';
+    svg.appendChild(t);
+  }
+  // x 軸目盛（隔月）
+  rows.forEach((r, i) => {
+    if (i % 2 !== 0 && i !== n - 1) return;
+    const t = svgEl('text', { class: 'tick', x: x(i), y: H - PAD.b + 20, 'text-anchor': 'middle' });
+    t.textContent = r.month.slice(2);
+    svg.appendChild(t);
+  });
+  // 予測月ラベル
+  const tf = svgEl('text', { class: 'tick', x: x(n), y: H - PAD.b + 20, 'text-anchor': 'middle', 'font-weight': '700' });
+  tf.textContent = TARGET_MONTH.slice(2);
+  tf.style.fill = 'var(--ink-2)';
+  svg.appendChild(tf);
+
+  // 実績の折れ線
+  const dpath = rows.map((r, i) => `${i ? 'L' : 'M'}${x(i)},${y(r.amount)}`).join(' ');
+  svg.appendChild(svgEl('path', { class: 'hist-line', d: dpath }));
+  rows.forEach((r, i) => {
+    const c = svgEl('circle', { class: 'hist-dot', cx: x(i), cy: y(r.amount), r: 4 });
+    c.addEventListener('mousemove', e => showTip(e, `${r.month}　${yen(r.amount)}`));
+    c.addEventListener('mouseleave', hideTip);
+    svg.appendChild(c);
+  });
+
+  if (forecast) {
+    const fx = x(n);
+    const fin = forecast.final;
+    // 最終予測レンジ帯
+    if (typeof fin.range_low === 'number' && typeof fin.range_high === 'number') {
+      svg.appendChild(svgEl('rect', {
+        class: 'band-rect', x: fx - 22, width: 44,
+        y: y(fin.range_high), height: Math.max(1, y(fin.range_low) - y(fin.range_high)), rx: 5,
+      }));
+    }
+    // 実績最終点 → 各視点への細い連結線＋視点の点
+    forecast.stances.forEach(s => {
+      if (typeof s.forecast_amount !== 'number') return;
+      const col = cssVar(STANCE_META[s.stance].varName);
+      const ln = svgEl('line', { x1: x(n - 1), y1: y(rows[n - 1].amount), x2: fx, y2: y(s.forecast_amount),
+        stroke: col, 'stroke-width': 2, 'stroke-opacity': .5 });
+      svg.appendChild(ln);
+      const c = svgEl('circle', { cx: fx, cy: y(s.forecast_amount), r: 7, fill: col,
+        stroke: 'var(--surface)', 'stroke-width': 2.5 });
+      c.addEventListener('mousemove', e => showTip(e, `${STANCE_META[s.stance].label}　${yen(s.forecast_amount)}`));
+      c.addEventListener('mouseleave', hideTip);
+      svg.appendChild(c);
+    });
+    // 最終予測：横破線＋ひし形（色でなく形で強調）
+    if (typeof fin.final_amount === 'number') {
+      const fy = y(fin.final_amount);
+      svg.appendChild(svgEl('line', { class: 'final-line', x1: PAD.l, y1: fy, x2: fx + 22, y2: fy }));
+      const d = 10;
+      const dm = svgEl('path', {
+        d: `M${fx},${fy - d} L${fx + d},${fy} L${fx},${fy + d} L${fx - d},${fy} Z`,
+        fill: 'var(--final)', stroke: 'var(--surface)', 'stroke-width': 2,
+      });
+      dm.addEventListener('mousemove', e => showTip(e, `調整AI最終　${yen(fin.final_amount)}`));
+      dm.addEventListener('mouseleave', hideTip);
+      svg.appendChild(dm);
+    }
+  }
+  container.appendChild(svg);
+}
+
+// 予算消化バー。landing があれば予測分・超過分・着地判定も描く。
+function drawBudgetBar(card, landing) {
+  const bar = card.querySelector('.bbar');
+  if (!bar || !BUDGET) return;
+  bar.innerHTML = '';
+  const budget = BUDGET.annual_budget, spent = BUDGET.spent;
+  const proj = landing && typeof landing.projected_landing === 'number' ? landing.projected_landing : null;
+  const scaleMax = Math.max(budget, proj || 0) * 1.04;
+  const pct = v => (v / scaleMax * 100);
+
+  const spentSeg = document.createElement('div');
+  spentSeg.className = 'bseg spent';
+  spentSeg.style.left = '0'; spentSeg.style.width = pct(spent) + '%';
+  bar.appendChild(spentSeg);
+
+  if (proj !== null) {
+    const withinEnd = Math.min(proj, budget);
+    if (withinEnd > spent) {
+      const fc = document.createElement('div');
+      fc.className = 'bseg fc';
+      fc.style.left = pct(spent) + '%'; fc.style.width = (pct(withinEnd) - pct(spent)) + '%';
+      bar.appendChild(fc);
+    }
+    if (proj > budget) {
+      const over = document.createElement('div');
+      over.className = 'bseg fc-over';
+      over.style.left = pct(budget) + '%'; over.style.width = (pct(proj) - pct(budget)) + '%';
+      bar.appendChild(over);
+    }
+  }
+  const marker = document.createElement('div');
+  marker.className = 'bmarker';
+  marker.style.left = pct(budget) + '%';
+  bar.appendChild(marker);
+}
+
+// 着地見込みの数値・判定をパネルに反映
+function renderLanding(card, landing) {
+  const stat = card.querySelector('.bstat.landing');
+  if (!stat || !landing || typeof landing.projected_landing !== 'number') return;
+  stat.classList.add('done');
+  card.querySelector('.land-val').textContent = yen(landing.projected_landing);
+  const over = landing.over_amount;
+  const verdict = card.querySelector('.land-verdict');
+  stat.classList.toggle('over', over > 0);
+  stat.classList.toggle('under', over <= 0);
+  verdict.textContent = over > 0
+    ? `⚠️ 予算を ${yen(over)} 超える見込み`
+    : `✓ 予算内（あと ${yen(-over)} 余裕）`;
+  drawBudgetBar(card, landing);
+}
+
+function renderResult(card, data) {
+  const box = card.querySelector('.result');
+  box.classList.add('show');
+  if (data.budget) renderLanding(card, data.budget);
+  const fin = data.final;
+  card.querySelector('.final-num').textContent = yen(fin.final_amount);
+  const rng = card.querySelector('.final-range');
+  rng.textContent = (typeof fin.range_low === 'number')
+    ? `幅 ${yen(fin.range_low)} 〜 ${yen(fin.range_high)}` : '';
+  card.querySelector('.final-reason').textContent = fin.reasoning || '';
+
+  const esc = card.querySelector('.escalate');
+  if (fin.escalate_to_human) {
+    esc.classList.add('show');
+    const pct = fin.disagreement_score != null ? Math.round(fin.disagreement_score * 100) + '%' : '';
+    esc.querySelector('.esc-text').textContent = `3視点の割れが大きい（${pct}）ため、人間の確認が必要`;
+  } else {
+    esc.classList.remove('show');
+  }
+
+  const list = card.querySelector('.stances');
+  list.innerHTML = '';
+  data.stances.forEach(s => {
+    const meta = STANCE_META[s.stance];
+    const row = document.createElement('div');
+    row.className = 'stance-row';
+    row.innerHTML =
+      `<span class="stance-name"><span class="swatch" style="background:var(${meta.varName})"></span>${meta.label}</span>` +
+      `<span><span class="stance-amt">${yen(s.forecast_amount)}</span>` +
+      `<span class="stance-reason"> — ${s.reasoning || ''}</span></span>`;
+    list.appendChild(row);
+  });
+
+  drawChart(card.querySelector('.chart'), HISTORY[data.category], data);
+}
+
+async function runForecast(card) {
+  const category = card.dataset.category;
+  const btn = card.querySelector('.run-btn');
+  const status = card.querySelector('.status');
+  btn.disabled = true;
+  status.textContent = '3視点が予測中… 調整AIが統合します（数十秒）';
+  try {
+    const res = await fetch('/api/forecast', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ category }),
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    renderResult(card, data);
+    status.textContent = '';
+  } catch (e) {
+    status.textContent = 'エラー: ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function buildCards() {
+  const grid = document.getElementById('grid');
+  for (const [category, rows] of Object.entries(HISTORY)) {
+    const latest = rows[rows.length - 1];
+    const card = document.createElement('section');
+    card.className = 'card';
+    card.dataset.category = category;
+    const budgetPanel = BUDGET ? `
+      <div class="budget">
+        <p class="budget-title">予算管理 <span class="fy">${BUDGET.fiscal_label}</span></p>
+        <div class="bstats">
+          <div class="bstat"><span class="blabel">年度予算</span><span class="bval">${yen(BUDGET.annual_budget)}</span></div>
+          <div class="bstat"><span class="blabel">使った額（実績累計）</span><span class="bval">${yen(BUDGET.spent)}</span><span class="bsub">${BUDGET.elapsed_months}ヶ月経過</span></div>
+          <div class="bstat"><span class="blabel">あと使える（残予算）</span><span class="bval">${yen(BUDGET.remaining_budget)}</span><span class="bsub">残り${BUDGET.remaining_months}ヶ月</span></div>
+          <div class="bstat landing"><span class="blabel">着地見込み（予測込み）</span><span class="bval land-val">予測待ち</span><span class="bsub land-verdict"></span></div>
+        </div>
+        <div class="bbar-wrap"><div class="bbar"></div></div>
+        <div class="bbar-legend">
+          <span class="item"><span class="sw spent"></span>使った額</span>
+          <span class="item"><span class="sw fc"></span>予測分（残り月の見込み）</span>
+          <span class="item">｜ = 年度予算ライン</span>
+        </div>
+      </div>` : '';
+    card.innerHTML = `
+      <div class="card-head">
+        <h2>${category}</h2>
+        <span class="latest">直近 ${latest.month}: ${yen(latest.amount)}</span>
+      </div>
+      ${budgetPanel}
+      <div class="card-actions">
+        <button class="btn btn-primary run-btn" type="button">予測する</button>
+        <span class="status"></span>
+      </div>
+      <div class="chart"></div>
+      <div class="legend">
+        <span class="item"><span class="swatch" style="background:var(--history)"></span>実績</span>
+        <span class="item"><span class="swatch" style="background:var(--critical)"></span>批判的</span>
+        <span class="item"><span class="swatch" style="background:var(--neutral)"></span>中立</span>
+        <span class="item"><span class="swatch" style="background:var(--advocate)"></span>推進的</span>
+        <span class="item"><span class="swatch diamond" style="background:var(--final)"></span>調整AI最終</span>
+      </div>
+      <div class="result">
+        <div class="escalate"><span>⚠️</span><span class="esc-text"></span></div>
+        <div class="final-box">
+          <span class="final-num">—</span>
+          <span class="final-range"></span>
+        </div>
+        <div class="final-reason"></div>
+        <div class="stances"></div>
+      </div>`;
+    grid.appendChild(card);
+    card.querySelector('.run-btn').addEventListener('click', () => runForecast(card));
+    drawChart(card.querySelector('.chart'), rows, null);
+    drawBudgetBar(card, null);  // 予測前は実績分だけ表示（予算−実績はAI不要）
+  }
+}
+
+document.getElementById('run-all').addEventListener('click', () => {
+  document.querySelectorAll('.card').forEach(c => runForecast(c));
+});
+document.getElementById('theme-toggle').addEventListener('click', () => {
+  const root = document.documentElement;
+  const dark = root.getAttribute('data-theme') === 'dark'
+    || (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+  root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  // 再描画してSVG内の色を更新
+  document.querySelectorAll('.card').forEach(c => {
+    const cat = c.dataset.category;
+    drawChart(c.querySelector('.chart'), HISTORY[cat], null);
+  });
+});
+
+buildCards();
+</script>
+</body>
+</html>

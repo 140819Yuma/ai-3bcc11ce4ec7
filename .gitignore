@@ -3,13 +3,21 @@
 .AppleDouble
 .LSOverride
 
-# 内部資料・PDF（機密情報含む可能性あり）
+# 内部資料・PDF・打ち合わせメモ（個人情報・機密含む。公開リポジトリには載せない）
 AIエージェント調査.pdf
+2026_07_21_geminiメモ.md
+できるようになったこと_2026-07-02.pdf
+第二の脳_実践ガイド_2026-07.pdf
 
 # 環境・APIキー
 .env
 *.key
 *.pem
+
+# 実データ（会計・給与など機密。sample_/template_ 以外は公開しない）
+agent/data/expenses.xlsx
+agent/data/expenses.csv
+agent/data/*_real.*
 
 # Python
 __pycache__/

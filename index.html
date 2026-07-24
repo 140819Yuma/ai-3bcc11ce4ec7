@@ -456,6 +456,7 @@
     <button class="nav-tab" data-tab="design" role="tab">設計</button>
     <button class="nav-tab" data-tab="research" role="tab">リサーチ</button>
     <button class="nav-tab" data-tab="impl" role="tab">環境と実装</button>
+    <button class="nav-tab" data-tab="kaminaga" role="tab">神永ライン</button>
   </div>
 </nav>
 
@@ -489,6 +490,12 @@
   <a href="#pc-spec">PCスペック</a><span class="sub-sep"> · </span>
   <a href="#local-vs-cloud">ローカルLLM比較</a>
 </div>
+<div class="sub-nav-bar" data-tab="kaminaga">
+  <a href="#kaminaga">ライン概要</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-app">実装状況</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-budget">予算管理</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-next">現状と次</a>
+</div>
 
 <main>
 
@@ -515,7 +522,14 @@
     <div class="sec-head">
       <div class="sec-tag">Executive Summary</div>
       <h2 class="sec-title">全体サマリー — ここまでの結論と、次にやること</h2>
-      <p class="sec-sub">2026年6月19日の試作開始から現在までの設計・調査・意思決定を1画面に圧縮した。根拠と詳細は各セクションへ。（最終更新: 2026-07-08）</p>
+      <p class="sec-sub">2026年6月19日の試作開始から現在までの設計・調査・意思決定を1画面に圧縮した。根拠と詳細は各セクションへ。（最終更新: 2026-07-21）</p>
+    </div>
+
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🚨</div>
+      <div>
+        <p><strong>体制転換・緊急度上昇（2026-07-21、神永さん・石川さん打ち合わせ）：</strong> Koki Matanoとの日程調整が続かず進捗が止まっていたため、共同作業から<strong>各自が別テーマを個別に進めて成果物を共有する体制</strong>へ移行。財務予測エージェントはYuma Kaminaga単独推進に切り替わる。石川さん（Nobuyuki Ishikawa）の整理では本プロジェクトは「陸上戦（As-Is：現状の経理系仕組み化）」に位置づけられ、年明けからの長期化を踏まえ石川さんから<strong>「これ以上待てない」「場合によっては別ルート・並走も検討」</strong>との言及があった。また「足し算・引き算の処理でありAIにこだわらず手作業でも良い」との指摘に対し、<strong>YumaはAI活用にこだわる方針を維持することを決定</strong>（<a href="#decisions" style="color:var(--accent);">意思決定ボード論点6</a>）。詳細は<a href="#meeting" style="color:var(--accent);">打ち合わせメモ</a>・<a href="#log" style="color:var(--accent);">進捗ログ7/21</a>へ。</p>
+      </div>
     </div>
 
     <div class="callout c-warn" style="margin-bottom:28px;">
@@ -616,7 +630,7 @@
     <div class="callout c-tip">
       <div class="callout-icon">🧭</div>
       <div>
-        <p><strong>ひとことで：</strong> 財務予測エージェントへ軌足を変更した。基盤アーキテクチャ（司令官・合議ループ・マスキング）は流用できるため、ゼロからの構築ではない。合議の決め方（意思決定ボード論点1）は7/9の打ち合わせで<strong>決定済み</strong>（独立判断＋上位AGが集約）。次にやるべきはデータ接続とマスキング範囲（論点3）の確定である。</p>
+        <p><strong>ひとことで：</strong> 財務予測エージェントへ軌足を変更した。基盤アーキテクチャ（司令官・合議ループ・マスキング）は流用できるため、ゼロからの構築ではない。合議の決め方（意思決定ボード論点1）は7/9の打ち合わせで<strong>決定済み</strong>（独立判断＋上位AGが集約）。2026-07-21に体制が単独推進へ切り替わり緊急度も上がったため、次にやるべきは<strong>データ接続とマスキング範囲（論点3）の確定</strong>——石川さんとの週1回の短い打ち合わせに間に合わせるペースで進める。</p>
       </div>
     </div>
   </div>
@@ -628,10 +642,16 @@
     <div class="sec-head">
       <div class="sec-tag">Project Overview</div>
       <h2 class="sec-title">プロジェクト概要</h2>
-      <p class="sec-sub">複数のAIエージェントに財務予測をさせることで、AI × 人間のシステムの体系化を進め、人間側のリソースの有効活用をはかる。（2026-07-08 方針転換：旧「タスク管理の自動化」路線からドメインを変更）</p>
+      <p class="sec-sub">複数のAIエージェントに財務予測をさせることで、AI × 人間のシステムの体系化を進め、人間側のリソースの有効活用をはかる。（2026-07-08 方針転換：旧「タスク管理の自動化」路線からドメインを変更／2026-07-21 単独推進体制へ移行）</p>
     </div>
 
     <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">🧭</div>
+        <h3>推進体制（2026-07-21更新）</h3>
+        <p>Koki Matanoとの共同作業から、各自が別テーマを個別に進めて成果物を共有し合う体制へ転換。財務予測エージェントは<strong>Yuma Kaminaga単独推進</strong>となり、石川さん（Nobuyuki Ishikawa）と週1回・5〜10分程度の短い打ち合わせで進捗を共有する。石川さんの整理では本プロジェクトは「陸上戦（As-Is：現状の経理系仕組み化）」に位置づけられる。</p>
+        <span class="badge bo">体制変更</span>
+      </div>
       <div class="card">
         <div class="card-icon">⚖️</div>
         <h3>財務予測（5エージェント構成）</h3>
@@ -666,7 +686,7 @@
     <div class="sec-head">
       <div class="sec-tag">Meeting Notes</div>
       <h2 class="sec-title">打ち合わせメモ — プロジェクトの方向性議論</h2>
-      <p class="sec-sub">Yuma Kaminaga・Nobuyuki Ishikawa・Koki Matanoによる議論。コスト感・目的設計・人間とAIの役割分担について共有された内容を整理。</p>
+      <p class="sec-sub">2026-06-30（Yuma Kaminaga・Nobuyuki Ishikawa・Koki Matano）と2026-07-21（Yuma Kaminaga・Nobuyuki Ishikawa）の2回分。コスト感・目的設計・役割分担に加え、7/21では推進体制の転換とプロジェクトの位置づけが議論された。</p>
     </div>
 
     <div class="callout c-info" style="margin-bottom:24px;">
@@ -727,10 +747,46 @@
       </div>
     </div>
 
-    <div class="callout c-purple">
+    <div class="callout c-purple" style="margin-bottom:24px;">
       <div class="callout-icon">🔍</div>
       <div>
         <p><strong>話題に上がった具体ツール：</strong> <strong>Manus</strong>（後述の<a href="#agent-services" style="color:var(--accent)">サービス比較</a>セクションで詳細あり）と<strong>Merlin</strong>（最大8時間の自律的リサーチが可能とされるが、開発元の信頼性・セキュリティ上の懸念点が話題に）。Merlinは今回のリサーチ範囲（後述5記事）には登場せず未検証のため、導入前に個別調査が必要。</p>
+      </div>
+    </div>
+
+    <!-- 7/21 打ち合わせ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 12px;">2026-07-21 打ち合わせ — 神永さん・石川さん（体制転換と位置づけの明確化）</h3>
+    <p style="font-size:13px;color:var(--text2);line-height:2;margin-bottom:16px;">アオタケPM運営全般の定例の中で、財務予測エージェントの進行体制について議論された部分を抜粋。メンバー個人の学業・状況に関する話題は本レポートの対象外のため除いている。</p>
+    <div class="card-grid" style="margin-bottom:24px;">
+      <div class="card">
+        <div class="card-icon">🔀</div>
+        <h3>共同作業 → 個別作業への転換</h3>
+        <p>Koki Matanoとの日程調整が続かず、話すたびに内容がアップデートされず蓄積されない停滞状態が続いていた。日程調整コストが最も高いことを踏まえ、二人で予定を合わせて作る方式から<strong>各自が別テーマを個別に進めて成果物を見せ合う</strong>方式へ変更。</p>
+        <span class="badge bo">体制</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🪖</div>
+        <h3>「陸上戦（As-Is）」としての位置づけ</h3>
+        <p>石川さんはAI関連の取り組みを「空中戦（To-Be：未来ビジョンからのバックキャスト）」と「陸上戦（As-Is：過去から現在への課題解決）」に大別。財務予測（経理系の予算管理システム）は陸上戦にあたり、今年度あといくら使えるか可視化する仕組みとして位置づけられている。</p>
+        <span class="badge bb">位置づけ</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏰</div>
+        <h3>緊急度の上昇</h3>
+        <p>年明けから開始し既に半年以上が経過。石川さんから「これ以上待てない」との言及があり、感情的摩擦を避けつつも<strong>別ルートで進める・並走させる可能性</strong>も検討されている。石川さん自身は「足し算・引き算の処理でありAIの利用にはこだわらず手作業での仕組み化でも構わない」とも述べた。</p>
+        <span class="badge bpk">要注意</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">📄</div>
+        <h3>もう一つのAIライン（提案書自動化）</h3>
+        <p>石川さんは別途、ステークホルダー向け提案書作成の自動化を「To-Be」として推進中（10〜11月運用開始目標）。分野別の複数AIを指揮する「オーケストレーション」構成が現在の技術水準に適するとの見立てで、Claudeの上位プランへの加入も検討中。会津大学・松田さんが取り組む「AI同士を対等に議論させるマルチエージェント」への言及もあったが、これは<a href="#decisions" style="color:var(--accent);">論点1で決定した独立判断方式</a>とは異なるアプローチ。</p>
+        <span class="badge bp">別ライン</span>
+      </div>
+    </div>
+    <div class="callout c-warn">
+      <div class="callout-icon">✅</div>
+      <div>
+        <p><strong>Yumaの判断：</strong> 「AIにこだわらず手作業でも良い」という選択肢が明示的に示された上で、YumaはAI活用にこだわる方針を維持することを決定した（<a href="#decisions" style="color:var(--accent);">意思決定ボード論点6</a>）。単独推進・緊急度上昇という制約の中で、次の1〜2週間でデータ接続の目処をつけることが最優先になる。</p>
       </div>
     </div>
   </div>
@@ -892,6 +948,23 @@
           <div class="log-insight">
             <strong>📌 気づき：</strong> API選定は「今決める」必要がない。抽象化層（LiteLLM）を挟めば開発は止まらず、選定は論点4のバックテストに候補モデルを相乗りさせて<strong>実測（費目別WAPE×実コスト）で決められる</strong>。一方、データ学習利用ポリシーだけは後から直せない入口の基準なので、財務データを流す前に必ず確認する。<br>
             <strong>📌 次のステップ：</strong> ①LiteLLMベースの骨組みへプロトタイプを移行、②候補モデルの書類選考（学習ポリシー・構造化出力）、③バックテスト設計（論点4）と統合したモデル比較実験の計画。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">7/21</div>
+        <div class="log-content">
+          <h4>体制転換 — Koki Matanoとの共同作業から単独推進へ、緊急度が上昇</h4>
+          <ul class="log-items">
+            <li>神永さん・石川さん打ち合わせ（<a href="#meeting">詳細</a>）：日程調整の停滞を受け、共同作業から各自が別テーマを個別に進める体制へ転換。財務予測エージェントはYuma Kaminaga単独推進に</li>
+            <li>石川さんの整理でプロジェクトを「陸上戦（As-Is：現状の経理系仕組み化）」と位置づけ。年明けからの長期化を踏まえ「これ以上待てない」「別ルート・並走も検討」との言及あり</li>
+            <li>石川さんから「足し算・引き算の処理でありAIにこだわらず手作業でも良い」との指摘 → <strong>意思決定ボード論点6</strong>としてYumaが判断し、AI活用にこだわる方針で決定</li>
+            <li>石川さんは別途、提案書自動化のためのAIオーケストレーションを「空中戦（To-Be）」として推進中（10〜11月運用開始目標）。会津大学・松田さんの「AI同士が議論するマルチエージェント」構想への言及もあり、本プロジェクトの独立判断方式（論点1）との対比材料として記録</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> 「AIにこだわらず手作業でも良い」という選択肢が明示されたことで、逆にAI活用にこだわる理由を言語化する必要が出てきた——6/30打ち合わせで確認した本プロジェクトのテーマ（<a href="#meeting">人間とAIの役割分担の実践知見を蓄積すること</a>）がその根拠になる。単独推進・緊急度上昇という制約は、5エージェントのフル実装より先に<strong>まず動くものを早く見せる</strong>ことの優先度を上げた。<br>
+            <strong>📌 次のステップ：</strong> データ接続（勘定科目別月次推移CSVの取得）を最優先で進め、石川さんとの週1回・5〜10分の打ち合わせで小さく進捗を共有する。
           </div>
         </div>
       </div>
@@ -1076,6 +1149,13 @@
       </div>
     </div>
 
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🚨</div>
+      <div>
+        <p><strong>2026-07-21 打ち合わせ反映（神永さん・石川さん）：</strong> 新論点6を追加し即決定——石川さんの「AIにこだわらず手作業でも良い」という指摘に対し、YumaはAI活用にこだわる方針を選んだ。あわせて体制が単独推進へ切り替わり緊急度が上がったため（<a href="#meeting" style="color:var(--accent);">詳細</a>）、論点3・4（マスキング範囲・バックテスト基準）は石川さんへの相談を急ぐ必要がある未決事項として優先度を引き上げる。</p>
+      </div>
+    </div>
+
     <!-- サイクル#1 サマリー -->
     <div class="callout c-info">
       <div class="callout-icon">🔄</div>
@@ -1167,10 +1247,22 @@
       </table></div>
     </div>
 
+    <!-- 論点6（決定） -->
+    <div style="background:var(--bg2);border:2px solid var(--green);border-radius:8px;padding:26px 30px;margin:20px 0;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--green);margin-bottom:10px;">論点 6 ｜ ⚪ 欠落 → ✅ 決定（2026-07-21）｜ <span style="color:var(--orange);">体制転換に伴う新規論点</span></div>
+      <h3 style="font-family:var(--serif);font-size:17px;margin:0 0 12px;">財務予測の仕組み化は、AI活用にこだわるか・手作業に切り替えるか</h3>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><strong>背景：</strong> 石川さん（Nobuyuki Ishikawa）から、財務予測の仕組みは本質的に「足し算・引き算の処理」であり、AIの利用にはこだわらず手作業での仕組み化でも構わないとの指摘があった。年明けからの長期化を踏まえ「これ以上待てない」との言及もあり、選択肢として現実味を持って提示された（<a href="#meeting" style="color:var(--accent);">詳細</a>）。</p>
+      <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:16px 18px;margin-bottom:14px;">
+        <div style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:8px;">Yumaの決定</div>
+        <p style="font-size:13px;color:var(--text2);line-height:1.9;margin-bottom:0;"><strong>AI活用にこだわる方針を維持</strong>。本プロジェクトの目的は経理業務の効率化そのものではなく、<a href="#meeting" style="color:var(--accent);">AI×人間の役割分担の実践知見を蓄積すること</a>（6/30打ち合わせで確認した本実験のテーマ）にあるため、手作業への切り替えはテーマそのものを手放すことになる。ただし単独推進・緊急度上昇という制約の中では、5エージェントのフル実装を待たず<strong>まず動くものを早く見せる</strong>ことを優先する（部分実装からの段階的な拡張は許容）。</p>
+      </div>
+      <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:0;"><strong>継続検討：</strong> 石川さんが「別ルートで進める・並走させる」可能性に言及した以上、進捗が見えない期間が続けば方針が再び揺らぎうる。次回の石川さんとの打ち合わせまでに、最低でも<a href="#plan" style="color:var(--accent);">実行計画Step 1</a>（データソース確定）の目に見える進捗を用意することが望ましい。</p>
+    </div>
+
     <div class="callout c-tip">
       <div class="callout-icon">✅</div>
       <div>
-        <p><strong>決め方：</strong> 各論点について「A/B/C＋ひとこと理由」をClaude Codeに伝えるだけでよい（例:「論点3はA、論点4もAで進めて」）。決定はステータス欄に反映され、次のディスカッションサイクルで本文・実行計画に組み込まれる。<strong>✅ 決定済み：</strong> 論点1（合議は独立判断＋上位AGが集約）。<strong>🟢裏付けの反映済み事項：</strong> Python司令官のif/thenルーティング設計は2026年の業界収束形（司令官＋使い捨てサブエージェント）と一致することを確認。設計変更の必要なし。</p>
+        <p><strong>決め方：</strong> 各論点について「A/B/C＋ひとこと理由」をClaude Codeに伝えるだけでよい（例:「論点3はA、論点4もAで進めて」）。決定はステータス欄に反映され、次のディスカッションサイクルで本文・実行計画に組み込まれる。<strong>✅ 決定済み：</strong> 論点1（合議は独立判断＋上位AGが集約）・論点6（AI活用にこだわる）。<strong>🟢裏付けの反映済み事項：</strong> Python司令官のif/thenルーティング設計は2026年の業界収束形（司令官＋使い捨てサブエージェント）と一致することを確認。設計変更の必要なし。</p>
       </div>
     </div>
   </div>
@@ -2987,6 +3079,212 @@ session <span class="co">=</span> client.beta.sessions.create(
 </section>
 
 </div><!-- /tab-pane impl -->
+
+<div class="tab-pane" data-tab="kaminaga">
+
+<!-- ===== KAMINAGA LINE OVERVIEW ===== -->
+<section id="kaminaga">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Kaminaga Line</div>
+      <h2 class="sec-title">神永ライン — 財務予測エージェント 個別開発ワークスペース</h2>
+      <p class="sec-sub">2026-07-21の打ち合わせで、Koki Matanoとの共同作業から<strong>各自が別テーマを個別に進める体制</strong>へ移行した。このタブは神永（Yuma）単独で進める財務予測エージェントの作業場であり、既存の共有セクション（概要・設計・リサーチ・環境と実装）とは分けて、ここに開発の実物と進捗を集約していく。（新設: 2026-07-24）</p>
+    </div>
+
+    <div class="callout c-info" style="margin-bottom:24px;">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>なぜ分けたか：</strong> 日程調整の停滞で共同作業が前に進まなくなったため、体制を「別々に動いて成果物を見せ合う」方式へ変更した（<a href="#meeting" style="color:var(--accent);">打ち合わせメモ 2026-07-21</a>）。共有ノート側の設計・調査資産（<a href="#hybrid" style="color:var(--accent);">ハイブリッド設計</a>・<a href="#expense-forecast" style="color:var(--accent);">支出予測の実務調査</a>・<a href="#api-selection" style="color:var(--accent);">API選定</a>）はそのまま土台として使い、<strong>ここには「実際に動くもの」を積み上げる</strong>。</p>
+      </div>
+    </div>
+
+    <!-- 石川さんの中核要件との対応 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">石川さんが求めた中核と、この開発の位置づけ</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">石川さん（Nobuyuki Ishikawa）が「陸上戦（As-Is）」として述べた本質は<strong>「今年度あといくら使えて、いくら使ってしまったかを可視化する予算管理システム」</strong>だった（<a href="#meeting" style="color:var(--accent);">同メモ</a>）。石川さんは「足し算引き算なのでAIにこだわらなくてよい」とも述べたが、神永はAI活用にこだわる方針を採る（<a href="#decisions" style="color:var(--accent);">論点6</a>）。この2つは対立せず、次のように役割を分ければ両立する：</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:38mm;">要素</th><th>中身</th><th>AIの要否</th></tr></thead>
+        <tbody>
+          <tr><td><strong>予算管理の土台</strong></td><td>残予算 = 年度予算 − 実績累計。使った額・あと使える額の可視化</td><td><span class="ok">AI不要</span>（足し算引き算）</td></tr>
+          <tr><td><strong>着地見込み</strong></td><td>翌月以降いくら使いそうか。季節性・賞与月・活動量を読む必要がある</td><td><span class="tri">AIが価値を出す</span></td></tr>
+          <tr><td><strong>判定</strong></td><td>着地見込み vs 予算 →「予算を超えそうか／あといくら余るか」</td><td>土台＋AI予測の合算</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip">
+      <div class="callout-icon">🎯</div>
+      <div>
+        <p><strong>ひとことで：</strong> 予算管理の土台（AI不要）を作り、その上に<strong>3視点合議の予測AIを「年度末の着地見込み」として乗せる</strong>。こうすると、石川さんの問い「今年度あといくら使えるか」に予測AIが直接答える形になり、神永がこだわるマルチエージェント予測が予算管理の中核に組み込まれる。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KAMINAGA APP / BUILT ===== -->
+<section id="kaminaga-app">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Working Prototype</div>
+      <h2 class="sec-title">実装状況 — 動くもの（agent フォルダ）</h2>
+      <p class="sec-sub">ローカルで動く財務予測マルチエージェント＋可視化ダッシュボード。すべてGroqのAPI無料枠のみで稼働し、コストは¥0。使用する本番API・モデルは引き続き選定中（<a href="#api-selection" style="color:var(--accent);">API選定</a>）。（最終更新: 2026-07-24）</p>
+    </div>
+
+    <div class="card-grid" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-icon">⚖️</div>
+        <h3>3視点合議 → 調整AI</h3>
+        <p>批判的AG・中立AG・推進的AGが<strong>互いに議論せず独立に</strong>翌月を予測し、調整AIが根拠ごと1本に統合する。意見の割れが30%を超えたら人間へエスカレーション。<a href="#decisions" style="color:var(--accent);">論点1</a>の設計どおり。</p>
+        <span class="badge bg">稼働</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">📊</div>
+        <h3>可視化ダッシュボード</h3>
+        <p>Flask＋インラインSVGのローカルWebアプリ。月次実績の折れ線に3視点の予測点と調整AIの最終レンジを重ね描く。ダーク/ライト対応。割れが大きい費目はステータス赤で警告。</p>
+        <span class="badge bg">稼働</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">💰</div>
+        <h3>予算管理（本日追加）</h3>
+        <p>年度予算・実績累計・残予算を表示し、予測AIの月額を残り月に延長した<strong>年度末の着地見込み</strong>と予算超過判定を出す。消化バーで一目で分かる。</p>
+        <span class="badge bb">2026-07-24</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <h3>Excel/CSVデータ受け渡し</h3>
+        <p>会計ソフトの月次推移（横持ち）と縦持ちCSV、<code>.xlsx</code>直読みを自動判別。金額のカンマ・円記号・和暦風の月表記も吸収。記入用テンプレートも同梱。</p>
+        <span class="badge bg">稼働</span>
+      </div>
+    </div>
+
+    <!-- 動かし方 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 12px;">動かし方</h3>
+    <div class="code-wrap" style="margin-bottom:16px;">
+      <div class="code-head">
+        <div class="dots"><span class="dr"></span><span class="dy"></span><span class="dg"></span></div>
+        <div class="lang">BASH — ローカル起動</div>
+      </div>
+      <pre><span class="cc"># 依存インストール（初回のみ）</span>
+cd agent
+pip install -r requirements.txt
+
+<span class="cc"># .env に GROQ_API_KEY=... を設定（無料枠）</span>
+
+<span class="cc"># ① ターミナルで合議パイプラインを試す</span>
+python3 run_forecast_demo.py
+
+<span class="cc"># ② 可視化ダッシュボードを起動 → ブラウザで http://127.0.0.1:5001</span>
+python3 app.py</pre>
+    </div>
+    <div class="callout c-info">
+      <div class="callout-icon">📁</div>
+      <div>
+        <p><strong>データの差し込み：</strong> 記入した実データを <code>agent/data/expenses.xlsx</code>（または <code>expenses.csv</code>）として置くだけで、アプリが自動で読む（<code>xlsx → csv → 同梱サンプル</code>の順）。テンプレートは <code>python3 make_template.py</code> で再生成できる。<strong>会計・給与データは機密のため、公開リポジトリには絶対にコミットしない</strong>（実データファイルは.gitignore対象にする）。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KAMINAGA BUDGET DETAIL ===== -->
+<section id="kaminaga-budget">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Budget Tracking</div>
+      <h2 class="sec-title">予算管理の仕組み — 予測AIを着地見込みに乗せる</h2>
+      <p class="sec-sub">石川さんの中核要件（あといくら使えるか）に予測AIで直接答える部分。土台は足し算引き算、着地見込みだけAIが担う。</p>
+    </div>
+
+    <div class="steps" style="margin-bottom:24px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>使った額（実績累計）を出す</h4><p>今年度に入ってからの月次実績を合計する。AI不要の単純集計。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>残予算を出す</h4><p>残予算 = 年度予算 − 実績累計。これが「あといくら使えるか」。ここまでは足し算引き算だけ。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>着地見込みを予測AIで出す</h4><p>3視点合議＋調整AIが出した翌月の予測月額を、残り月数に延長する。着地見込み = 実績累計 ＋ 予測月額 × 残り月数。<strong>ここがAIの担当</strong>。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>予算と突き合わせて判定</h4><p>着地見込みが年度予算を超えるなら「予算を◯◯円超える見込み」と赤で警告、収まるなら「予算内（あと◯◯円余裕）」と表示する。</p></div>
+      </div>
+    </div>
+
+    <div class="callout c-warn">
+      <div class="callout-icon">🧪</div>
+      <div>
+        <p><strong>現時点の割り切り（要改善として明記）：</strong> ①年度予算は仮の定数（後でExcel側から設定できるようにする）。②着地見込みは「翌月の予測月額 × 残り月数」という単純延長で、残り各月を個別に予測してはいない（精度より、まず仕組みを動かすことを優先）。③費目別ではなく総支出の合算で見ている。いずれも次の改善候補。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KAMINAGA NEXT ===== -->
+<section id="kaminaga-next">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Status &amp; Next</div>
+      <h2 class="sec-title">現状と次にやること</h2>
+      <p class="sec-sub">神永ラインの開発ログ。ここに時系列で積み上げていく。</p>
+    </div>
+
+    <div class="log-timeline" style="margin-bottom:28px;">
+      <div class="log-entry">
+        <div class="log-date">7/22</div>
+        <div class="log-content">
+          <h4>合議パイプラインの骨格が稼働</h4>
+          <ul class="log-items">
+            <li>3視点予測AG（批判的・中立・推進的）を「同じコード・異なるプロンプト」で実装し、費目別のダミーデータで動作確認</li>
+            <li>JSONパース失敗（全角記号混入）をプロンプト強化＋リトライで修正</li>
+          </ul>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-date">7/23</div>
+        <div class="log-content">
+          <h4>調整AI・ダッシュボード・データ受け渡し</h4>
+          <ul class="log-items">
+            <li>調整AI（統合＋割れ30%超で人間エスカレーション。割れ判定はLLMでなくPython計算）を実装</li>
+            <li>Flask＋SVGの可視化ダッシュボードを構築。3費目を総支出1本に合算するビューへ</li>
+            <li>Excel（横持ち月次推移）/CSV自動判別ローダーと記入テンプレートを整備</li>
+          </ul>
+        </div>
+      </div>
+      <div class="log-entry">
+        <div class="log-date">7/24</div>
+        <div class="log-content">
+          <h4>予算管理を追加 — 石川さんの中核要件に接続</h4>
+          <ul class="log-items">
+            <li>年度予算・実績累計・残予算・着地見込み・予算超過判定をダッシュボードに追加</li>
+            <li>予測AIの月額を残り月に延長して「年度末に予算を超えそうか」を可視化（消化バー）</li>
+            <li>この神永ライン用の新タブを本ノートに新設し、既存の共有セクションと分離</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> 「AIにこだわらなくていい」と言われた予算管理に、予測AIを<strong>着地見込みという形で中核に据えられた</strong>。予算−実績（AI不要）と着地見込み（AI）の役割分担が、論点6（AIにこだわる）の技術的な裏づけになっている。
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">次の候補（優先順は打ち合わせで調整）</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:44mm;">項目</th><th>内容</th></tr></thead>
+        <tbody>
+          <tr><td>実データでの検証</td><td>ダミーではなく実際の会計データ（月次推移CSV）を入れて、数字の妥当性と使い勝手を確認する</td></tr>
+          <tr><td>年度予算の外部設定</td><td>予算を定数からExcel/設定ファイルに移し、非エンジニアでも変更できるようにする</td></tr>
+          <tr><td>着地見込みの精度</td><td>「翌月×残り月」の単純延長から、残り各月を個別に予測する方式へ（<a href="#decisions" style="color:var(--accent);">論点4</a>のバックテストと合わせて検証）</td></tr>
+          <tr><td>費目別ビューの復活</td><td>総支出だけでなく費目別の予算・着地も見られるように（人件費・事業費で性質が違うため）</td></tr>
+          <tr><td>マスキング（門番AG）</td><td>実データ（給与・取引先名）を扱う前に、クラウド送信前の伏字化を実装（<a href="#decisions" style="color:var(--accent);">論点3</a>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+</div><!-- /tab-pane kaminaga -->
 
 </main>
 
