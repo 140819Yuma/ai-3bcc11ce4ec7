@@ -78,6 +78,25 @@
       content: ""; position: absolute; left: 14px; right: 14px; bottom: -1px;
       height: 2px; background: var(--accent);
     }
+    /* アーカイブ（Yuma & Koki 共同期）のタブは控えめに */
+    .nav-divider {
+      align-self: center; color: var(--text2); opacity: .5;
+      font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+      padding: 0 4px 0 14px; white-space: nowrap; user-select: none;
+    }
+    .nav-tab.archived { font-size: 12px; color: var(--text2); opacity: .55; font-weight: 500; padding: 0 12px; }
+    .nav-tab.archived:hover { opacity: 1; color: var(--text); }
+    .nav-tab.archived.active { opacity: 1; }
+
+    /* 過去の産物であることを示すバナー */
+    .archive-banner {
+      background: var(--bg2); border-bottom: 1px solid var(--border);
+      color: var(--text2); font-size: 12.5px; padding: 10px 28px;
+      text-align: center; letter-spacing: .02em;
+    }
+    .archive-banner strong { color: var(--text); }
+    .archive-banner a { color: var(--accent); text-decoration: none; font-weight: 600; }
+    .archive-banner a:hover { text-decoration: underline; }
 
     .sub-nav-bar {
       display: none; align-items: center; gap: 0;
@@ -450,18 +469,19 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">AIエージェント研究ノート <span>Yuma &amp; Koki</span></div>
+  <div class="nav-logo">財務予測AIエージェント <span>神永ライン</span></div>
   <div class="nav-tabs" role="tablist">
-    <button class="nav-tab active" data-tab="overview" role="tab">概要</button>
-    <button class="nav-tab" data-tab="design" role="tab">設計</button>
-    <button class="nav-tab" data-tab="research" role="tab">リサーチ</button>
-    <button class="nav-tab" data-tab="impl" role="tab">環境と実装</button>
-    <button class="nav-tab" data-tab="kaminaga" role="tab">神永ライン</button>
+    <button class="nav-tab active" data-tab="kaminaga" role="tab">神永ライン</button>
+    <span class="nav-divider" aria-hidden="true">アーカイブ ›</span>
+    <button class="nav-tab archived" data-tab="overview" role="tab">概要</button>
+    <button class="nav-tab archived" data-tab="design" role="tab">設計</button>
+    <button class="nav-tab archived" data-tab="research" role="tab">リサーチ</button>
+    <button class="nav-tab archived" data-tab="impl" role="tab">環境と実装</button>
   </div>
 </nav>
 
 <!-- ===== SUB NAV ===== -->
-<div class="sub-nav-bar active" data-tab="overview">
+<div class="sub-nav-bar" data-tab="overview">
   <a href="#summary">全体サマリー</a><span class="sub-sep"> · </span>
   <a href="#project">プロジェクト概要</a><span class="sub-sep"> · </span>
   <a href="#meeting">打ち合わせメモ</a><span class="sub-sep"> · </span>
@@ -490,7 +510,7 @@
   <a href="#pc-spec">PCスペック</a><span class="sub-sep"> · </span>
   <a href="#local-vs-cloud">ローカルLLM比較</a>
 </div>
-<div class="sub-nav-bar" data-tab="kaminaga">
+<div class="sub-nav-bar active" data-tab="kaminaga">
   <a href="#kaminaga">ライン概要</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-app">実装状況</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-design">現在の設計</a><span class="sub-sep"> · </span>
@@ -500,7 +520,9 @@
 
 <main>
 
-<div class="tab-pane active" data-tab="overview">
+<div class="tab-pane" data-tab="overview">
+
+<div class="archive-banner">📦 これは <strong>Yuma &amp; Koki 共同期</strong>の研究ノート（過去の資産）です。現在メインで進めている作業は <a href="#kaminaga">神永ライン</a> にあります。</div>
 
 <!-- HERO -->
 <div class="hero">
@@ -1273,6 +1295,8 @@
 
 <div class="tab-pane" data-tab="design">
 
+<div class="archive-banner">📦 <strong>Yuma &amp; Koki 共同期</strong>の資産（過去の産物）。現在の作業は <a href="#kaminaga">神永ライン</a> へ。</div>
+
 <!-- ===== HYBRID ARCHITECTURE ===== -->
 <section id="hybrid">
   <div class="container">
@@ -1842,6 +1866,8 @@
 </div><!-- /tab-pane design -->
 
 <div class="tab-pane" data-tab="research">
+
+<div class="archive-banner">📦 <strong>Yuma &amp; Koki 共同期</strong>の資産（過去の産物）。現在の作業は <a href="#kaminaga">神永ライン</a> へ。</div>
 
 <!-- ===== EXPENSE FORECAST RESEARCH ===== -->
 <section id="expense-forecast">
@@ -2596,6 +2622,8 @@
 
 <div class="tab-pane" data-tab="impl">
 
+<div class="archive-banner">📦 <strong>Yuma &amp; Koki 共同期</strong>の資産（過去の産物）。現在の作業は <a href="#kaminaga">神永ライン</a> へ。</div>
+
 <!-- ===== IMPLEMENTATION ===== -->
 <section id="impl">
   <div class="container">
@@ -3081,7 +3109,22 @@ session <span class="co">=</span> client.beta.sessions.create(
 
 </div><!-- /tab-pane impl -->
 
-<div class="tab-pane" data-tab="kaminaga">
+<div class="tab-pane active" data-tab="kaminaga">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">財務予測 AI エージェント / 神永ライン</div>
+    <h1>組織の支出を、<br/>AIマルチエージェントで予測する</h1>
+    <p>人件費・事業費などの経費を、批判的・中立・推進的の3視点で予測し、調整AIが1つに統合する。予算に対する「年度末の着地見込み」まで可視化する——神永が単独で開発中の財務予測エージェント。</p>
+    <div class="hero-chips">
+      <span class="chip"><span class="dot dot-blue"></span>3視点合議 ＋ 調整AI</span>
+      <span class="chip"><span class="dot dot-green"></span>予算 vs 着地見込み</span>
+      <span class="chip"><span class="dot dot-orange"></span>ローカル稼働 / ¥0</span>
+      <span class="chip"><span class="dot dot-purple"></span>Excel・CSVデータ対応</span>
+    </div>
+  </div>
+</div>
 
 <!-- ===== KAMINAGA LINE OVERVIEW ===== -->
 <section id="kaminaga">
