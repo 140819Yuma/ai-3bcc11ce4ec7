@@ -493,6 +493,7 @@
 <div class="sub-nav-bar" data-tab="kaminaga">
   <a href="#kaminaga">ライン概要</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-app">実装状況</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-design">現在の設計</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-budget">予算管理</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-next">現状と次</a>
 </div>
@@ -3179,6 +3180,109 @@ python3 app.py</pre>
       <div class="callout-icon">📁</div>
       <div>
         <p><strong>データの差し込み：</strong> 記入した実データを <code>agent/data/expenses.xlsx</code>（または <code>expenses.csv</code>）として置くだけで、アプリが自動で読む（<code>xlsx → csv → 同梱サンプル</code>の順）。テンプレートは <code>python3 make_template.py</code> で再生成できる。<strong>会計・給与データは機密のため、公開リポジトリには絶対にコミットしない</strong>（実データファイルは.gitignore対象にする）。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KAMINAGA CURRENT DESIGN ===== -->
+<section id="kaminaga-design">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Current Design</div>
+      <h2 class="sec-title">現在の設計 — いま実際に動いている中身</h2>
+      <p class="sec-sub">構想ではなく、2026-07-30時点で <code>agent/</code> フォルダに実装され動いているものを、コードに忠実に記載する。理想形（<a href="#hybrid" style="color:var(--accent);">5エージェント設計</a>）との差分も正直に併記する。</p>
+    </div>
+
+    <!-- データフロー -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">データの流れ（現状）</h3>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font-size:12.5px;">
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
+        <div style="font-weight:700;color:var(--text);">① CSV</div>
+        <div style="color:var(--text2);font-size:11px;">3費目×12ヶ月<br/>（ダミー）</div>
+      </div>
+      <div style="color:var(--accent);font-weight:700;">→</div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
+        <div style="font-weight:700;color:var(--text);">② Python合算</div>
+        <div style="color:var(--text2);font-size:11px;">月ごとに全費目を<br/>「総支出」1本に</div>
+      </div>
+      <div style="color:var(--accent);font-weight:700;">→</div>
+      <div style="background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;min-width:150px;">
+        <div style="font-weight:700;color:var(--text);">③ 3視点AG（並列）</div>
+        <div style="color:var(--text2);font-size:11px;">批判的・中立・推進的<br/>が独立に翌月を予測</div>
+      </div>
+      <div style="color:var(--accent);font-weight:700;">→</div>
+      <div style="background:rgba(227,179,65,.1);border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;min-width:130px;">
+        <div style="font-weight:700;color:var(--text);">④ 調整AI</div>
+        <div style="color:var(--text2);font-size:11px;">3つを統合→最終予測<br/>割れ大なら人間へ</div>
+      </div>
+      <div style="color:var(--accent);font-weight:700;">→</div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
+        <div style="font-weight:700;color:var(--text);">⑤ 予算判定</div>
+        <div style="color:var(--text2);font-size:11px;">着地見込み vs 予算<br/>（<a href="#kaminaga-budget" style="color:var(--accent);">予算管理</a>）</div>
+      </div>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:36px;">
+      <div class="callout-icon">⚠️</div>
+      <div style="font-size:13px;">②の「Python合算」は<strong>機械的な足し算</strong>であって、AIが読んで整理しているわけではない。理想形（<a href="#hybrid" style="color:var(--accent);">5エージェント設計</a>）ではここが「データ収集AG」だが、現状はまだAI化していない（後述のギャップ参照）。</div>
+    </div>
+
+    <!-- 与えているデータ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">① 与えているデータ</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><code>agent/data/sample_expenses.csv</code>。<strong>これはダミー（架空）データで、実データではない。</strong>縦持ち3列（<code>month, category, amount</code>）。費目の性質を分けて作ってある：</p>
+    <div class="tbl-wrap" style="margin-bottom:14px;">
+      <table>
+        <thead><tr><th>費目</th><th>月額の目安</th><th>意図した性質</th></tr></thead>
+        <tbody>
+          <tr><td>人件費</td><td>120〜135万（12月・6月に賞与で跳ねる）</td><td>準固定＋季節性</td></tr>
+          <tr><td>外注費</td><td>6〜41万でバラつく</td><td>変動費</td></tr>
+          <tr><td>家賃</td><td>22〜23万でほぼ一定</td><td>固定費</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:36px;">アプリはこれを月ごとに合算し、<strong>「総支出」1本の12ヶ月系列</strong>にしてから予測にかける（例: 2025-07 = 人件費120万＋外注費18万＋家賃22万 ＝ <strong>160万円</strong>）。実データを使うときは <code>agent/data/expenses.xlsx</code>（横持ち月次推移も可）を置けば自動で読む。</p>
+
+    <!-- 各エージェントの実装 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">各段階の実装</h3>
+    <div class="tbl-wrap" style="margin-bottom:14px;">
+      <table>
+        <thead><tr><th style="width:26mm;">段階</th><th>中身</th><th>モデル</th><th>ファイル</th></tr></thead>
+        <tbody>
+          <tr><td><strong>③ 3視点AG</strong></td><td><strong>同じコード・違う指示文</strong>で3体を実現。各体に総支出12ヶ月をプロンプトに埋め込み「翌月をJSONで予測」と依頼。3体は互いに議論しない（<a href="#decisions" style="color:var(--accent);">論点1</a>）</td><td>Groq<br/>llama-3.3-70b</td><td><code>agents/<br/>forecast_agent.py</code></td></tr>
+          <tr><td><strong>④ 調整AI</strong></td><td>3体の予測＋根拠を文章で渡し、LLMが最終予測＋レンジに統合。<strong>「意見の割れ」はLLMでなくPythonで</strong> (最大−最小)/中央値 を計算し、30%超で人間へエスカレーション</td><td>Groq<br/>llama-3.3-70b</td><td><code>agents/<br/>arbiter_agent.py</code></td></tr>
+          <tr><td><strong>② 合算</strong></td><td>CSV/Excelを読み、月ごとに全費目を総支出へ集計（機械的・AIなし）</td><td>—（Python）</td><td><code>app.py</code><br/><code>data_loader.py</code></td></tr>
+          <tr><td><strong>⑤ 予算判定</strong></td><td>着地見込み＝実績累計＋予測月額×残り月。予算と突き合わせて超過判定（<a href="#kaminaga-budget" style="color:var(--accent);">予算管理</a>）</td><td>—（Python）</td><td><code>app.py</code></td></tr>
+          <tr><td>司令／表示</td><td>Flask＋インラインSVGのダッシュボード。上記を順に呼び出して可視化</td><td>—（Python/JS）</td><td><code>app.py</code><br/><code>templates/</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 3視点の性格づけ -->
+    <div class="callout c-info" style="margin-bottom:36px;">
+      <div class="callout-icon">🎭</div>
+      <div>
+        <p><strong>3視点の違いは「指示文（プロンプト）の性格づけ」だけ：</strong> 批判的AG＝「下振れ・突発増・季節性を重視し、やや高めでも保守的に」／中立AG＝「偏らず統計的なベースライン」／推進的AG＝「成長・活動量の増加を織り込み、やや楽観でも」。3体とも<strong>読んでいるのは同じ総支出12ヶ月の数字</strong>で、性格の違いで温度差を出している。</p>
+      </div>
+    </div>
+
+    <!-- 理想形とのギャップ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">理想形（5エージェント設計）とのギャップ — 正直な現在地</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th>要素</th><th>理想形</th><th>現状</th></tr></thead>
+        <tbody>
+          <tr><td>データ収集AG</td><td>CSVを読んで各費目を整理・分類し、構造化した要約を3体に渡す</td><td><span class="ng">未AI化</span>— Pythonが機械的に合算しているだけ</td></tr>
+          <tr><td>3視点予測AG</td><td>整理済みの文脈を読んで予測</td><td><span class="ok">実装済</span>（ただし入力は生の数字の列）</td></tr>
+          <tr><td>調整AI</td><td>3体を統合し裁定</td><td><span class="ok">実装済</span></td></tr>
+          <tr><td>入力データ</td><td>財務データ＋カレンダー等の活動量シグナル</td><td><span class="ng">総支出の数字のみ</span>— 活動量は未接続（推進的AGの指示文にはあるが実データは渡していない）</td></tr>
+          <tr><td>数値予測の担い手</td><td>統計モデル(季節ナイーブ/ETS)が外挿、LLMは解釈</td><td><span class="tri">LLMが数値予測</span>— <a href="#decisions" style="color:var(--accent);">論点5</a>の課題が残ったまま</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>ひとことで：</strong> 「CSV→整理→3体予測→上位が統合」という配線は<strong>③④が完成、②の"整理"がまだPythonの機械合算</strong>という状態。5エージェント設計を完成させる次の一歩は<strong>データ収集AG（調査用AI）を1体足して、各費目を読んで整理させてから3体に渡す</strong>こと。数値予測をLLMから統計モデルへ移す件（論点5）と、活動量データの接続は、その先の改善として残している。</p>
       </div>
     </div>
   </div>
