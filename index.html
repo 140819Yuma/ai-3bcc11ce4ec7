@@ -514,6 +514,7 @@
   <a href="#kaminaga">ライン概要</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-app">実装状況</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-design">現在の設計</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-dataflow">データフロー図</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-budget">予算管理</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-next">現状と次</a>
 </div>
@@ -3326,6 +3327,233 @@ python3 app.py</pre>
       <div class="callout-icon">🧭</div>
       <div>
         <p><strong>ひとことで：</strong> 「CSV→整理→3体予測→上位が統合」という配線は<strong>③④が完成、②の"整理"がまだPythonの機械合算</strong>という状態。5エージェント設計を完成させる次の一歩は<strong>データ収集AG（調査用AI）を1体足して、各費目を読んで整理させてから3体に渡す</strong>こと。数値予測をLLMから統計モデルへ移す件（論点5）と、活動量データの接続は、その先の改善として残している。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KAMINAGA DATA FLOW ===== -->
+<section id="kaminaga-dataflow">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Data Flow</div>
+      <h2 class="sec-title">データフロー図 — どの情報がどこを通るか</h2>
+      <p class="sec-sub">2026-07-30の打ち合わせで石川さんから依頼された設計図。目的は構成の説明ではなく<strong>漏洩リスクの管理</strong>——データがどこで生まれ、どこに保管され、<strong>どこで社外に出るのか</strong>を明示し、安全性と拡張性を確保する。（作成: 2026-07-31）</p>
+    </div>
+
+    <div class="callout c-danger" style="margin-bottom:28px;">
+      <div class="callout-icon">🚧</div>
+      <div>
+        <p><strong>この図の読み方（最重要）：</strong> 図の中で唯一の危険地帯は<strong style="color:var(--orange);">🛡️ 門番AG（マスキング）より右側＝社外</strong>である。ここを通る情報だけが会社の外に出る。<strong>現在この門番AGは未実装のため、実データは投入していない（ダミーデータのみで開発中）</strong>。実データを入れる前に、この関所を必ず作る。</p>
+      </div>
+    </div>
+
+    <!-- フロー図 -->
+    <div class="arch-box">
+      <div class="arch-title">財務予測エージェント データフロー（信頼境界つき）</div>
+
+      <!-- 社内: 入力 -->
+      <div class="arch-zone local">
+        <div class="arch-zone-label">🏢 社内ゾーン① — データの発生と保管（社外に出ない）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-green">
+            <div class="n-icon">📒</div>
+            <div class="n-name">経理の実績データ</div>
+            <div class="n-sub">会計システムの月次推移<br/><span style="color:var(--orange);">※1ヶ月のタイムラグあり</span></div>
+          </div>
+          <div class="arch-node hl-green">
+            <div class="n-icon">🎯</div>
+            <div class="n-name">予算データ</div>
+            <div class="n-sub">年度予算・費目別枠<br/>（突合の基準）</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-blue">
+            <div class="n-icon">🗄️</div>
+            <div class="n-name">社内ストレージ</div>
+            <div class="n-sub">会社のOneDrive /<br/>Google Cloud（社内管理）</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arr down">↓ CSV / Excel（月次推移・横持ちも縦持ちも可）</div>
+
+      <!-- 社内: 処理 -->
+      <div class="arch-zone local">
+        <div class="arch-zone-label">🏢 社内ゾーン② — 取り込みと集計（すべてローカルのPython処理・AIなし）</div>
+        <div class="arch-row">
+          <div class="arch-node">
+            <div class="n-icon">📥</div>
+            <div class="n-name">データ取り込み</div>
+            <div class="n-sub"><code>data_loader.py</code><br/>形式を自動判別して読む</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node">
+            <div class="n-icon">➕</div>
+            <div class="n-name">集計・合算</div>
+            <div class="n-sub">月ごとに費目を合算<br/>（＝粒度を粗くする＝匿名化にもなる）</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arr down">↓ 集計済みの数値のみ</div>
+
+      <!-- 境界: 門番 -->
+      <div class="arch-zone bridge">
+        <div class="arch-zone-label">🛡️ 信頼境界 — ここから先が社外。通すものを絞る関所</div>
+        <div class="arch-row">
+          <div class="arch-node hl-orange" style="min-width:260px;">
+            <div class="n-icon">🛡️</div>
+            <div class="n-name">門番AG（マスキング）<span style="color:var(--red);font-size:10px;"> ※未実装</span></div>
+            <div class="n-sub">固有名詞を伏字化／費目名をラベル置換／<br/>必要なら金額を指数化・桁丸め<br/><strong>復元マップは社内にのみ保持（社外に出さない）</strong></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arr down">↓ <strong>マスク済みデータだけが社外へ</strong></div>
+
+      <!-- 社外 -->
+      <div class="arch-zone cloud" style="border-color:var(--red);">
+        <div class="arch-zone-label" style="color:var(--red);">🌐 社外ゾーン — 外部LLM API（現在はGroq。ここに送った情報は会社の外にある）</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">🔴</div><div class="n-name">批判的AG</div><div class="n-sub">下振れ・突発増を重視</div></div>
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">⚪</div><div class="n-name">中立AG</div><div class="n-sub">ベースライン予測</div></div>
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">🟢</div><div class="n-name">推進的AG</div><div class="n-sub">増加要因を織り込む</div></div>
+        </div>
+        <div class="arch-arr down">↓ 3つの予測と根拠</div>
+        <div class="arch-row">
+          <div class="arch-node" style="min-width:220px;">
+            <div class="n-icon">⚖️</div>
+            <div class="n-name">調整AI（統合）</div>
+            <div class="n-sub">3体を1つの最終予測＋レンジにまとめる</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arch-arr down">↓ <strong>予測値と根拠テキストだけが戻る</strong></div>
+
+      <!-- 社内: 出力 -->
+      <div class="arch-zone local">
+        <div class="arch-zone-label">🏢 社内ゾーン③ — 復元・予算突合・可視化（予算データは社外に出さない）</div>
+        <div class="arch-row">
+          <div class="arch-node hl-orange">
+            <div class="n-icon">🔓</div>
+            <div class="n-name">復元（unmask）</div>
+            <div class="n-sub">社内の復元マップで<br/>伏字を元に戻す</div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-green">
+            <div class="n-icon">🧮</div>
+            <div class="n-name">予算突合</div>
+            <div class="n-sub">残予算＝予算−実績累計<br/>着地見込み＝実績＋予測×残月<br/><strong>Python計算・社外に出ない</strong></div>
+          </div>
+          <div class="arch-arr">→</div>
+          <div class="arch-node hl-blue">
+            <div class="n-icon">📊</div>
+            <div class="n-name">ダッシュボード</div>
+            <div class="n-sub">ローカルWeb（Flask）<br/>127.0.0.1 で表示<br/>割れ大 → 人間へエスカレーション</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 境界を越えるデータ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">境界を越えるデータの一覧 — 何を社外に出し、何を出さないか</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:42mm;">データ</th><th style="width:26mm;">社外へ</th><th style="width:22mm;">機密度</th><th>扱いと対策</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>月次の合計金額</td>
+            <td><span class="tri">送っている</span></td>
+            <td>中</td>
+            <td>予測に必須。全費目を合算した総支出のみを送ることで粒度を粗くしている</td>
+          </tr>
+          <tr>
+            <td>費目名（人件費・外注費など）</td>
+            <td><span class="tri">送りうる</span></td>
+            <td>中〜高</td>
+            <td>費目別予測をする場合に送る。<strong>「人件費の月額合計」は給与水準が推測されうる</strong>ため、門番AGでラベル置換（費目A/B/C）を検討</td>
+          </tr>
+          <tr>
+            <td>個人名・給与明細</td>
+            <td><span class="ok">送らない</span></td>
+            <td><span class="ng">最高</span></td>
+            <td><strong>そもそも入力しない</strong>。システムは集計後の月次データのみを扱う設計</td>
+          </tr>
+          <tr>
+            <td>取引先名・案件名</td>
+            <td><span class="ok">送らない</span></td>
+            <td>高</td>
+            <td>明細レベルのデータは投入しない。入る場合は門番AGで伏字化</td>
+          </tr>
+          <tr>
+            <td>予算額・残予算</td>
+            <td><span class="ok">送らない</span></td>
+            <td>高</td>
+            <td><strong>設計上、境界を越えない</strong>——予算突合はすべてローカルのPython計算で完結する</td>
+          </tr>
+          <tr>
+            <td>予測値・根拠テキスト</td>
+            <td><span class="ok">← 受け取る</span></td>
+            <td>—</td>
+            <td>社外から社内へ戻る方向。復元マップは社内にのみ保持する</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🔐</div>
+      <div>
+        <p><strong>この設計の安全上の要点2つ：</strong> ①<strong>予算データは一度も社外に出ない</strong>——AIに渡すのは過去実績だけで、予算との突合は社内で行う。②<strong>合算そのものが匿名化として働く</strong>——個々の取引ではなく月次の合計だけを送るため、明細の情報は境界を越えない。この2点により、外部APIを使いながらも社外に出る情報は「月次の金額の列」に限定できる。</p>
+      </div>
+    </div>
+
+    <!-- 保管とタイムラグ -->
+    <div class="card-grid" style="margin-bottom:28px;">
+      <div class="card">
+        <div class="card-icon">🗄️</div>
+        <h3>データの保管場所</h3>
+        <p>外部クラウドに依存しすぎない方針（2026-07-30合意）。実データは<strong>会社のOneDrive / Google Cloud など社内で管理できる環境</strong>に置き、アプリはそこから読む。ローカルの作業ファイルと復元マップも社内に留め、<strong>公開リポジトリには絶対にコミットしない</strong>（<code>.gitignore</code>で実データを除外済み）。</p>
+        <span class="badge bb">方針</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">⏱️</div>
+        <h3>1ヶ月のタイムラグ</h3>
+        <p>経理の実績データは締めから反映まで約1ヶ月遅れる（2026-07-30確認）。つまり<strong>「最新月の実績はまだ無い」前提で予測する</strong>必要がある。予算の消化状況も同じだけ遅れて見えるため、ダッシュボードには<strong>データの基準日を明示</strong>し、遅延分は予測で埋める設計にする。</p>
+        <span class="badge bo">制約</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🌐</div>
+        <h3>外部APIとの緊張関係</h3>
+        <p>「社内で安全に管理する」方針と、Groq（外部API）に送る現構成は緊張関係にある。<strong>これを橋渡しするのが門番AG</strong>。将来ローカルLLMに移せば境界そのものを無くせるが、当面はマスキングで対応する（<a href="#decisions" style="color:var(--accent);">論点3</a>）。</p>
+        <span class="badge bpk">論点</span>
+      </div>
+      <div class="card">
+        <div class="card-icon">🧩</div>
+        <h3>汎用化（他組織での利用）</h3>
+        <p>組織横断でこのシステムを使えるようにするには、<strong>データの取り扱いガイドライン</strong>が要る（2026-07-30合意）。この図と上の一覧表が、そのガイドラインの土台になる——「何を入れてよく、何が社外に出るか」を導入先に説明できる形にしておく。</p>
+        <span class="badge bp">今後</span>
+      </div>
+    </div>
+
+    <!-- 実データ投入前のチェックリスト -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">実データを入れる前のチェックリスト</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>門番AG（マスキング）を実装する</h4><p>現在の唯一の未実装ブロック。最低限、費目名のラベル置換と、明細が混ざった場合の固有名詞の伏字化。復元マップは社内のみに保持する。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>投入するデータの粒度を決める</h4><p>月次の合計までにするか、費目別まで入れるか。粒度が細かいほど予測は良くなるが、境界を越える情報は増える。<strong>石川さんと合意して決める</strong>。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>保管場所を社内ストレージに固定する</h4><p>実データの置き場を会社のOneDrive等に決め、アプリの読み込み先をそこに向ける。ローカルコピーを作らない運用にする。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>ログに機密が残らないか確認する</h4><p>APIへの送信内容やエラーログに生データが出ていないかを点検する。<strong>意外な漏洩経路になりやすい箇所</strong>。</p></div>
       </div>
     </div>
   </div>
