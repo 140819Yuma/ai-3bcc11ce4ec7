@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>予算消化ダッシュボード</title>
+<style>
+  :root {
+    color-scheme: light;
+    --plane:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink-2:#52514e; --muted:#898781;
+    --grid:#e1e0d9; --border:rgba(11,11,11,0.10);
+    --critical:#eb6834; --neutral:#2a78d6; --advocate:#1baf7a;
+    --over:#d03b3b; --under:#fab219; --good:#0ca30c;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) {
+      color-scheme: dark;
+      --plane:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+      --grid:#2c2c2a; --border:rgba(255,255,255,0.10);
+      --critical:#d95926; --neutral:#3987e5; --advocate:#199e70;
+      --over:#e05656; --under:#fab219; --good:#0ca30c;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --plane:#0d0d0d; --surface:#1a1a19; --ink:#fff; --ink-2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --border:rgba(255,255,255,0.10);
+    --critical:#d95926; --neutral:#3987e5; --advocate:#199e70;
+    --over:#e05656; --under:#fab219; --good:#0ca30c;
+  }
+
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--plane); color:var(--ink);
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased;
+  }
+  header {
+    padding:26px clamp(20px,4vw,48px); border-bottom:1px solid var(--border);
+    display:flex; align-items:baseline; gap:18px; flex-wrap:wrap;
+  }
+  header h1 { font-size:22px; margin:0; font-weight:650; }
+  header .sub { color:var(--ink-2); font-size:14px; }
+  header .spacer { flex:1; }
+  .btn {
+    font:inherit; font-size:14px; cursor:pointer; border:1px solid var(--border);
+    background:var(--surface); color:var(--ink); padding:9px 16px; border-radius:9px;
+  }
+  main { padding:clamp(20px,4vw,40px); max-width:1080px; margin:0 auto; display:grid; gap:24px; }
+  .card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:16px; padding:26px;
+  }
+  .card > h2 {
+    font-size:15px; margin:0 0 18px; font-weight:650; letter-spacing:.02em;
+  }
+
+  /* ---- 経過率 vs 消化率（この画面の主役）---- */
+  .pace { display:grid; grid-template-columns:1fr 1fr; gap:28px; align-items:end; }
+  @media (max-width:640px){ .pace{ grid-template-columns:1fr; } }
+  .pace-item .lbl { font-size:13px; color:var(--ink-2); margin-bottom:6px; }
+  .pace-item .val { font-size:38px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1; }
+  .pace-item .sub { font-size:12.5px; color:var(--muted); margin-top:6px; font-variant-numeric:tabular-nums; }
+  .pace-gap {
+    margin-top:20px; padding:14px 18px; border-radius:10px; font-size:14.5px; font-weight:600;
+    display:flex; align-items:center; gap:10px;
+  }
+  .pace-gap.behind { color:var(--under); background:color-mix(in srgb,var(--under) 13%,transparent);
+                     border:1px solid color-mix(in srgb,var(--under) 35%,transparent); }
+  .pace-gap.ahead  { color:var(--over);  background:color-mix(in srgb,var(--over) 12%,transparent);
+                     border:1px solid color-mix(in srgb,var(--over) 35%,transparent); }
+  .pace-gap.ontrack{ color:var(--good);  background:color-mix(in srgb,var(--good) 12%,transparent);
+                     border:1px solid color-mix(in srgb,var(--good) 35%,transparent); }
+
+  /* ---- 予算バー ---- */
+  .barwrap { position:relative; margin:30px 0 12px; }
+  .bar { position:relative; height:44px; border-radius:8px; overflow:hidden;
+         background:color-mix(in srgb,var(--muted) 15%,transparent); }
+  .seg { position:absolute; top:0; height:100%; }
+  .seg.spent { background:var(--neutral); }
+  .seg.band {
+    background:repeating-linear-gradient(135deg,
+      color-mix(in srgb,var(--muted) 42%,transparent) 0 7px,
+      color-mix(in srgb,var(--muted) 16%,transparent) 7px 14px);
+  }
+  .seg.over {
+    background:repeating-linear-gradient(135deg,
+      color-mix(in srgb,var(--over) 65%,transparent) 0 7px,
+      color-mix(in srgb,var(--over) 30%,transparent) 7px 14px);
+  }
+  .marker { position:absolute; top:-6px; bottom:-6px; width:2px; background:var(--ink); }
+  .marker::after {
+    content:attr(data-label); position:absolute; top:-19px; left:50%; transform:translateX(-50%);
+    font-size:11px; color:var(--ink-2); white-space:nowrap; font-weight:600;
+  }
+  .diamond {
+    position:absolute; width:15px; height:15px; background:var(--ink);
+    border:2px solid var(--surface); transform:translate(-50%,-50%) rotate(45deg);
+    top:50%; border-radius:2px;
+  }
+  .bar-legend { display:flex; flex-wrap:wrap; gap:18px; margin-top:26px; font-size:12.5px; color:var(--ink-2); }
+  .bar-legend .item { display:inline-flex; align-items:center; gap:7px; }
+  .sw { width:14px; height:14px; border-radius:3px; flex-shrink:0; }
+  .sw.spent { background:var(--neutral); }
+  .sw.band  { background:repeating-linear-gradient(135deg,
+      color-mix(in srgb,var(--muted) 42%,transparent) 0 4px,
+      color-mix(in srgb,var(--muted) 16%,transparent) 4px 8px); }
+  .sw.dia { width:11px; height:11px; background:var(--ink); transform:rotate(45deg); border-radius:2px; }
+
+  /* ---- 統合結果 ---- */
+  .verdict { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:6px; }
+  .verdict .num { font-size:34px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .verdict .tag {
+    font-size:13px; font-weight:700; padding:5px 12px; border-radius:20px;
+  }
+  .tag.over    { color:var(--over);  background:color-mix(in srgb,var(--over) 14%,transparent); }
+  .tag.under   { color:var(--under); background:color-mix(in srgb,var(--under) 16%,transparent); }
+  .tag.ontrack { color:var(--good);  background:color-mix(in srgb,var(--good) 14%,transparent); }
+  .gap-note { font-size:14px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .reasoning { font-size:14.5px; line-height:1.85; color:var(--ink-2); margin:16px 0 0; }
+
+  .escalate {
+    display:flex; align-items:flex-start; gap:11px; font-size:14.5px; font-weight:600;
+    color:var(--over); background:color-mix(in srgb,var(--over) 11%,transparent);
+    border:1px solid color-mix(in srgb,var(--over) 35%,transparent);
+    padding:14px 18px; border-radius:11px; margin-bottom:20px; line-height:1.7;
+  }
+  .escalate .why { font-weight:400; color:var(--ink-2); display:block; margin-top:4px; }
+
+  /* ---- 3視点 ---- */
+  .stances { display:grid; gap:16px; }
+  .stance {
+    border:1px solid var(--border); border-left-width:4px; border-radius:11px; padding:18px 20px;
+  }
+  .stance.critical { border-left-color:var(--critical); }
+  .stance.neutral  { border-left-color:var(--neutral); }
+  .stance.advocate { border-left-color:var(--advocate); }
+  .stance-head { display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+  .stance-name { font-weight:700; font-size:15px; }
+  .stance-role { font-size:12.5px; color:var(--muted); }
+  .stance-num { margin-left:auto; font-size:20px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .stance-rate { font-size:13px; color:var(--ink-2); font-variant-numeric:tabular-nums; }
+  .stance-why { font-size:13.5px; line-height:1.8; color:var(--ink-2); margin:0; }
+  .conf { font-size:11.5px; color:var(--muted); border:1px solid var(--border); padding:2px 8px; border-radius:12px; }
+
+  ul.findings { margin:0; padding-left:20px; font-size:14px; line-height:2; color:var(--ink-2); }
+  .empty { text-align:center; padding:70px 20px; color:var(--ink-2); line-height:2; }
+  .empty code { background:color-mix(in srgb,var(--muted) 15%,transparent); padding:3px 8px; border-radius:5px; font-size:13px; }
+  .foot { font-size:12px; color:var(--muted); text-align:center; padding-bottom:20px; }
+</style>
+</head>
+<body>
+
+{% if fc %}
+<header>
+  <h1>{{ fc.project }}</h1>
+  <span class="sub">{{ fc.fiscal_period }} ／ {{ fc.as_of }} 時点</span>
+  <span class="spacer"></span>
+  <button class="btn" id="theme-toggle" type="button">◐ テーマ</button>
+</header>
+
+<main>
+
+  <!-- 経過率 vs 消化率 -->
+  <section class="card">
+    <h2>いまどこにいるか</h2>
+    <div class="pace">
+      <div class="pace-item">
+        <div class="lbl">年度の経過</div>
+        <div class="val">{{ '%.0f'|format(fc.elapsed_rate * 100) }}<span style="font-size:20px;">%</span></div>
+        <div class="sub">12ヶ月中 {{ (fc.elapsed_rate * 12)|round|int }}ヶ月</div>
+      </div>
+      <div class="pace-item">
+        <div class="lbl">予算の消化</div>
+        <div class="val">{{ '%.1f'|format(fc.consumption_rate * 100) }}<span style="font-size:20px;">%</span></div>
+        <div class="sub">{{ '{:,}'.format(fc.spent) }}円 ／ {{ '{:,}'.format(fc.budget_total) }}円</div>
+      </div>
+    </div>
+
+    {% set pg = fc._pace_gap %}
+    <div class="pace-gap {{ 'behind' if pg < -0.05 else ('ahead' if pg > 0.05 else 'ontrack') }}">
+      {% if pg < -0.05 %}
+        <span>🐢</span><span>予定より {{ '%.1f'|format(-pg * 100) }} ポイント遅い — 使い残しの方向</span>
+      {% elif pg > 0.05 %}
+        <span>🔥</span><span>予定より {{ '%.1f'|format(pg * 100) }} ポイント速い — 超過の方向</span>
+      {% else %}
+        <span>✓</span><span>経過とほぼ同じペースで消化できている</span>
+      {% endif %}
+    </div>
+
+    <!-- 予算バー -->
+    <div class="barwrap">
+      <div class="bar" id="bar"></div>
+    </div>
+    <div class="bar-legend">
+      <span class="item"><span class="sw spent"></span>使った額（確定）</span>
+      <span class="item"><span class="sw band"></span>着地の振れ幅（3視点のレンジ）</span>
+      <span class="item"><span class="sw dia"></span>統合した着地見込み</span>
+      <span class="item">｜ = 年度予算</span>
+    </div>
+  </section>
+
+  <!-- 統合結果 -->
+  <section class="card">
+    <h2>年度末の着地見込み</h2>
+
+    {% if fc.escalate_to_human %}
+    <div class="escalate">
+      <span>⚠️</span>
+      <span>人間の確認が必要です
+        <span class="why">3視点の見立てが {{ '%.0f'|format(fc.disagreement_score * 100) }}% 開いています。
+        予算の大部分が未執行で、着地は今後の運営判断しだいで大きく動きます。</span>
+      </span>
+    </div>
+    {% endif %}
+
+    <div class="verdict">
+      <span class="num">{{ '{:,}'.format(fc.final_landing) }}円</span>
+      <span class="tag {{ fc._verdict_class }}">{{ fc._verdict_label }}</span>
+    </div>
+    <div class="gap-note">
+      予算 {{ '{:,}'.format(fc.budget_total) }}円 に対し
+      {% if fc._gap is not none and fc._gap < 0 %}
+        <strong>{{ '{:,}'.format(-fc._gap) }}円 の使い残し</strong>
+      {% elif fc._gap is not none and fc._gap > 0 %}
+        <strong>{{ '{:,}'.format(fc._gap) }}円 の超過</strong>
+      {% endif %}
+      　／　振れ幅 {{ '{:,}'.format(fc.range_low) }}〜{{ '{:,}'.format(fc.range_high) }}円
+    </div>
+    <p class="reasoning">{{ fc.reasoning }}</p>
+  </section>
+
+  <!-- 3視点 -->
+  <section class="card">
+    <h2>3視点の内訳（互いに相談せず独立に判断）</h2>
+    <div class="stances">
+      {% for s in fc.stances %}
+      <div class="stance {{ s.stance }}">
+        <div class="stance-head">
+          <span class="stance-name">{{ s._label }}</span>
+          <span class="stance-role">{{ s._role }}</span>
+          <span class="stance-num">{{ '{:,}'.format(s.landing_estimate) }}円</span>
+        </div>
+        <div class="stance-head" style="margin-bottom:10px;">
+          <span class="stance-rate">予算比 {{ '%.1f'|format(s.landing_rate * 100) }}%</span>
+          <span class="conf">確信度 {{ s.confidence }}</span>
+        </div>
+        <p class="stance-why">{{ s.reasoning }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 気づき -->
+  {% if fc.key_findings %}
+  <section class="card">
+    <h2>データから見つかったこと</h2>
+    <ul class="findings">
+      {% for f in fc.key_findings %}<li>{{ f }}</li>{% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+
+</main>
+<p class="foot">{{ fc._source_file }} を表示中 ／ 分析は Claude Code 側で実行（このアプリはLLMを呼びません）</p>
+
+<script>
+  const FC = {{ {'spent': fc.spent, 'budget': fc.budget_total, 'low': fc.range_low,
+                 'high': fc.range_high, 'landing': fc.final_landing} | tojson }};
+
+  function drawBar() {
+    const bar = document.getElementById('bar');
+    bar.innerHTML = '';
+    const scale = Math.max(FC.budget, FC.high) * 1.04;
+    const pct = v => v / scale * 100;
+
+    // 使った額（確定）
+    const spent = document.createElement('div');
+    spent.className = 'seg spent';
+    spent.style.left = '0'; spent.style.width = pct(FC.spent) + '%';
+    bar.appendChild(spent);
+
+    // 着地の振れ幅（予算内の部分／超過部分で塗り分け）
+    const from = Math.max(FC.low, FC.spent);
+    const withinEnd = Math.min(FC.high, FC.budget);
+    if (withinEnd > from) {
+      const band = document.createElement('div');
+      band.className = 'seg band';
+      band.style.left = pct(from) + '%';
+      band.style.width = (pct(withinEnd) - pct(from)) + '%';
+      bar.appendChild(band);
+    }
+    if (FC.high > FC.budget) {
+      const over = document.createElement('div');
+      over.className = 'seg over';
+      over.style.left = pct(FC.budget) + '%';
+      over.style.width = (pct(FC.high) - pct(FC.budget)) + '%';
+      bar.appendChild(over);
+    }
+
+    // 統合着地（ひし形）
+    const dia = document.createElement('div');
+    dia.className = 'diamond';
+    dia.style.left = pct(FC.landing) + '%';
+    bar.appendChild(dia);
+
+    // 予算ライン
+    const m = document.createElement('div');
+    m.className = 'marker';
+    m.style.left = pct(FC.budget) + '%';
+    m.setAttribute('data-label', '予算');
+    bar.appendChild(m);
+  }
+
+  document.getElementById('theme-toggle').addEventListener('click', () => {
+    const root = document.documentElement;
+    const dark = root.getAttribute('data-theme') === 'dark'
+      || (!root.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    drawBar();
+  });
+
+  drawBar();
+</script>
+
+{% else %}
+<header><h1>予算消化ダッシュボード</h1></header>
+<main>
+  <div class="card empty">
+    <p>まだ分析結果がありません。</p>
+    <p>Claude Code で <code>サンプルデータで予算消化を分析して</code> と伝えると、<br>
+       <code>agent/output/forecast_YYYY-MM.json</code> が作られ、ここに表示されます。</p>
+  </div>
+</main>
+{% endif %}
+
+</body>
+</html>

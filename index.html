@@ -3171,20 +3171,20 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="sec-head">
       <div class="sec-tag">Working Prototype</div>
       <h2 class="sec-title">実装状況 — 動くもの（agent フォルダ）</h2>
-      <p class="sec-sub">ローカルで動く財務予測マルチエージェント＋可視化ダッシュボード。すべてGroqのAPI無料枠のみで稼働し、コストは¥0。使用する本番API・モデルは引き続き選定中（<a href="#api-selection" style="color:var(--accent);">API選定</a>）。（最終更新: 2026-07-24）</p>
+      <p class="sec-sub">ローカルで動く財務予測マルチエージェント＋可視化ダッシュボード。実行基盤は<strong>Claude Codeのサブエージェント</strong>（サブスクリプションで稼働・APIキー課金なし）。詳細な構成は<a href="#kaminaga-design" style="color:var(--accent);">現在の設計</a>を参照。（最終更新: 2026-08-18）</p>
     </div>
 
     <div class="card-grid" style="margin-bottom:28px;">
       <div class="card">
         <div class="card-icon">⚖️</div>
         <h3>3視点合議 → 調整AI</h3>
-        <p>批判的AG・中立AG・推進的AGが<strong>互いに議論せず独立に</strong>翌月を予測し、調整AIが根拠ごと1本に統合する。意見の割れが30%を超えたら人間へエスカレーション。<a href="#decisions" style="color:var(--accent);">論点1</a>の設計どおり。</p>
+        <p>批判的AG・中立AG・推進的AGが<strong>互いに議論せず独立に</strong>年度末の着地を見積もり、調整AIが根拠ごと1本に統合する。意見の割れが30%を超えたら人間へエスカレーション。サブエージェントは独立コンテキストのため、<a href="#decisions" style="color:var(--accent);">論点1</a>が構造的に保証される。</p>
         <span class="badge bg">稼働</span>
       </div>
       <div class="card">
         <div class="card-icon">📊</div>
         <h3>可視化ダッシュボード</h3>
-        <p>Flask＋インラインSVGのローカルWebアプリ。月次実績の折れ線に3視点の予測点と調整AIの最終レンジを重ね描く。ダーク/ライト対応。割れが大きい費目はステータス赤で警告。</p>
+        <p>Flaskのローカルアプリ。<strong>経過率 vs 消化率</strong>を主役に据え、予算バーに「使った額（確定）／3視点のレンジ／統合着地／予算ライン」を重ねる。<strong>LLMを一切呼ばず</strong>、Claude Codeが出力したJSONを読んで描くだけ。</p>
         <span class="badge bg">稼働</span>
       </div>
       <div class="card">
@@ -3234,100 +3234,169 @@ python3 app.py</pre>
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Current Design</div>
-      <h2 class="sec-title">現在の設計 — いま実際に動いている中身</h2>
-      <p class="sec-sub">構想ではなく、2026-07-30時点で <code>agent/</code> フォルダに実装され動いているものを、コードに忠実に記載する。理想形（<a href="#hybrid" style="color:var(--accent);">5エージェント設計</a>）との差分も正直に併記する。</p>
+      <h2 class="sec-title">現在の設計 — Claude Codeサブエージェント方式</h2>
+      <p class="sec-sub">構想ではなく、2026-08-18時点で実際に動いているものを記載する。7月末の設計から<strong>3つの大きな転換</strong>を経ており、旧記述（Python＋Groqで翌月を予測する構成）は本セクションで置き換えられている。</p>
     </div>
 
-    <!-- データフロー -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">データの流れ（現状）</h3>
-    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:12px;font-size:12.5px;">
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
-        <div style="font-weight:700;color:var(--text);">① CSV</div>
-        <div style="color:var(--text2);font-size:11px;">3費目×12ヶ月<br/>（ダミー）</div>
+    <!-- 3つの転換 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">7月末から何が変わったか</h3>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:22mm;">日付</th><th style="width:38mm;">変わったこと</th><th>理由</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>8/10</td>
+            <td><strong>予測の中身</strong><br/>翌月の金額 → <strong>予算消化ペース</strong></td>
+            <td>実データが届き、月次データ点が3つしか無いと判明。時系列予測は成立しない。一方「年度末に予算を使い切れるか」なら成立し、しかも石川さんの中核要件に直結する</td>
+          </tr>
+          <tr>
+            <td>8/16</td>
+            <td><strong>実行基盤</strong><br/>Python＋Groq → <strong>Claude Codeサブエージェント</strong></td>
+            <td>エージェントをMarkdownで定義でき、サブスクリプションで動き、ファイルを直接読める。独立コンテキストなので<a href="#decisions" style="color:var(--accent);">論点1</a>「3体を議論させない」が構造的に保証される</td>
+          </tr>
+          <tr>
+            <td>8/18</td>
+            <td><strong>門番</strong><br/>LLMのAG → <strong>Python</strong></td>
+            <td>LLMにマスキングさせると、マスク対象の生データをまずLLM（社外API）へ送ることになり本末転倒。下記の理由により決定論的な実装が必須</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 実行構成 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:36px 0 16px;">実行構成 — 5体はMarkdownファイル</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">エージェントの実体は <code>.claude/agents/*.md</code> という<strong>職務記述書</strong>である。知能はClaude側にあり、mdファイルは役割の定義だけを持つ。システム全体で<strong>298行のMarkdown</strong>＋入出力ファイルしかない。</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:52mm;">ファイル</th><th style="width:20mm;">行数</th><th>役割</th></tr></thead>
+        <tbody>
+          <tr><td><code>fc-data-collector.md</code></td><td>66</td><td>予算・実績ファイルを自分で読み、意味を対応づけて <code>collected.json</code> を出力</td></tr>
+          <tr><td><code>fc-critical.md</code></td><td>46</td><td>計画どおり進まない前提でリスクを評価</td></tr>
+          <tr><td><code>fc-neutral.md</code></td><td>45</td><td>実績だけを外挿したベースライン</td></tr>
+          <tr><td><code>fc-advocate.md</code></td><td>45</td><td>予算の計画情報（開催回数・契約期間）を織り込む</td></tr>
+          <tr><td><code>skills/fc-forecast/SKILL.md</code></td><td>96</td><td><strong>調整AI</strong>の手順。メインセッション自身が司令塔として実行する</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">📦</div>
+      <div>
+        <p><strong>エージェント定義がただのMarkdownであることの効果：</strong> ①会社アカウントで開いても<strong>移植作業ゼロでそのまま動く</strong>、②非エンジニアでも中身を読めて直せる、③エージェント自身は状態を持たない（毎回まっさら）ため<strong>再現性があり、過去時点の再現＝バックテストが正確にできる</strong>。状態はすべてファイル側（入力CSV・出力JSON）にある。</p>
+      </div>
+    </div>
+
+    <!-- データの流れ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">データの流れ</h3>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:16px;font-size:12.5px;">
+      <div style="background:rgba(51,122,68,.06);border:1px solid var(--green);border-radius:8px;padding:10px 14px;min-width:120px;">
+        <div style="font-weight:700;color:var(--text);">① 生データ</div>
+        <div style="color:var(--text2);font-size:11px;">予算CSV＋仕訳帳<br/><strong>社内のみ</strong></div>
+      </div>
+      <div style="color:var(--orange);font-weight:700;">→</div>
+      <div style="background:rgba(163,101,29,.09);border:2px solid var(--orange);border-radius:8px;padding:10px 14px;min-width:150px;">
+        <div style="font-weight:700;color:var(--text);">② 門番（Python）</div>
+        <div style="color:var(--text2);font-size:11px;">個人単位の情報を集約して落とす<br/><span style="color:var(--red);">※未実装</span></div>
       </div>
       <div style="color:var(--accent);font-weight:700;">→</div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
-        <div style="font-weight:700;color:var(--text);">② Python合算</div>
-        <div style="color:var(--text2);font-size:11px;">月ごとに全費目を<br/>「総支出」1本に</div>
+      <div style="background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;min-width:130px;">
+        <div style="font-weight:700;color:var(--text);">③ データ収集AG</div>
+        <div style="color:var(--text2);font-size:11px;">意味の対応づけ<br/>計画情報の読解</div>
       </div>
       <div style="color:var(--accent);font-weight:700;">→</div>
-      <div style="background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;min-width:150px;">
-        <div style="font-weight:700;color:var(--text);">③ 3視点AG（並列）</div>
-        <div style="color:var(--text2);font-size:11px;">批判的・中立・推進的<br/>が独立に翌月を予測</div>
+      <div style="background:rgba(88,166,255,.08);border:1px solid var(--accent);border-radius:8px;padding:10px 14px;min-width:140px;">
+        <div style="font-weight:700;color:var(--text);">④ 3視点AG（並列）</div>
+        <div style="color:var(--text2);font-size:11px;">互いに議論しない</div>
       </div>
       <div style="color:var(--accent);font-weight:700;">→</div>
       <div style="background:rgba(227,179,65,.1);border:1px solid var(--yellow);border-radius:8px;padding:10px 14px;min-width:130px;">
-        <div style="font-weight:700;color:var(--text);">④ 調整AI</div>
-        <div style="color:var(--text2);font-size:11px;">3つを統合→最終予測<br/>割れ大なら人間へ</div>
+        <div style="font-weight:700;color:var(--text);">⑤ 調整AI</div>
+        <div style="color:var(--text2);font-size:11px;">統合＋割れ判定<br/>forecast.json 出力</div>
       </div>
       <div style="color:var(--accent);font-weight:700;">→</div>
       <div style="background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;min-width:120px;">
-        <div style="font-weight:700;color:var(--text);">⑤ 予算判定</div>
-        <div style="color:var(--text2);font-size:11px;">着地見込み vs 予算<br/>（<a href="#kaminaga-budget" style="color:var(--accent);">予算管理</a>）</div>
+        <div style="font-weight:700;color:var(--text);">⑥ ダッシュボード</div>
+        <div style="color:var(--text2);font-size:11px;">JSONを読んで表示<br/><strong>LLMを呼ばない</strong></div>
       </div>
     </div>
-    <div class="callout c-warn" style="margin-bottom:36px;">
-      <div class="callout-icon">⚠️</div>
-      <div style="font-size:13px;">②の「Python合算」は<strong>機械的な足し算</strong>であって、AIが読んで整理しているわけではない。理想形（<a href="#hybrid" style="color:var(--accent);">5エージェント設計</a>）ではここが「データ収集AG」だが、現状はまだAI化していない（後述のギャップ参照）。</div>
-    </div>
-
-    <!-- 与えているデータ -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">① 与えているデータ</h3>
-    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;"><code>agent/data/sample_expenses.csv</code>。<strong>これはダミー（架空）データで、実データではない。</strong>縦持ち3列（<code>month, category, amount</code>）。費目の性質を分けて作ってある：</p>
-    <div class="tbl-wrap" style="margin-bottom:14px;">
-      <table>
-        <thead><tr><th>費目</th><th>月額の目安</th><th>意図した性質</th></tr></thead>
-        <tbody>
-          <tr><td>人件費</td><td>120〜135万（12月・6月に賞与で跳ねる）</td><td>準固定＋季節性</td></tr>
-          <tr><td>外注費</td><td>6〜41万でバラつく</td><td>変動費</td></tr>
-          <tr><td>家賃</td><td>22〜23万でほぼ一定</td><td>固定費</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:36px;">アプリはこれを月ごとに合算し、<strong>「総支出」1本の12ヶ月系列</strong>にしてから予測にかける（例: 2025-07 = 人件費120万＋外注費18万＋家賃22万 ＝ <strong>160万円</strong>）。実データを使うときは <code>agent/data/expenses.xlsx</code>（横持ち月次推移も可）を置けば自動で読む。</p>
-
-    <!-- 各エージェントの実装 -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">各段階の実装</h3>
-    <div class="tbl-wrap" style="margin-bottom:14px;">
-      <table>
-        <thead><tr><th style="width:26mm;">段階</th><th>中身</th><th>モデル</th><th>ファイル</th></tr></thead>
-        <tbody>
-          <tr><td><strong>③ 3視点AG</strong></td><td><strong>同じコード・違う指示文</strong>で3体を実現。各体に総支出12ヶ月をプロンプトに埋め込み「翌月をJSONで予測」と依頼。3体は互いに議論しない（<a href="#decisions" style="color:var(--accent);">論点1</a>）</td><td>Groq<br/>llama-3.3-70b</td><td><code>agents/<br/>forecast_agent.py</code></td></tr>
-          <tr><td><strong>④ 調整AI</strong></td><td>3体の予測＋根拠を文章で渡し、LLMが最終予測＋レンジに統合。<strong>「意見の割れ」はLLMでなくPythonで</strong> (最大−最小)/中央値 を計算し、30%超で人間へエスカレーション</td><td>Groq<br/>llama-3.3-70b</td><td><code>agents/<br/>arbiter_agent.py</code></td></tr>
-          <tr><td><strong>② 合算</strong></td><td>CSV/Excelを読み、月ごとに全費目を総支出へ集計（機械的・AIなし）</td><td>—（Python）</td><td><code>app.py</code><br/><code>data_loader.py</code></td></tr>
-          <tr><td><strong>⑤ 予算判定</strong></td><td>着地見込み＝実績累計＋予測月額×残り月。予算と突き合わせて超過判定（<a href="#kaminaga-budget" style="color:var(--accent);">予算管理</a>）</td><td>—（Python）</td><td><code>app.py</code></td></tr>
-          <tr><td>司令／表示</td><td>Flask＋インラインSVGのダッシュボード。上記を順に呼び出して可視化</td><td>—（Python/JS）</td><td><code>app.py</code><br/><code>templates/</code></td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <!-- 3視点の性格づけ -->
     <div class="callout c-info" style="margin-bottom:36px;">
-      <div class="callout-icon">🎭</div>
+      <div class="callout-icon">🔌</div>
       <div>
-        <p><strong>3視点の違いは「指示文（プロンプト）の性格づけ」だけ：</strong> 批判的AG＝「下振れ・突発増・季節性を重視し、やや高めでも保守的に」／中立AG＝「偏らず統計的なベースライン」／推進的AG＝「成長・活動量の増加を織り込み、やや楽観でも」。3体とも<strong>読んでいるのは同じ総支出12ヶ月の数字</strong>で、性格の違いで温度差を出している。</p>
+        <p><strong>分析と表示を分離した：</strong> 従来はFlaskが自分でGroqを呼んで予測していたが、その役割はClaude Code側へ移った。現在の <code>app.py</code> は約90行で、やることは「<code>forecast_*.json</code> を読んで描く」だけ。APIキーすら不要になった。<strong>モデルやAPIを差し替えても表示側は無変更で済む</strong>ため、これから行うアカウント間比較でも表示層を固定したまま検証できる。</p>
       </div>
     </div>
 
-    <!-- 理想形とのギャップ -->
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">理想形（5エージェント設計）とのギャップ — 正直な現在地</h3>
+    <!-- 門番がPythonである理由 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">なぜ門番はPythonでなければならないか（2026-08-18の設計判断）</h3>
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🚨</div>
+      <div>
+        <p><strong>当初設計の「門番AG（LLM）」は原理的に破綻している。</strong> LLMにマスキングさせるということは、<strong>マスクすべき生データを、マスクする前にLLM（＝社外API）へ送る</strong>ということである。守りたいものを守る前に外へ出すことになり、関所として成立しない。加えてLLMの処理は確率的なので、<strong>一定確率でマスクし漏れる</strong>。</p>
+      </div>
+    </div>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">したがって門番はPythonで実装する。決定論的でマスク漏れが起きず、何を落としたかを監査ログに残せ、そして<strong>生データが社外に出ない</strong>。これは本プロジェクトで一貫している「数値と確定処理はPython、解釈はLLM」の延長でもある。</p>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:36px;"><strong>門番をPythonにしてもデータ収集AGの価値は残る。</strong> AGが実際に担っているのは、①「移動費」と「旅費交通費」が同じものだという<strong>意味の対応づけ</strong>、②備考欄から「年3回開催」を拾う<strong>計画情報の読解</strong>、③「人件費に対応する仕訳が無い」という<strong>矛盾の発見</strong>——いずれもPythonにはできない。逆に個人名の確実な除去はLLMには任せられない。責務がきれいに分かれる。</p>
+
+    <!-- マスキング方針 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">マスキング方針 — 集約して落とす（2026-08-18決定）</h3>
     <div class="tbl-wrap" style="margin-bottom:16px;">
       <table>
-        <thead><tr><th>要素</th><th>理想形</th><th>現状</th></tr></thead>
+        <thead><tr><th style="width:44mm;">対象</th><th style="width:26mm;">扱い</th><th>根拠</th></tr></thead>
         <tbody>
-          <tr><td>データ収集AG</td><td>CSVを読んで各費目を整理・分類し、構造化した要約を3体に渡す</td><td><span class="ng">未AI化</span>— Pythonが機械的に合算しているだけ</td></tr>
-          <tr><td>3視点予測AG</td><td>整理済みの文脈を読んで予測</td><td><span class="ok">実装済</span>（ただし入力は生の数字の列）</td></tr>
-          <tr><td>調整AI</td><td>3体を統合し裁定</td><td><span class="ok">実装済</span></td></tr>
-          <tr><td>入力データ</td><td>財務データ＋カレンダー等の活動量シグナル</td><td><span class="ng">総支出の数字のみ</span>— 活動量は未接続（推進的AGの指示文にはあるが実データは渡していない）</td></tr>
-          <tr><td>数値予測の担い手</td><td>統計モデル(季節ナイーブ/ETS)が外挿、LLMは解釈</td><td><span class="tri">LLMが数値予測</span>— <a href="#decisions" style="color:var(--accent);">論点5</a>の課題が残ったまま</td></tr>
+          <tr><td><strong>個人名＋日単価</strong>（見積書）</td><td><span class="ok">送らない</span></td><td>最高機密。個人別の行を役割単位でなく<strong>項目総額に集約</strong>し、氏名も単価も構造的に存在しない形にする</td></tr>
+          <tr><td>摘要の固有名詞</td><td><span class="tri">辞書で置換</span></td><td>組織名（自社・取引先・助成元）の辞書を用意して置換。計画情報（「第1回セミナー」）は残す必要があるため全削除はしない</td></tr>
+          <tr><td>金額・総額</td><td><span class="ok">そのまま送る</span></td><td>予測に必須。マスクすると分析が成立しない</td></tr>
+          <tr><td>単位・構造（日/回/ヶ月）</td><td><span class="ok">そのまま送る</span></td><td>「稼働日ベースか否か」は判断に効く。個人情報ではない</td></tr>
         </tbody>
       </table>
     </div>
-    <div class="callout c-tip">
-      <div class="callout-icon">🧭</div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🔬</div>
       <div>
-        <p><strong>ひとことで：</strong> 「CSV→整理→3体予測→上位が統合」という配線は<strong>③④が完成、②の"整理"がまだPythonの機械合算</strong>という状態。5エージェント設計を完成させる次の一歩は<strong>データ収集AG（調査用AI）を1体足して、各費目を読んで整理させてから3体に渡す</strong>こと。数値予測をLLMから統計モデルへ移す件（論点5）と、活動量データの接続は、その先の改善として残している。</p>
+        <p><strong>「粒度を落としても分析は痩せない」は推測ではなく実行ログからの検証結果：</strong> 2026-08-16の実行で3体が実際に根拠として挙げたのは「人件費の総額」「稼働日ベースという構造」「残り期間の残額」の3つで、<strong>個人名は一度も使われていない</strong>。日単価は推進的AGが残額計算に使ったのみで、これはPython側で先に計算して渡せる。<br/><br/><strong>役割ラベル方式を採らなかった理由：</strong> 少人数組織では役職と個人が1対1に対応するため、「ディレクター 46,800円/日」は氏名を消しても誰か分かってしまう。匿名化として機能しない。<br/><br/><strong>順序の原則：</strong> 緩く始めて後で締めるのは、一度出たデータが戻らないため不可逆。厳しく始めて必要なら緩める方が安全。副次的に、他組織へ導入する際「個人単位の情報はそもそもシステムに入りません」と説明できるのが最も強い。</p>
       </div>
+    </div>
+
+    <!-- 動作実績 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">動作実績（2026-08-16・ダミーデータ）</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;">実データと同じ構造のダミー（予算3,553,000円／実績359,060円・17件・3ヶ月）で、5体が最初から最後まで通ることを確認した。経過率25%に対し消化率10.1%という状況は、<strong>実データの財団案件（10.0%）をほぼ再現している</strong>。</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:30mm;">視点</th><th style="width:32mm;">着地見込み</th><th style="width:20mm;">予算比</th><th>要旨</th></tr></thead>
+        <tbody>
+          <tr><td>中立AG</td><td>1,436,240円</td><td>40.4%</td><td>実績を素直に外挿（359,060 ÷ 0.25）</td></tr>
+          <tr><td>批判的AG</td><td><strong>2,350,000円</strong></td><td>66.1%</td><td>支援金・セミナーは後半に相応に執行されるが、<strong>稼働日ベースの人件費は経過分が回収不能</strong></td></tr>
+          <tr><td>推進的AG</td><td>3,554,760円</td><td>100.0%</td><td>計画の回数・月数を残期間に割り付ければ予算どおり着地</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">⚖️</div>
+      <div>
+        <p><strong>割れ 90.1%（閾値30%）→ 人間へエスカレーション。</strong> これは失敗ではなく<strong>正しいシグナル</strong>である。予算の6割超（支援金80万＋人件費144万）が実績ゼロで、それが執行されるかは<strong>過去データから読める傾向ではなく今後の運営判断</strong>だから。「AIには決めきれないので人間が判断してください」と正しく言えている。</p>
+      </div>
+    </div>
+    <div class="callout c-info" style="margin-bottom:36px;">
+      <div class="callout-icon">🔍</div>
+      <div>
+        <p><strong>設計が効いた2つの観察：</strong> ①<strong>批判的AGが中立AGより高い数字を出した</strong>——悲観＝低い数字ではない。中立の単純外挿は立ち上がり期の実績を延ばしただけで下振れしすぎており、批判的AGは積み上げた上でなお未消化に終わると判断した。②<strong>データ収集AGが指示のミスを検出した</strong>——年度定義を誤って「1〜12月」と指示したところ、指示に従いつつ「1〜3月の取引が無い」と <code>uncertain</code> に記録した。「合わなければ黙って進まず uncertain に書く」という定義が機能している。</p>
+      </div>
+    </div>
+
+    <!-- 残っているギャップ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">残っているギャップ — 正直な現在地</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:38mm;">要素</th><th>状態</th></tr></thead>
+        <tbody>
+          <tr><td>5エージェント構成</td><td><span class="ok">完成</span>—ダミーデータで最初から最後まで動作確認済み</td></tr>
+          <tr><td>ダッシュボード</td><td><span class="ok">完成</span>—forecast JSONを読む形に付け替え済み。LLM呼び出しなし</td></tr>
+          <tr><td><strong>門番（Python）</strong></td><td><span class="ng">未実装</span>—方針は決定（集約して落とす）。<strong>実データ投入の前提条件</strong></td></tr>
+          <tr><td><strong>予算データの入手形式</strong></td><td><span class="ng">ブロッカー</span>—見積書がPDFのまま。PythonでPDFを構造化するのは困難で、Claudeに読ませると門番の手前で個人名が社外へ出る。<strong>予算をCSV/Excelでもらうことが必須条件</strong></td></tr>
+          <tr><td>実データでの実行</td><td><span class="tri">未実施</span>—予算CSV到着待ち</td></tr>
+          <tr><td>バックテスト（<a href="#decisions" style="color:var(--accent);">論点4</a>）</td><td><span class="tri">データ不足</span>—実績が3ヶ月分しかなく1回も試行できない。<strong>昨年度データが入手できれば前倒し可能</strong></td></tr>
+          <tr><td>アカウント間の差異検証</td><td><span class="tri">準備段階</span>—LLMは同一アカウントでも出力が揺れるため、先に<strong>揺れ幅のベースライン</strong>を取る必要がある</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -3344,7 +3413,7 @@ python3 app.py</pre>
     <div class="callout c-danger" style="margin-bottom:28px;">
       <div class="callout-icon">🚧</div>
       <div>
-        <p><strong>この図の読み方（最重要）：</strong> 図の中で唯一の危険地帯は<strong style="color:var(--orange);">🛡️ 門番AG（マスキング）より右側＝社外</strong>である。ここを通る情報だけが会社の外に出る。<strong>現在この門番AGは未実装のため、実データは投入していない（ダミーデータのみで開発中）</strong>。実データを入れる前に、この関所を必ず作る。</p>
+        <p><strong>この図の読み方（最重要）：</strong> 図の中で唯一の危険地帯は<strong style="color:var(--orange);">🛡️ 門番（マスキング）より右側＝社外</strong>である。ここを通る情報だけが会社の外に出る。<strong>現在この門番は未実装のため、実データは投入していない（ダミーデータのみで開発中）</strong>。実データを入れる前に、この関所を必ず作る。<br/><br/><strong style="color:var(--orange);">2026-08-18 更新：</strong> 当初この門番は「門番AG（LLM）」として設計していたが、<strong>LLMにマスキングさせると、マスク対象の生データをマスク前にLLM＝社外APIへ送ることになり原理的に破綻する</strong>と判明したため、<strong>Pythonによる決定論的な実装へ変更</strong>した。マスキング方式は「個人単位の情報を集約して落とす」に決定。根拠は<a href="#kaminaga-design" style="color:var(--accent);">現在の設計</a>を参照。</p>
       </div>
     </div>
 
@@ -3403,7 +3472,7 @@ python3 app.py</pre>
         <div class="arch-row">
           <div class="arch-node hl-orange" style="min-width:260px;">
             <div class="n-icon">🛡️</div>
-            <div class="n-name">門番AG（マスキング）<span style="color:var(--red);font-size:10px;"> ※未実装</span></div>
+            <div class="n-name">門番（Python・マスキング）<span style="color:var(--red);font-size:10px;"> ※未実装</span></div>
             <div class="n-sub">固有名詞を伏字化／費目名をラベル置換／<br/>必要なら金額を指数化・桁丸め<br/><strong>復元マップは社内にのみ保持（社外に出さない）</strong></div>
           </div>
         </div>
@@ -3472,7 +3541,7 @@ python3 app.py</pre>
             <td>費目名（人件費・外注費など）</td>
             <td><span class="tri">送りうる</span></td>
             <td>中〜高</td>
-            <td>費目別予測をする場合に送る。<strong>「人件費の月額合計」は給与水準が推測されうる</strong>ため、門番AGでラベル置換（費目A/B/C）を検討</td>
+            <td>費目別に送る。<strong>個人別の行は項目総額に集約してから送る</strong>（2026-08-18決定）——少人数組織では役割ラベルでも個人が特定されうるため、氏名も日単価も構造的に存在しない形にする</td>
           </tr>
           <tr>
             <td>個人名・給与明細</td>
@@ -3484,7 +3553,7 @@ python3 app.py</pre>
             <td>取引先名・案件名</td>
             <td><span class="ok">送らない</span></td>
             <td>高</td>
-            <td>明細レベルのデータは投入しない。入る場合は門番AGで伏字化</td>
+            <td>明細レベルのデータは投入しない。摘要に混ざる場合は門番（Python）が組織名辞書で置換。計画情報（「第1回セミナー」等）は分析に必要なため残す</td>
           </tr>
           <tr>
             <td>予算額・残予算</td>
@@ -3641,20 +3710,128 @@ python3 app.py</pre>
           </div>
         </div>
       </div>
+
+      <div class="log-entry">
+        <div class="log-date">7/31</div>
+        <div class="log-content">
+          <h4>データフロー図を作成（石川さんの依頼に対応）</h4>
+          <ul class="log-items">
+            <li>信頼境界（社内／社外）を主役にした図を作成。「どの情報がどこを通るか」を明示</li>
+            <li>境界を越えるデータの一覧表を作成——<strong>予算データは一度も社外に出ない</strong>／<strong>月次合算そのものが匿名化として働く</strong>という2つの安全上の性質を明文化</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">8/5</div>
+        <div class="log-content">
+          <h4>打ち合わせ — 図が合意され、実データ提供が決定</h4>
+          <ul class="log-items">
+            <li>データフロー図が石川さんに承認された</li>
+            <li><strong>実データ（予算・経費）をCSVで提供いただけることに</strong>。予算データの投入フォーマット統一は要検討として持ち越し</li>
+            <li>Claude検証アカウント：新規契約ではなく社内アカウント1枠を1ヶ月借用する方向で申請</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">8/10</div>
+        <div class="log-content">
+          <h4>実データ受領 — 設計の前提が崩れ、予算消化ペース分析へ転換</h4>
+          <ul class="log-items">
+            <li><strong>まず保護：</strong> データがリポジトリ直下に無防備で置かれていたため即座に <code>.gitignore</code> へ追加（git履歴には未混入を確認）</li>
+            <li>実績＝freee仕訳帳（取引明細・cp932）、予算＝プロジェクト単位の見積書PDF。<strong>会社全体の月次ではなくプロジェクト単位</strong>だった</li>
+            <li><strong>時系列予測が成立しない</strong>と判明——実績は2025/04〜06の3ヶ月分43取引のみで、月次データ点が3つしかない</li>
+            <li>→ <strong>「翌月いくら使うか」から「年度末に予算を使い切れるか」へ転換</strong>。3データ点でも成立し、石川さんの中核要件に直結する</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 気づき：</strong> この転換は<strong>むしろLLMを活かす方向</strong>だった。数値の外挿はLLMが不得意（<a href="#decisions" style="color:var(--accent);">論点5</a>）だが、見積書の計画情報（「年3回開催」「12ヶ月契約」）を読んで執行ペースを解釈するのは得意分野。財団案件は年度25%経過時点で消化率10.0%と、実データで既に分析が成り立つ状態だった。<br/>
+            <strong>📌 マスキングの優先対象が変わった：</strong> 仕訳帳の取引先列は<strong>全行空欄</strong>だった。代わりに<strong>見積書に個人名＋日単価</strong>が記載されており、こちらが最高機密と判明。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">8/16</div>
+        <div class="log-content">
+          <h4>Claude Codeサブエージェント方式へ移行 — 5体構成が完成</h4>
+          <ul class="log-items">
+            <li>オーケストレーションの3方式を比較し<strong>①Claude Codeサブエージェント</strong>を採用（②Agent SDK／③Managed Agentsは保留。③は5体構成そのもののAPIがあるが<strong>APIキー課金必須＋サンドボックスがAnthropic側</strong>で社内データ方針と衝突）</li>
+            <li><code>.claude/agents/</code> に4体＋調整AI手順スキルを定義。<strong>実体は298行のMarkdown</strong></li>
+            <li>実データと同じ構造のダミーデータを作成（石川さんへ渡す予算テンプレートを兼ねる）</li>
+            <li>ダミーで<strong>5体が最初から最後まで動作</strong>。ダッシュボードをforecast JSONを読む形に付け替え、<strong>FlaskからLLM呼び出しが消えた</strong></li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 3体が本当に別々の判断をした：</strong> 中立144万／批判的235万／推進的355万、割れ90.1%でエスカレーション。特に<strong>批判的AGが中立AGより高い数字</strong>を出したのが良い兆候——悲観＝低い数字ではなく、中立の単純外挿が立ち上がり期を延ばしただけで下振れしすぎていた。<strong>稼働日ベースの人件費は経過分が回収不能</strong>という構造的な指摘は批判的AGだけが見つけた。<br/>
+            <strong>📌 データ収集AGが私（AI）の指示ミスを検出：</strong> 年度定義を誤って指示したところ、従いつつ「1〜3月の取引が無い」と <code>uncertain</code> に記録した。「合わなければ黙って進まない」という定義が機能している。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">8/18</div>
+        <div class="log-content">
+          <h4>門番の設計判断 — LLMマスキングは原理的に破綻する</h4>
+          <ul class="log-items">
+            <li><strong>当初設計の「門番AG（LLM）」を破棄</strong>——マスクすべき生データをマスク前にLLM（社外API）へ送ることになり本末転倒。加えて処理が確率的なのでマスク漏れが起きる</li>
+            <li>→ <strong>門番はPythonで実装</strong>（決定論的・監査ログ付き・生データが社外に出ない）</li>
+            <li>マスキング方式は<strong>「個人単位の情報を集約して落とす」</strong>に決定。氏名も日単価も構造的に存在しない形にする</li>
+            <li><strong>新たなブロッカーを発見：</strong> 予算が見積書PDFのままだと、PythonでPDFを構造化するのは困難で、Claudeに読ませると門番の手前で個人名が社外へ出る。<strong>予算をCSV/Excelでもらうことが必須条件</strong>と判明</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 粒度を落としても分析は痩せない（実行ログによる検証）：</strong> 8/16の実行で3体が根拠に挙げたのは「人件費の総額」「稼働日ベースという構造」「残額」の3つで、<strong>個人名は一度も使われていない</strong>。日単価も残額計算に使われただけでPython側で先に計算できる。<br/>
+            <strong>📌 役割ラベル方式は採らなかった：</strong> 少人数組織では役職と個人が1対1に対応するため「ディレクター 46,800円/日」は氏名を消しても誰か分かる。匿名化として機能しない。<br/>
+            <strong>📌 順序の原則：</strong> 緩く始めて後で締めるのは、一度出たデータが戻らないため不可逆。厳しく始めて必要なら緩める。他組織への導入時に「個人単位の情報はそもそも入りません」と言えるのが最も強い説明になる。
+          </div>
+        </div>
+      </div>
     </div>
 
-    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">次の候補（優先順は打ち合わせで調整）</h3>
-    <div class="tbl-wrap">
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">残作業と見積もり（2026-08-18時点）</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:16px;">作業量そのものは大きくない（<strong>正味15〜25時間</strong>）。工期を決めているのは作業時間ではなく<strong>他者待ちの3つのブロッカー</strong>である。</p>
+    <div class="tbl-wrap" style="margin-bottom:20px;">
       <table>
-        <thead><tr><th style="width:44mm;">項目</th><th>内容</th></tr></thead>
+        <thead><tr><th style="width:46mm;">作業</th><th style="width:20mm;">正味時間</th><th>依存</th></tr></thead>
         <tbody>
-          <tr><td>実データでの検証</td><td>ダミーではなく実際の会計データ（月次推移CSV）を入れて、数字の妥当性と使い勝手を確認する</td></tr>
-          <tr><td>年度予算の外部設定</td><td>予算を定数からExcel/設定ファイルに移し、非エンジニアでも変更できるようにする</td></tr>
-          <tr><td>着地見込みの精度</td><td>「翌月×残り月」の単純延長から、残り各月を個別に予測する方式へ（<a href="#decisions" style="color:var(--accent);">論点4</a>のバックテストと合わせて検証）</td></tr>
-          <tr><td>費目別ビューの復活</td><td>総支出だけでなく費目別の予算・着地も見られるように（人件費・事業費で性質が違うため）</td></tr>
-          <tr><td>マスキング（門番AG）</td><td>実データ（給与・取引先名）を扱う前に、クラウド送信前の伏字化を実装（<a href="#decisions" style="color:var(--accent);">論点3</a>）</td></tr>
+          <tr><td><strong>Python門番</strong>（集約マスキング＋監査ログ）</td><td>2〜4h</td><td><span class="ok">なし・着手可</span></td></tr>
+          <tr><td><strong>予算テンプレート（Excel）</strong></td><td>1h</td><td><span class="ok">なし・着手可</span>／<strong>渡すまで石川さんが動けない</strong></td></tr>
+          <tr><td>実データ形式対応（cp932・仕訳帳・予算CSV）</td><td>2〜3h</td><td><span class="ok">なし・着手可</span></td></tr>
+          <tr><td>門番込みの通し確認（ダミー）</td><td>1〜2h</td><td>上記3件の後</td></tr>
+          <tr><td>実データでの初回実行と調整</td><td>2〜4h</td><td><span class="tri">⚠️ 予算CSV待ち</span></td></tr>
+          <tr><td>ダッシュボードの複数プロジェクト対応</td><td>2〜3h</td><td>実データ実行の後</td></tr>
+          <tr><td>アカウント間の揺れ幅比較</td><td>2〜3h</td><td><span class="tri">⚠️ 会社アカウント待ち</span></td></tr>
+          <tr><td>バックテスト（<a href="#decisions" style="color:var(--accent);">論点4</a>）</td><td>3〜5h</td><td><span class="tri">⚠️ データ量待ち</span></td></tr>
         </tbody>
       </table>
+    </div>
+
+    <div class="callout c-danger" style="margin-bottom:20px;">
+      <div class="callout-icon">🚧</div>
+      <div>
+        <p><strong>最優先のクリティカルパス＝予算テンプレートの提供。</strong> 予算が見積書PDFのままだと門番を通せず（PythonでのPDF構造化は困難、Claudeに読ませると門番の手前で個人名が社外へ出る）、<strong>実データ投入そのものが始められない</strong>。作業は1時間で、渡した瞬間から相手が動ける。<br/><br/><strong>バックテストは現時点では実施できない。</strong> 実績が3ヶ月分しかなく1回も試行できない。ただし2026-07-30のメモに「昨年の経費データと現在の予算データを突合する」とあり<strong>昨年度データの存在が示唆されている</strong>——入手できれば10月を待たず即座に着手できるため、8/24で確認する価値が高い。</p>
+      </div>
+    </div>
+
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">現実的なタイムライン</h3>
+    <div class="steps" style="margin-bottom:20px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>〜8/24（打ち合わせ）— 正味6〜10時間</h4><p>門番の実装とダミーでの通し確認まで完了。予算テンプレートを渡して依頼。昨年度データの有無を確認。<strong>見せられる状態：マスキング込みで5体が動き、ダッシュボードに出る。</strong></p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>9月上旬 — 正味4〜7時間</h4><p>予算CSVが届き次第、実データで初回実行。<strong>見せられる状態：実際の案件で「あといくら使えるか」が出る。</strong></p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>9月中〜下旬 — 正味4〜6時間</h4><p>会社アカウント到着後、揺れ幅のベースラインと比較。昨年度データがあればバックテスト。</p></div>
+      </div>
+    </div>
+    <div class="callout c-tip">
+      <div class="callout-icon">📅</div>
+      <div>
+        <p><strong>カレンダー上は9月末〜10月頭で一通り完成</strong>という見積もり。石川さんが7/21に「これ以上待てない」と述べていることを踏まえると、重要なのは総完成時期より<strong>節目ごとに見せられるものがあるか</strong>。7/21時点では設計図しかなかったものが、8/24には動くものになっている。</p>
+      </div>
     </div>
   </div>
 </section>

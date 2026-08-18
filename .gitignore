@@ -20,6 +20,14 @@ agent/data/expenses.xlsx
 agent/data/expenses.csv
 agent/data/*_real.*
 
+# 会社の実データ一式（決算・予算・仕訳帳。取引先名や契約金額を含むため絶対に公開しない）
+# 先頭スラッシュ必須：これが無いと agent/data/（ダミー・テンプレート専用）まで巻き込む
+/data/
+**/仕訳帳*
+**/決算データ/
+**/*見積書*
+**/*積算内訳書*
+
 # Python
 __pycache__/
 *.pyc
@@ -28,3 +36,6 @@ __pycache__/
 # 一時ファイル
 *.tmp
 *.log
+
+# エージェント出力（実データ由来の中間ファイルを含むため公開しない）
+agent/output/
