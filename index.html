@@ -165,6 +165,70 @@
     .fnode.ext  { border: 2px solid var(--red); background: rgba(211,71,71,.06); }
     .farr { align-self: center; color: var(--text2); font-size: 15px; flex: 0 0 auto; }
 
+    /* ===== 図版 ===== */
+    /* 5体の構成図 */
+    .amap { margin: 8px 0 18px; }
+    .amap-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .amap-src { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+    .amap-src span {
+      font-size: 11px; color: var(--text2); background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 5px; padding: 5px 11px;
+    }
+    .amap-arr { text-align: center; color: var(--text2); font-size: 13px; margin: 7px 0; }
+    .amap-arr b { color: var(--orange); font-weight: 700; font-size: 11.5px; }
+    .amap-box {
+      border: 1px solid var(--border); border-radius: 8px; padding: 11px 14px;
+      background: var(--bg2); text-align: center; min-width: 150px;
+    }
+    .amap-box.wide { min-width: 300px; }
+    .amap-box .t { font-size: 12.5px; font-weight: 700; color: var(--text); }
+    .amap-box .s { font-size: 10.5px; color: var(--text2); margin-top: 4px; line-height: 1.65; }
+    .amap-box.a1 { border-color: var(--accent); background: rgba(44,95,170,.06); }
+    .amap-box.a2 { border-color: var(--orange); background: rgba(163,101,29,.06); }
+    .amap-box.a3 { border-color: var(--green);  background: rgba(51,122,68,.06); }
+    .amap-box .ev {
+      display: block; margin-top: 7px; padding-top: 7px; border-top: 1px dashed var(--border);
+      font-size: 10px; color: var(--text2);
+    }
+    .amap-box .ev b { color: var(--text); font-weight: 700; }
+
+    /* 信頼境界の帯 */
+    .bnd { display: flex; border-radius: 9px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 10px; }
+    .bnd-z { flex: 1 1 0; padding: 15px 16px; min-width: 130px; }
+    .bnd-z.in  { background: rgba(51,122,68,.07); }
+    .bnd-z.out { background: rgba(211,71,71,.08); border-left: 2px dashed var(--red); border-right: 2px dashed var(--red); }
+    .bnd-z .zl { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; margin-bottom: 7px; }
+    .bnd-z.in  .zl { color: var(--green); }
+    .bnd-z.out .zl { color: var(--red); }
+    .bnd-z .zi { font-size: 11.5px; color: var(--text2); line-height: 1.9; }
+    .bnd-z .zi b { color: var(--text); }
+
+    /* 割れ方の診断 */
+    .dg { display: grid; grid-template-columns: repeat(auto-fit,minmax(250px,1fr)); gap: 12px; margin-bottom: 16px; }
+    .dg-c { border: 1px solid var(--border); border-radius: 9px; padding: 14px 16px; background: var(--bg2); }
+    .dg-c.hot { border-color: var(--red); background: rgba(211,71,71,.05); }
+    .dg-b { display: grid; grid-template-columns: 30px 1fr; gap: 4px 7px; align-items: center; margin-bottom: 10px; }
+    .dg-b i { font-size: 9.5px; color: var(--text2); font-style: normal; text-align: right; }
+    .dg-b u { height: 9px; border-radius: 2px; display: block; text-decoration: none; }
+    .dg-b u.r1 { background: var(--accent); }
+    .dg-b u.r2 { background: var(--orange); }
+    .dg-b u.r3 { background: var(--green); }
+    .dg-v { font-size: 12px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+    .dg-a { font-size: 11.5px; color: var(--text2); line-height: 1.7; }
+
+    /* タイムライン */
+    .tl { display: flex; gap: 0; margin-bottom: 16px; flex-wrap: wrap; }
+    .tl-i { flex: 1 1 190px; padding: 0 14px 0 0; position: relative; }
+    .tl-i::before {
+      content: ""; display: block; height: 3px; border-radius: 2px;
+      background: var(--accent); margin-bottom: 12px; opacity: .75;
+    }
+    .tl-i.f2::before { opacity: .5; }
+    .tl-i.f3::before { opacity: .28; }
+    .tl-d { font-size: 12.5px; font-weight: 700; color: var(--text); }
+    .tl-h { font-size: 10.5px; color: var(--text2); margin: 2px 0 6px; }
+    .tl-t { font-size: 11.5px; color: var(--text2); line-height: 1.8; }
+
     /* 改善ループ */
     .loop {
       display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
@@ -177,6 +241,11 @@
     }
     .loop b { border: 2px solid var(--orange); background: rgba(163,101,29,.08); color: var(--text); }
     .loop i { color: var(--text2); font-style: normal; font-size: 13px; }
+    .loop-back {
+      flex-basis: 100%; margin-top: 12px; padding-top: 11px;
+      border-top: 2px dashed var(--orange);
+      font-size: 11.5px; color: var(--orange); font-weight: 700; text-align: center;
+    }
 
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
@@ -3258,17 +3327,40 @@ session <span class="co">=</span> client.beta.sessions.create(
     <!-- 構成 -->
     <h3 class="sub-h">5体の構成 — 実体はMarkdownファイル</h3>
     <p class="lead">エージェントの実体は <code>.claude/agents/*.md</code> という職務記述書。知能はClaude側にあり、mdは役割の定義だけを持つ。システム全体で<strong>298行のMarkdown</strong>＋入出力ファイルしかない。</p>
-    <div class="tbl-wrap" style="margin-bottom:16px;">
-      <table>
-        <thead><tr><th style="width:34mm;">エージェント</th><th style="width:44mm;">答える問い</th><th>見るもの（専有情報）</th></tr></thead>
-        <tbody>
-          <tr><td><strong>データ収集AG</strong></td><td>—（整理役）</td><td>ファイルを読み、意味を対応づけ、計画情報を拾い、矛盾を記録する</td></tr>
-          <tr><td><strong>実績AG</strong></td><td>このペースが続いたら？</td><td>仕訳の時系列<strong>だけ</strong>。予算書は見せない</td></tr>
-          <tr><td><strong>計画AG</strong></td><td>計画どおり実行されたら？</td><td>予算内訳と残タスク<strong>だけ</strong>。実績の推移は見せない</td></tr>
-          <tr><td><strong>制約AG</strong></td><td>物理的に可能なのは？</td><td>費目の性質（稼働日ベースか）・締め／年度またぎ制約</td></tr>
-          <tr><td><strong>調整AI</strong></td><td>—（統合役）</td><td>3体の結果。Claude Codeのメインセッション自身が担う</td></tr>
-        </tbody>
-      </table>
+    <div class="amap">
+      <div class="amap-src"><span>📄 予算CSV</span><span>📒 仕訳帳</span></div>
+      <div class="amap-arr">↓</div>
+      <div class="amap-row">
+        <div class="amap-box wide">
+          <div class="t">📡 データ収集AG</div>
+          <div class="s">ファイルを読み、意味を対応づけ、計画情報を拾い、矛盾を記録する</div>
+        </div>
+      </div>
+      <div class="amap-arr">↓ <b>それぞれ違う情報だけを配る</b> ↓</div>
+      <div class="amap-row">
+        <div class="amap-box a1">
+          <div class="t">📉 実績AG</div>
+          <div class="s">このペースが<br/>続いたら？</div>
+          <span class="ev"><b>仕訳の時系列だけ</b><br/>予算書は見せない</span>
+        </div>
+        <div class="amap-box a2">
+          <div class="t">📋 計画AG</div>
+          <div class="s">計画どおり<br/>実行されたら？</div>
+          <span class="ev"><b>予算内訳と残タスクだけ</b><br/>実績の推移は見せない</span>
+        </div>
+        <div class="amap-box a3">
+          <div class="t">🚧 制約AG</div>
+          <div class="s">物理的に<br/>可能なのは？</div>
+          <span class="ev"><b>費目の性質・期限</b><br/>稼働日ベースか等</span>
+        </div>
+      </div>
+      <div class="amap-arr">↓ 3つの予測と根拠（互いに相談しない）</div>
+      <div class="amap-row">
+        <div class="amap-box wide" style="border-color:var(--yellow);background:rgba(227,179,65,.08);">
+          <div class="t">⚖️ 調整AI</div>
+          <div class="s">統合して1本に ／ 割れが30%超なら人間へ<br/>Claude Codeのメインセッション自身が担う</div>
+        </div>
+      </div>
     </div>
     <div class="callout c-tip" style="margin-bottom:32px;">
       <div class="callout-icon">📦</div>
@@ -3279,14 +3371,19 @@ session <span class="co">=</span> client.beta.sessions.create(
 
     <!-- データの流れと信頼境界 -->
     <h3 class="sub-h">データの流れ — 社外に出るのは1箇所だけ</h3>
-    <div class="flowrow">
-      <div class="fnode safe"><b>① 生データ</b><span>予算CSV＋仕訳帳<br/>社内のみ</span></div>
-      <div class="farr">→</div>
-      <div class="fnode gate"><b>② 門番（Python）</b><span>個人単位の情報を<br/>集約して落とす</span></div>
-      <div class="farr">→</div>
-      <div class="fnode ext"><b>③ 社外（Claude）</b><span>データ収集AG →<br/>3視点 → 調整AI</span></div>
-      <div class="farr">→</div>
-      <div class="fnode safe"><b>④ 社内へ戻る</b><span>予算突合・<br/>ダッシュボード表示</span></div>
+    <div class="bnd">
+      <div class="bnd-z in">
+        <div class="zl">🏢 社内</div>
+        <div class="zi"><b>① 生データ</b><br/>予算CSV・仕訳帳<br/><br/><b>② 門番（Python）</b><br/>個人名と日単価を<br/>集約して落とす</div>
+      </div>
+      <div class="bnd-z out">
+        <div class="zl">🌐 社外（Claude）</div>
+        <div class="zi"><b>③ 5体が動く</b><br/>データ収集AG<br/>→ 実績・計画・制約<br/>→ 調整AI<br/><br/>ここを通る情報だけが<br/>会社の外に出る</div>
+      </div>
+      <div class="bnd-z in">
+        <div class="zl">🏢 社内</div>
+        <div class="zi"><b>④ 戻ってから</b><br/>予算との突合<br/>ダッシュボード表示<br/><br/>予算額は<br/>一度も外に出ない</div>
+      </div>
     </div>
     <div class="callout c-danger" style="margin-bottom:16px;">
       <div class="callout-icon">🚨</div>
@@ -3329,18 +3426,14 @@ session <span class="co">=</span> client.beta.sessions.create(
 
     <!-- 月次の一巡 -->
     <h3 class="sub-h">月次の一巡</h3>
-    <div class="tbl-wrap" style="margin-bottom:16px;">
-      <table>
-        <thead><tr><th style="width:10mm;"></th><th style="width:44mm;">やること</th><th>誰が</th></tr></thead>
-        <tbody>
-          <tr><td>1</td><td>データを社内ストレージに置く</td><td>人間。予算は<strong>CSV/Excelで</strong>受け取る（PDFだと次を通せない）</td></tr>
-          <tr><td>2</td><td>門番を通す</td><td>Python・ローカル。<strong>ここまで社外に出ない</strong></td></tr>
-          <tr><td>3</td><td>Claude Codeに <code>予算消化を分析して</code></td><td>人間が起動。<strong>ボタンもAPI呼び出しも無い</strong></td></tr>
-          <tr><td>4</td><td>5体が動く</td><td>自動。割れ30%超なら人間へエスカレーション</td></tr>
-          <tr><td>5</td><td><strong>結果を社内ストレージへ退避</strong></td><td>人間。<strong>飛ばすと蓄積が途切れる</strong></td></tr>
-          <tr><td>6</td><td>ダッシュボードで確認</td><td>Flaskが読むだけ。<strong>LLMを呼ばない</strong></td></tr>
-        </tbody>
-      </table>
+    <div class="flowrow" style="margin-bottom:14px;">
+      <div class="fnode safe"><b>1 データを置く</b><span>👤 人間<br/>予算は<strong>CSV/Excel</strong>で<br/>（PDFだと次を通せない）</span></div>
+      <div class="farr">→</div>
+      <div class="fnode gate"><b>2 門番を通す</b><span>🐍 Python・ローカル<br/><strong>ここまで社外に出ない</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode ext"><b>3–4 分析</b><span>👤 人間が起動 →<br/>🤖 5体が自動で動く<br/>割れ30%超なら人間へ</span></div>
+      <div class="farr">→</div>
+      <div class="fnode safe"><b>5–6 退避と表示</b><span>👤 <strong>社内へ退避</strong><br/>（飛ばすと蓄積が途切れる）<br/>📊 Flaskが読むだけ</span></div>
     </div>
     <div class="callout c-info" style="margin-bottom:32px;">
       <div class="callout-icon">👤</div>
@@ -3361,17 +3454,53 @@ session <span class="co">=</span> client.beta.sessions.create(
 
     <!-- 割れ方の診断 -->
     <h3 class="sub-h">割れ方が「診断」になる</h3>
-    <div class="tbl-wrap" style="margin-bottom:16px;">
-      <table>
-        <thead><tr><th style="width:40mm;">パターン</th><th style="width:46mm;">意味</th><th>打つ手</th></tr></thead>
-        <tbody>
-          <tr><td>3つとも近い</td><td>順調</td><td>何もしない</td></tr>
-          <tr><td>計画 ≫ 実績、制約も高い</td><td>立ち上がりが遅いだけ。巻き返せる</td><td>執行を急ぐ</td></tr>
-          <tr><td><strong>計画 ≫ 制約</strong></td><td><strong>計画が非現実的</strong></td><td>予算の組み替え・目標修正</td></tr>
-          <tr><td>実績 &gt; 制約</td><td>今のペースすら維持できない</td><td>何が詰まっているか調査</td></tr>
-          <tr><td><strong>制約 &lt; 予算</strong></td><td>構造的に使い切れない</td><td><strong>返上が確定的。早期に相談</strong></td></tr>
-        </tbody>
-      </table>
+    <p class="lead" style="margin-bottom:14px;">3本のバーが<span style="color:var(--accent);font-weight:700;">実績</span>・<span style="color:var(--orange);font-weight:700;">計画</span>・<span style="color:var(--green);font-weight:700;">制約</span>の着地見込み。長さの<strong>組み合わせ</strong>で状況が読める。</p>
+    <div class="dg">
+      <div class="dg-c">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:82%"></u>
+          <i>計画</i><u class="r2" style="width:90%"></u>
+          <i>制約</i><u class="r3" style="width:86%"></u>
+        </div>
+        <div class="dg-v">✓ 順調</div>
+        <div class="dg-a">3つとも近い。何もしない</div>
+      </div>
+      <div class="dg-c">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:38%"></u>
+          <i>計画</i><u class="r2" style="width:95%"></u>
+          <i>制約</i><u class="r3" style="width:85%"></u>
+        </div>
+        <div class="dg-v">立ち上がりが遅いだけ</div>
+        <div class="dg-a">制約が高い＝<strong>巻き返せる</strong>。執行を急ぐ</div>
+      </div>
+      <div class="dg-c hot">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:40%"></u>
+          <i>計画</i><u class="r2" style="width:95%"></u>
+          <i>制約</i><u class="r3" style="width:52%"></u>
+        </div>
+        <div class="dg-v" style="color:var(--red);">計画が非現実的</div>
+        <div class="dg-a">計画 ≫ 制約。<strong>予算の組み替え・目標修正が要る</strong></div>
+      </div>
+      <div class="dg-c">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:70%"></u>
+          <i>計画</i><u class="r2" style="width:88%"></u>
+          <i>制約</i><u class="r3" style="width:45%"></u>
+        </div>
+        <div class="dg-v">ペースを維持できない</div>
+        <div class="dg-a">実績 &gt; 制約。何が詰まっているか調査</div>
+      </div>
+      <div class="dg-c hot">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:35%"></u>
+          <i>計画</i><u class="r2" style="width:60%"></u>
+          <i>制約</i><u class="r3" style="width:42%"></u>
+        </div>
+        <div class="dg-v" style="color:var(--red);">構造的に使い切れない</div>
+        <div class="dg-a">全部が予算に届かない。<strong>返上が確定的。早期に相談</strong></div>
+      </div>
     </div>
     <div class="callout c-tip" style="margin-bottom:32px;">
       <div class="callout-icon">💬</div>
@@ -3384,6 +3513,7 @@ session <span class="co">=</span> client.beta.sessions.create(
     <h3 class="sub-h">精度が上がる仕組み</h3>
     <div class="loop">
       <span>予測を出す</span><i>→</i><span>実績が確定</span><i>→</i><span>突き合わせ</span><i>→</i><span>原因を特定</span><i>→</i><b>★ mdファイルを直す</b>
+      <div class="loop-back">↺ 直したルールで、翌月はより良い予測になる</div>
     </div>
     <div class="callout c-warn" style="margin-bottom:16px;">
       <div class="callout-icon">⚠️</div>
@@ -3544,15 +3674,22 @@ session <span class="co">=</span> client.beta.sessions.create(
     </div>
 
     <h3 class="sub-h">タイムライン</h3>
-    <div class="tbl-wrap" style="margin-bottom:20px;">
-      <table>
-        <thead><tr><th style="width:34mm;">時期</th><th style="width:20mm;">正味</th><th>見せられる状態</th></tr></thead>
-        <tbody>
-          <tr><td><strong>〜8/24</strong>（打ち合わせ）</td><td>6〜10h</td><td>マスキング込みで5体が動き、ダッシュボードに出る</td></tr>
-          <tr><td>9月上旬</td><td>4〜7h</td><td>実際の案件で「あといくら使えるか」が出る</td></tr>
-          <tr><td>9月中〜下旬</td><td>4〜6h</td><td>揺れ幅の比較とバックテスト</td></tr>
-        </tbody>
-      </table>
+    <div class="tl">
+      <div class="tl-i">
+        <div class="tl-d">〜 8/24</div>
+        <div class="tl-h">打ち合わせ ／ 正味6〜10h</div>
+        <div class="tl-t">マスキング込みで<strong>5体が動き、ダッシュボードに出る</strong></div>
+      </div>
+      <div class="tl-i f2">
+        <div class="tl-d">9月上旬</div>
+        <div class="tl-h">予算CSV到着後 ／ 正味4〜7h</div>
+        <div class="tl-t">実際の案件で<strong>「あといくら使えるか」</strong>が出る</div>
+      </div>
+      <div class="tl-i f3">
+        <div class="tl-d">9月中〜下旬</div>
+        <div class="tl-h">アカウント到着後 ／ 正味4〜6h</div>
+        <div class="tl-t">揺れ幅の比較と<strong>バックテスト</strong></div>
+      </div>
     </div>
 
     <h3 class="sub-h">8/24で確認すること</h3>
