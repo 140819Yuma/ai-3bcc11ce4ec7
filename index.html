@@ -515,6 +515,7 @@
   <a href="#kaminaga-app">実装状況</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-design">現在の設計</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-dataflow">データフロー図</a><span class="sub-sep"> · </span>
+  <a href="#kaminaga-workflow">ワークフロー</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-budget">予算管理</a><span class="sub-sep"> · </span>
   <a href="#kaminaga-next">現状と次</a>
 </div>
@@ -3178,7 +3179,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="card">
         <div class="card-icon">⚖️</div>
         <h3>3視点合議 → 調整AI</h3>
-        <p>批判的AG・中立AG・推進的AGが<strong>互いに議論せず独立に</strong>年度末の着地を見積もり、調整AIが根拠ごと1本に統合する。意見の割れが30%を超えたら人間へエスカレーション。サブエージェントは独立コンテキストのため、<a href="#decisions" style="color:var(--accent);">論点1</a>が構造的に保証される。</p>
+        <p>3体が<strong>互いに議論せず独立に</strong>年度末の着地を見積もり、調整AIが根拠ごと1本に統合する。意見の割れが30%を超えたら人間へエスカレーション。サブエージェントは独立コンテキストのため、<a href="#decisions" style="color:var(--accent);">論点1</a>が構造的に保証される。3視点の性格づけは2026-08-18に<strong>実績／計画／制約</strong>へ再設計した（<a href="#kaminaga-workflow" style="color:var(--accent);">ワークフロー</a>参照）。</p>
         <span class="badge bg">稼働</span>
       </div>
       <div class="card">
@@ -3271,9 +3272,9 @@ python3 app.py</pre>
         <thead><tr><th style="width:52mm;">ファイル</th><th style="width:20mm;">行数</th><th>役割</th></tr></thead>
         <tbody>
           <tr><td><code>fc-data-collector.md</code></td><td>66</td><td>予算・実績ファイルを自分で読み、意味を対応づけて <code>collected.json</code> を出力</td></tr>
-          <tr><td><code>fc-critical.md</code></td><td>46</td><td>計画どおり進まない前提でリスクを評価</td></tr>
-          <tr><td><code>fc-neutral.md</code></td><td>45</td><td>実績だけを外挿したベースライン</td></tr>
-          <tr><td><code>fc-advocate.md</code></td><td>45</td><td>予算の計画情報（開催回数・契約期間）を織り込む</td></tr>
+          <tr><td><code>fc-critical.md</code><span style="color:var(--orange);font-size:11px;"> ※再設計中</span></td><td>46</td><td>初版：計画どおり進まない前提でリスクを評価 → <strong>制約AG</strong>へ改める（<a href="#kaminaga-workflow" style="color:var(--accent);">理由</a>）</td></tr>
+          <tr><td><code>fc-neutral.md</code><span style="color:var(--orange);font-size:11px;"> ※再設計中</span></td><td>45</td><td>初版：実績だけを外挿したベースライン → <strong>実績AG</strong>（役割はほぼ継承）</td></tr>
+          <tr><td><code>fc-advocate.md</code><span style="color:var(--orange);font-size:11px;"> ※再設計中</span></td><td>45</td><td>初版：予算の計画情報を織り込む → <strong>計画AG</strong>（役割はほぼ継承）</td></tr>
           <tr><td><code>skills/fc-forecast/SKILL.md</code></td><td>96</td><td><strong>調整AI</strong>の手順。メインセッション自身が司令塔として実行する</td></tr>
         </tbody>
       </table>
@@ -3484,9 +3485,9 @@ python3 app.py</pre>
       <div class="arch-zone cloud" style="border-color:var(--red);">
         <div class="arch-zone-label" style="color:var(--red);">🌐 社外ゾーン — 外部LLM API（現在はGroq。ここに送った情報は会社の外にある）</div>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px;">
-          <div class="arch-node" style="min-width:auto;"><div class="n-icon">🔴</div><div class="n-name">批判的AG</div><div class="n-sub">下振れ・突発増を重視</div></div>
-          <div class="arch-node" style="min-width:auto;"><div class="n-icon">⚪</div><div class="n-name">中立AG</div><div class="n-sub">ベースライン予測</div></div>
-          <div class="arch-node" style="min-width:auto;"><div class="n-icon">🟢</div><div class="n-name">推進的AG</div><div class="n-sub">増加要因を織り込む</div></div>
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">📉</div><div class="n-name">実績AG</div><div class="n-sub">このペースが続いたら？<br/>見るのは実績の時系列だけ</div></div>
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">📋</div><div class="n-name">計画AG</div><div class="n-sub">計画どおり実行されたら？<br/>見るのは予算内訳と残タスクだけ</div></div>
+          <div class="arch-node" style="min-width:auto;"><div class="n-icon">🚧</div><div class="n-name">制約AG</div><div class="n-sub">物理的に可能なのは？<br/>見るのは費目の性質と期限</div></div>
         </div>
         <div class="arch-arr down">↓ 3つの予測と根拠</div>
         <div class="arch-row">
@@ -3628,6 +3629,174 @@ python3 app.py</pre>
   </div>
 </section>
 
+<!-- ===== KAMINAGA WORKFLOW ===== -->
+<section id="kaminaga-workflow">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Workflow</div>
+      <h2 class="sec-title">ワークフロー — 月次でどう回すか</h2>
+      <p class="sec-sub">構成図（<a href="#kaminaga-design" style="color:var(--accent);">現在の設計</a>）が「何でできているか」なら、こちらは「毎月どう動かすか」。起動のしかた、情報の分け方、そして<strong>精度が上がる仕組み</strong>までを1本の流れとして示す。（2026-08-18策定）</p>
+    </div>
+
+    <!-- 月次の一巡 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">月次の一巡</h3>
+    <div class="steps" style="margin-bottom:20px;">
+      <div class="step">
+        <div class="snum">1</div>
+        <div class="scont"><h4>データを置く（人間・社内）</h4><p>会計ソフトから仕訳帳をエクスポートし、社内ストレージへ。予算は<strong>CSV/Excel形式で</strong>受け取る（PDFのままだと次のステップを通せない）。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">2</div>
+        <div class="scont"><h4>門番を通す（Python・ローカル・AIなし）</h4><p>個人名と日単価を集約して落とし、摘要の固有名詞を辞書で置換。<strong>ここまでは一切社外に出ない。</strong>何を落としたかは監査ログに残る。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">3</div>
+        <div class="scont"><h4>Claude Codeに分析を依頼（人間が起動）</h4><p><code>予算消化を分析して</code> と伝えるだけ。<strong>ボタンもAPI呼び出しも無い。</strong>Claude Code自身が調整AIとして <code>fc-forecast</code> の手順に従う。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">4</div>
+        <div class="scont"><h4>5体が動く（自動）</h4><p>データ収集AGが整理 → 3体が<strong>それぞれ違う情報だけ</strong>を見て独立に判断 → 調整AIが統合。割れが30%を超えれば人間へエスカレーション。</p></div>
+      </div>
+      <div class="step">
+        <div class="snum">5</div>
+        <div class="scont"><h4>結果を社内ストレージへ退避（重要）</h4><p><code>forecast_YYYY-MM.json</code> を社内へコピーする。<strong>会社アカウントは貸与式で毎回まっさらになるため、ここを飛ばすと蓄積が途切れる。</strong></p></div>
+      </div>
+      <div class="step">
+        <div class="snum">6</div>
+        <div class="scont"><h4>ダッシュボードで確認</h4><p>Flaskが退避したJSONを読んで表示。経過率 vs 消化率、着地の振れ幅、超過／未消化の判定。<strong>この工程でもLLMは呼ばない。</strong></p></div>
+      </div>
+    </div>
+    <div class="callout c-info" style="margin-bottom:36px;">
+      <div class="callout-icon">👤</div>
+      <div>
+        <p><strong>起動は人間が行う（自動実行ではない）。</strong> 以前はブラウザのボタンがFlask経由でAPIを叩いていたが、現在はYumaさんがClaude Codeに話しかけることが起点になる。月次の予算チェックであれば実害は小さいと判断して選んだ<strong>意図的な代償</strong>であり、無課金・サブスクリプション認証と引き換えに自動実行を手放している。将来必要になれば、Claude Agent SDK（Pythonに埋め込む）かManaged Agents（定期実行あり・APIキー課金）へ移行できる。</p>
+      </div>
+    </div>
+
+    <!-- 情報の分け方 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">情報の分け方 — 3体に「違うもの」を見せる</h3>
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🔬</div>
+      <div>
+        <p><strong>研究上の根拠：</strong> <a href="https://arxiv.org/pdf/2607.01661" target="_blank" style="color:var(--accent);">InfoDelphi（2026-07）</a>は、<strong>全エージェントに同一の証拠を与えると熟議は「同調（herding）」に堕し、単一エージェントとほとんど変わらなくなる</strong>ことを示した。証拠を共有部分と専有部分に分割すると、Brierスコアが12〜18%、精度が4〜8ポイント改善する。論文の結論は「<strong>情報非対称性を取り除くと改善のほとんどが消える。入力の多様性こそが鍵</strong>」。<br/><br/><strong>初版の設計はこの条件に該当していた。</strong> 3体とも同じ <code>collected.json</code> を読んでおり、違うのはプロンプトの性格づけだけだった。<a href="https://d2jud02ci9yv69.cloudfront.net/2025-04-28-mad-159/blog/mad/" target="_blank" style="color:var(--accent);">ICLR 2025の分析</a>では、この形（Multi-Persona）は単純なChain-of-Thoughtにすら負けている（MMLU 75.47% vs 80.73%、HumanEval 63.01% vs 78.05%）。</p>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:26mm;">AG</th><th style="width:44mm;">答える問い</th><th>見るもの（専有情報）</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><strong>実績AG</strong></td>
+            <td>このペースが続いたら？</td>
+            <td>仕訳の時系列・月次推移<strong>だけ</strong>。予算書は見せない</td>
+          </tr>
+          <tr>
+            <td><strong>計画AG</strong></td>
+            <td>計画どおり実行されたら？</td>
+            <td>予算内訳・残タスク・契約期間<strong>だけ</strong>。実績の時系列は見せない</td>
+          </tr>
+          <tr>
+            <td><strong>制約AG</strong></td>
+            <td>そもそも物理的に可能なのは？</td>
+            <td>費目の性質（稼働日ベースか）・締め／支払サイクル・年度またぎ制約</td>
+          </tr>
+          <tr>
+            <td colspan="2" style="text-align:right;"><em>全員に共有（public）</em></td>
+            <td>予算総額・実績累計・経過率・消化率という最低限の共通土台</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p><strong>なぜ感情の軸（批判的／中立／推進的）をやめたか：</strong> あれは「同じ数字に余裕を足すか、引くか、そのままか」という<strong>1次元の違い</strong>でしかなく、全員が同じデータを見ていて構わない構造だった。だから情報非対称性が作れなかった。<br/><br/><strong>問いで分けると、見るべきデータが自然に分かれる。</strong> 実績AGは過去を、計画AGは意図を、制約AGは実行可能性を見る——3体は同じ数字を違う気分で眺めるのではなく、<strong>それぞれ違うものを見ている</strong>。だから意見が割れることに意味が生まれる。<br/><br/>なお初版で最も鋭い指摘（「稼働日ベースの人件費は経過分が回収不能」）を出したのは批判的AGだったが、それが良かったのは悲観的だったからではなく<strong>メカニズムを考えたから</strong>である。制約AGはその良い部分だけを取り出して明確な任務にしたもの。</p>
+      </div>
+    </div>
+
+    <!-- 割れ方の読み方 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">割れ方が「診断」になる</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;">3つの数字の<strong>組み合わせ</strong>から状況が読み取れる。初版は「3つ数字が並んでいるだけ」だったが、この形なら具体的な結論と打ち手が出る。</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:42mm;">パターン</th><th style="width:52mm;">意味</th><th>打つ手</th></tr></thead>
+        <tbody>
+          <tr><td>3つとも近い</td><td>順調</td><td>何もしない</td></tr>
+          <tr><td>計画 ≫ 実績、<strong>制約も高い</strong></td><td>立ち上がりが遅いだけ。<strong>巻き返せる</strong></td><td>執行を急ぐ</td></tr>
+          <tr><td><strong>計画 ≫ 制約</strong></td><td><strong>計画が非現実的</strong></td><td>予算の組み替え・目標修正</td></tr>
+          <tr><td>実績 > 制約</td><td>今のペースすら維持できない</td><td>何が詰まっているか調査</td></tr>
+          <tr><td><strong>制約 &lt; 予算</strong></td><td>構造的に使い切れない</td><td><strong>返上が確定的。早期に相談</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-info" style="margin-bottom:36px;">
+      <div class="callout-icon">💬</div>
+      <div>
+        <p><strong>石川さんへの説明が変わる。</strong> 「AIが3つの意見を出しました」ではなく、「<strong>計画と実行可能性が120万円ずれています</strong>」と言える。前者は判断材料にならないが、後者は打ち手に直結する。</p>
+      </div>
+    </div>
+
+    <!-- 改善ループ -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">精度が上がる仕組み — 改善はmdファイルへの書き戻しで起きる</h3>
+    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:24px 28px;margin-bottom:16px;">
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;font-size:12.5px;justify-content:center;">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;"><strong>予測を出す</strong><br/><span style="color:var(--text2);font-size:11px;">forecast_2026-08.json</span></div>
+        <div style="color:var(--accent);font-weight:700;">→</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;"><strong>時間が経つ</strong><br/><span style="color:var(--text2);font-size:11px;">実績が確定する</span></div>
+        <div style="color:var(--accent);font-weight:700;">→</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;"><strong>突き合わせる</strong><br/><span style="color:var(--text2);font-size:11px;">予測235万 / 実績287万</span></div>
+        <div style="color:var(--accent);font-weight:700;">→</div>
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;"><strong>原因を特定</strong><br/><span style="color:var(--text2);font-size:11px;">支援金の採択が想定より早い</span></div>
+        <div style="color:var(--orange);font-weight:700;">→</div>
+        <div style="background:rgba(163,101,29,.09);border:2px solid var(--orange);border-radius:8px;padding:10px 14px;"><strong>★ mdファイルを直す</strong><br/><span style="color:var(--text2);font-size:11px;">制約AGの定義に書き足す</span></div>
+      </div>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">⚠️</div>
+      <div>
+        <p><strong>よくある誤解：「過去の予測を読み込ませれば精度が上がる」——これは成り立たない。むしろ悪化しうる。</strong><br/><br/>過去の予測だけを見せると、エージェントは「先月は235万と予測したのか、では今月も同程度だな」と<strong>アンカリング</strong>を起こす。自分で考え直さず前の数字に引きずられ、予測が「更新」ではなく「複製」になる。<br/><br/>必要なのは予測<strong>単体</strong>ではなく<strong>予測と実績の対</strong>であり、そこから得た教訓を<strong>mdファイルに書き戻す</strong>ことで初めて改善が定着する。<strong>読み込みではなく、書き込みが賢さの実体である。</strong></p>
+      </div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:52mm;">蓄積するもの</th><th style="width:24mm;">記録する</th><th>エージェントに読ませる</th></tr></thead>
+        <tbody>
+          <tr><td>生の過去予測（「235万と言った」）</td><td><span class="ok">する</span></td><td><span class="ng">読ませない</span>—アンカリングの危険</td></tr>
+          <tr><td>予測と実績のズレ</td><td><span class="ok">する</span></td><td><span class="tri">分析の材料としてのみ</span></td></tr>
+          <tr><td><strong>そこから抽出したルール</strong></td><td><span class="ok">する</span></td><td><span class="ok">読ませる</span>—mdファイルに書き戻す</td></tr>
+          <tr><td>過去案件の着地パターン</td><td><span class="ok">する</span></td><td><span class="ok">読ませる</span>—前例AG（4体目）の専有情報として</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:36px;">
+      <div class="callout-icon">🧠</div>
+      <div>
+        <p><strong>モデルは賢くならない。システムが賢くなる。</strong> Claudeは使っても学習しないし、43取引でファインチューニングしても何も起きない（むしろ壊れる）。自社製AIにしてもこの点は変わらない——「専用に作れば勝手に精度が上がる」というルートは実際には存在しない。<br/><br/>精度向上の実体は<strong>ファイルの蓄積とバックテストのループ</strong>であり、それはリポジトリ側に残る。<strong>アカウントを返しても、モデルを乗り換えても、蓄積は消えない。</strong>ステートレス設計を選んだのは、過去時点を正確に再現できる＝バックテストが成立するからでもある。</p>
+      </div>
+    </div>
+
+    <!-- 貸与式への対応 -->
+    <h3 style="font-family:var(--serif);font-size:16px;margin:0 0 16px;">会社アカウントが貸与式であることへの対応</h3>
+    <p style="font-size:13.5px;color:var(--text2);line-height:2;margin-bottom:14px;">会社のClaudeは<strong>1回ごとに申請が必要な貸与式</strong>で、セッション終了後は何も残らない。この制約に合わせて運用を設計する。</p>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:44mm;">原則</th><th>具体的に</th></tr></thead>
+        <tbody>
+          <tr><td><strong>開発は個人アカウントで完結</strong></td><td>ダミーデータでの試行錯誤・デバッグは全てこちらで済ませ、会社セッションは「実データで実行するだけ」の状態にしてから使う。文字コードエラーに会社セッションで初めて気づく事態を避ける</td></tr>
+          <tr><td>1コマンドで完了する形に</td><td><code>/fc-forecast</code> を呼べば最後まで走る。セッション内で悩まない</td></tr>
+          <tr><td>まとめて実行する</td><td>揺れ幅の測定に3〜5回要るなら<strong>1セッション内で連続実行</strong>。5回申請しない</td></tr>
+          <tr><td><strong>終わる前に必ず退避</strong></td><td>forecast JSONを社内ストレージへコピーしてからセッションを閉じる。これを飛ばすと蓄積が途切れる</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-warn">
+      <div class="callout-icon">❓</div>
+      <div>
+        <p><strong>石川さんに判断を仰ぐべき点：</strong> 門番を通した後のデータは「項目名と総額」だけになり、個人名も日単価も含まれない。<strong>それでもなお会社アカウントを通すべきか、マスク済みなら個人アカウントでもよいか</strong>——これは技術ではなく会社の方針の問題であり、こちらでは決められない。後者でよければ貸与申請の回数を大幅に減らせるため、確認する価値が高い。</p>
+      </div>
+    </div>
+  </div>
+</section>
 <!-- ===== KAMINAGA BUDGET DETAIL ===== -->
 <section id="kaminaga-budget">
   <div class="container">
@@ -3782,6 +3951,26 @@ python3 app.py</pre>
             <strong>📌 粒度を落としても分析は痩せない（実行ログによる検証）：</strong> 8/16の実行で3体が根拠に挙げたのは「人件費の総額」「稼働日ベースという構造」「残額」の3つで、<strong>個人名は一度も使われていない</strong>。日単価も残額計算に使われただけでPython側で先に計算できる。<br/>
             <strong>📌 役割ラベル方式は採らなかった：</strong> 少人数組織では役職と個人が1対1に対応するため「ディレクター 46,800円/日」は氏名を消しても誰か分かる。匿名化として機能しない。<br/>
             <strong>📌 順序の原則：</strong> 緩く始めて後で締めるのは、一度出たデータが戻らないため不可逆。厳しく始めて必要なら緩める。他組織への導入時に「個人単位の情報はそもそも入りません」と言えるのが最も強い説明になる。
+          </div>
+        </div>
+      </div>
+
+      <div class="log-entry">
+        <div class="log-date">8/18<br/><span style="font-size:10px;color:var(--text2);">（続き）</span></div>
+        <div class="log-content">
+          <h4>3視点を再設計 — 感情の軸から「問い」の軸へ</h4>
+          <ul class="log-items">
+            <li><strong>自己批判が出発点：</strong> 「いまの3体は計算をさせているだけではないか」という指摘。実行ログを見ると中立AGは割り算、推進的AGは引き算で、解釈をしていたのは批判的AGだけだった</li>
+            <li>マルチエージェント予測の研究を調査。<strong>アンサンブル（独立予測→集約）は有効、討論（debate）は無効</strong>という明確な分岐を確認</li>
+            <li><strong>決定的な発見：</strong> 全エージェントに同一証拠を与えると熟議は「同調」に堕し単一エージェントと変わらない（<a href="https://arxiv.org/pdf/2607.01661" target="_blank">InfoDelphi</a>）。初版はまさにこの条件に該当していた</li>
+            <li>→ <strong>実績AG／計画AG／制約AG</strong>へ再設計。それぞれ違う問いに答え、違う情報だけを見る形にした</li>
+            <li>会社アカウントが<strong>1回ごとの貸与式</strong>と判明。「1ヶ月まとめて借りる方が申請が少なくて親切」という以前の助言は前提が誤りだったため撤回</li>
+            <li><strong>設計の穴を発見：</strong> <code>agent/output/</code> はgitignoreしているためローカルにしかなく、貸与セッションが終わると<strong>予測記録が消えて蓄積が途切れる</strong>。社内ストレージへの退避を運用に組み込む</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 7/9の判断は研究的にも正しかった：</strong> 「3体を議論させない」（論点1）は正解だった。討論型は単純なChain-of-Thoughtにすら負ける。設計の骨格は合っていて、<strong>足りなかったのは「入力を分ける」という一手だけ</strong>だった。<br/>
+            <strong>📌 割れ方が診断になる：</strong> 「計画 ≫ 制約」なら計画が非現実的、「制約 &lt; 予算」なら返上が確定的、というように組み合わせから打ち手が出る。石川さんへの説明も「AIが3つの意見を出しました」から「<strong>計画と実行可能性が120万円ずれています</strong>」へ変わる。<br/>
+            <strong>📌 精度向上の実体：</strong> 過去の予測を読ませるだけでは<strong>アンカリング</strong>で悪化しうる。必要なのは予測と実績の対で、そこから得た教訓を<strong>mdファイルに書き戻す</strong>こと。読み込みではなく書き込みが賢さの実体。
           </div>
         </div>
       </div>
