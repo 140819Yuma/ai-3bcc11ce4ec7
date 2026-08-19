@@ -22,15 +22,17 @@ app = Flask(__name__)
 
 OUTPUT_DIR = Path(__file__).parent / "output"
 
+# 視点は「性格」ではなく「担当する問い」で分ける。
+# 同じ証拠を配ると3体は同じ答えに寄る（同調）ため、見る材料自体を分けてある。
 STANCE_LABELS = {
-    "critical": "批判的AG",
-    "neutral": "中立AG",
-    "advocate": "推進的AG",
+    "actuals": "実績AG",
+    "plan": "計画AG",
+    "constraint": "制約AG",
 }
 STANCE_ROLES = {
-    "critical": "計画どおり進まない前提でリスクを見る",
-    "neutral": "実績だけを外挿したベースライン",
-    "advocate": "予算の計画情報を織り込む",
+    "actuals": "このペースが続いたら、いくらか（実績のみ）",
+    "plan": "計画どおり実行されたら、いくらか（予算のみ）",
+    "constraint": "そもそも執行可能なのは、いくらまでか（費目の性質と期限）",
 }
 VERDICT_LABELS = {
     "over_budget": ("予算超過の見込み", "over"),
@@ -50,8 +52,35 @@ def latest_forecast() -> dict | None:
     return data
 
 
+def normalize(fc: dict) -> dict:
+    """出力スキーマの違いを表示側で吸収する。
+
+    3視点を「性格」から「担当する問い」へ再設計した際に、調整AIの出力キーも
+    変わった（range_low → range.min など）。分析側の語彙を表示の都合で縛りたく
+    ないので、変換はここに閉じ込める。テンプレートは常に平坦なキーだけを見る。
+    """
+    rng = fc.get("range") or {}
+    fc.setdefault("range_low", rng.get("min"))
+    fc.setdefault("range_high", rng.get("max"))
+    fc.setdefault("spent", fc.get("actuals_total"))
+    fc.setdefault("disagreement_score", fc.get("disagreement"))
+    # 乖離が閾値を超えた＝3視点が同じ絵を見ていない。人が読む必要がある。
+    fc.setdefault("escalate_to_human", fc.get("converged") is False)
+    fc.setdefault("reasoning", fc.get("adopted_view", ""))
+
+    if "key_findings" not in fc:
+        findings = list(fc.get("why_they_split", []))
+        ku = fc.get("key_uncertainty")
+        if ku:
+            findings.append(f"【最大の不確実性】{ku['question']} — {ku['why_it_matters']}")
+        findings += [f"【打ち手】{a}" for a in fc.get("actions", [])]
+        fc["key_findings"] = findings
+    return fc
+
+
 def enrich(fc: dict) -> dict:
     """表示に必要な派生値を足す（すべて確定計算・AIは介在しない）。"""
+    fc = normalize(fc)
     budget = fc["budget_total"]
     landing = fc.get("final_landing")
 
