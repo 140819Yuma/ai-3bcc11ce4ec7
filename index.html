@@ -3334,7 +3334,7 @@ session <span class="co">=</span> client.beta.sessions.create(
           <tr><td>8/16</td><td>実行基盤<br/><strong>Python+Groq → Claude Code</strong></td><td>エージェントをMarkdownで定義でき、サブスクリプションで動き、ファイルを直接読める。独立コンテキストで<a href="#decisions">論点1</a>が構造的に保証される</td></tr>
           <tr><td>8/18</td><td>門番<br/><strong>LLM → Python</strong></td><td>LLMにマスキングさせると、マスク対象の生データをマスク前に社外APIへ送ることになり破綻する</td></tr>
           <tr><td>8/18</td><td>3視点の軸<br/><strong>性格 → 問い</strong></td><td>批判的／中立／推進的は「同じ数字に余裕を足すか引くか」の1次元差でしかなく、全員が同じデータを見る形だった。問いで分ければ見るべきデータが自然に分かれる</td></tr>
-          <tr><td><strong>8/19</strong></td><td>門番の方式<br/><strong>ブロックリスト → ホワイトリスト</strong></td><td>実データで検証したところ<strong>個人名とブランド名が通過した</strong>。固有名詞を列挙して塞ぐ方式は原理的に漏れる。許可語だけを通す形に反転（下の🚨参照）</td></tr>
+          <tr><td><strong>8/19</strong></td><td>門番の方式<br/><strong>ブロックリスト → ホワイトリスト</strong></td><td><strong>固有名詞を列挙して塞ぐ方式は原理的に漏れる。</strong>法人格を含まないブランド名や、規則性の無い氏名は列挙しきれない。許可語だけを通す形に反転（下の🔐参照）</td></tr>
         </tbody>
       </table>
     </div>
@@ -3407,29 +3407,20 @@ session <span class="co">=</span> client.beta.sessions.create(
       </div>
     </div>
 
-    <!-- 漏洩と修正 -->
-    <div class="callout c-danger" style="margin-bottom:16px;">
-      <div class="callout-icon">🩹</div>
+    <!-- 門番の方式 -->
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">🔐</div>
       <div>
-        <p><strong>8/19、その門番が実データで漏らした。記録として残す。</strong></p>
-        <p style="margin:10px 0;">初版はブロックリスト方式——「株式会社」「有限会社」などの法人格を含む語を伏字にする形だった。実データを通したところ、データ収集AGが<strong>「摘要に人名が残っています」と報告してきた</strong>。調べると2種類が通過していた。</p>
-        <div class="tbl-wrap" style="margin-bottom:10px;">
-          <table>
-            <thead><tr><th style="width:36mm;">漏れたもの</th><th>なぜ通ったか</th></tr></thead>
-            <tbody>
-              <tr><td><strong>個人名</strong>（3件）</td><td>仕訳帳の摘要には<strong>精算相手や出席者の氏名</strong>が入る。見積書の氏名しか想定しておらず、この経路を設計時に考えていなかった</td></tr>
-              <tr><td><strong>ブランド名</strong>（4件）</td><td>鉄道会社やコインパーキングの通称は法人格を含まないため、ブロックリストの網にかからない</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p style="margin:10px 0;"><strong>そこで方式を反転させた。</strong> 会計・業務用語として明示的に許可した語だけを通し、それ以外の漢字・カタカナ・英字の連なりは<strong>人名か地名か組織名か判別できないもの</strong>として一律に伏字化する。過剰に伏字が出るが、<strong>緩く始めて後で締めるのは不可逆</strong>なので厳しい側から始める。</p>
-        <p style="margin:0;"><strong>1回目の修正でもまだ漏れた。</strong> 許可語を一部に含む語（「〈地名〉交通費」など）を丸ごと通す実装だったため。<strong>語が許可語だけで完全に分解できる場合のみ通す</strong>方式に直して解消。最終確認では漏洩語ゼロ、伏字74箇所、<strong>金額と行数は全件そのまま</strong>（分析に必要な情報は失われていない）。</p>
+        <p><strong>門番はホワイトリスト方式。「通してよい語」を決めて、それ以外を全部伏字にする。</strong></p>
+        <p style="margin:10px 0;">逆向きの設計——危ない語を列挙して塞ぐブロックリスト方式——は<strong>原理的に漏れる</strong>。列挙し忘れたものが必ず出るからで、たとえば法人格（「株式会社」等）を手がかりにすると、<strong>鉄道会社やコインパーキングの通称のように法人格を含まない名前</strong>が網にかからない。氏名にいたっては規則性が無く、列挙のしようがない。</p>
+        <p style="margin:10px 0;">そこで発想を反転させた。会計・業務用語として明示的に許可した語だけを通し、それ以外の漢字・カタカナ・英字の連なりは<strong>人名か地名か組織名か判別できないもの</strong>として一律に伏字化する。過剰に伏字が出るが、<strong>緩く始めて後で締めるのは不可逆</strong>なので厳しい側から始める。</p>
+        <p style="margin:0;">実装上の注意が1つ。<strong>許可語を一部に含むだけの語を通してはいけない。</strong>「〈地名〉交通費」は「交通費」を含むが地名は許可語ではない。<strong>語が許可語だけで完全に分解できる場合のみ通す</strong>——部分一致ではなく全分解で判定する。P3では伏字74箇所、<strong>金額と行数は全件そのまま</strong>で通過した。</p>
       </div>
     </div>
-    <div class="callout c-warn" style="margin-bottom:16px;">
+    <div class="callout c-info" style="margin-bottom:16px;">
       <div class="callout-icon">📖</div>
       <div>
-        <p><strong>この件で得た教訓は2つ。</strong> ①<strong>「危ないものを列挙して塞ぐ」は原理的に漏れる。</strong> 列挙し忘れたものが必ず出る。安全側の設計は「安全と確認できたものだけを通す」。<br/>②<strong>データの経路を1つ見落とすと防御が丸ごと無効になる。</strong> 見積書の氏名は完璧に守っていたのに、仕訳帳の摘要という別の経路が空いていた。<br/><br/>なお、この漏洩は<strong>1回のAPI送信で実際に社外へ出た</strong>。発覚時点で本人に開示済み。</p>
+        <p><strong>設計の指針として2つ。</strong> ①<strong>安全側の設計は「安全と確認できたものだけを通す」。</strong> 危険物の列挙に頼らない。<br/>②<strong>データの経路を数え漏らさない。</strong> 経路を1つ見落とすと防御が丸ごと無効になる。氏名は見積書だけでなく<strong>仕訳帳の摘要</strong>（精算相手・出席者）にも入る——想定していなかった経路が最大の弱点になる。</p>
       </div>
     </div>
 
@@ -3729,17 +3720,17 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="log-entry">
         <div class="log-date">8/19</div>
         <div class="log-content">
-          <h4>実データで初めて一巡した — そして門番の穴が見つかった</h4>
+          <h4>実データで初めて一巡した</h4>
           <ul class="log-items">
-            <li><strong>門番が実データで漏らした。</strong>個人名3件とブランド名4件が通過。ブロックリスト方式を捨て<strong>ホワイトリスト方式</strong>へ反転。1回目の修正でも許可語を含む語が丸ごと通ったため、<strong>完全分解できる語のみ通す</strong>方式に直して解消（<a href="#kaminaga-design">設計</a>に詳細）</li>
+            <li><strong>門番をホワイトリスト方式へ反転。</strong>ブロックリスト方式では法人格を含まないブランド名や氏名を塞ぎきれないため、<strong>許可語だけを通す</strong>形に。判定は部分一致ではなく<strong>完全分解</strong>で行う（<a href="#kaminaga-design">設計</a>に詳細）</li>
             <li><strong>証拠の分割をPythonで実装。</strong>分割後に検査したところ、実績スライスに <code>（予算では1,750,320円計上）</code> のような予算額が混入していた。収集AGは両方を見ているため書き添えてしまう。<strong>分割側で除去する処理を追加</strong></li>
             <li>実データで<strong>6ステップが最初から最後まで完走</strong>。3体は 170万／360万／424万 と答え、乖離度0.706でエスカレーション（<a href="#kaminaga-run">実演</a>）</li>
             <li>コードとエージェント定義を<strong>4コミットに分けてpush</strong>。これでアカウントが変わっても設計が復元できる状態になった</li>
           </ul>
           <div class="log-insight">
             <strong>📌 一番の収穫は予測値ではなく、データの穴だった：</strong>3体が割れた原因を追うと、<strong>予算の76%（人件費＋支援金）が仕訳帳に1行も無い</strong>ことに行き着いた。実績AGの外挿は予算の1/4しか覆っていない。<strong>1体に聞いていたら「40%で着地」で終わっていた</strong>。<br/>
-            <strong>📌 収集AGが門番の不備を報告した：</strong>「摘要に人名が残っています」と自発的に指摘。<strong>下流のAGが上流の欠陥を検出する</strong>形になっており、多段構成の副次的な利点として記録しておく。<br/>
-            <strong>📌 防御の教訓：</strong>見積書の氏名は完璧に守っていたのに、<strong>仕訳帳の摘要という別経路が空いていた</strong>。経路を1つ見落とすと防御全体が無効になる。
+            <strong>📌 下流のAGが上流の不備を報告した：</strong>データ収集AGが、指示されていないのに入力データの品質問題を自発的に指摘してきた。<strong>多段構成では、後段が前段の欠陥を検出する</strong>——副次的な利点として記録しておく。<br/>
+            <strong>📌 防御の指針：</strong>データの経路を1つ見落とすと防御全体が無効になる。氏名は見積書だけでなく<strong>仕訳帳の摘要</strong>（精算相手・出席者）にも入る。想定していなかった経路が最大の弱点になる。
           </div>
         </div>
       </div>
