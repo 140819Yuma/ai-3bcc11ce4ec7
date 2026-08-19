@@ -644,9 +644,10 @@
 <div class="sub-nav-bar active" data-tab="kaminaga">
   <a href="#kaminaga"><span class="sn-n">1</span>概要</a>
   <a href="#kaminaga-design"><span class="sn-n">2</span>設計</a>
-  <a href="#kaminaga-workflow"><span class="sn-n">3</span>運用</a>
-  <a href="#kaminaga-log"><span class="sn-n">4</span>ログ</a>
-  <a href="#kaminaga-next"><span class="sn-n">5</span>残作業</a>
+  <a href="#kaminaga-run"><span class="sn-n">3</span>実演</a>
+  <a href="#kaminaga-workflow"><span class="sn-n">4</span>運用</a>
+  <a href="#kaminaga-log"><span class="sn-n">5</span>ログ</a>
+  <a href="#kaminaga-next"><span class="sn-n">6</span>残作業</a>
 </div>
 
 <main>
@@ -3247,10 +3248,10 @@ session <span class="co">=</span> client.beta.sessions.create(
   <div class="hero-inner">
     <div class="hero-eyebrow">財務予測 AI エージェント / 神永ライン</div>
     <h1>組織の支出を、<br/>AIマルチエージェントで予測する</h1>
-    <p>助成・受託事業の予算がいくら残り、年度末にどこへ着地するか。3体のAIがそれぞれ違う情報を見て独立に判断し、上位のAIが1本にまとめる——神永が単独で開発中の財務予測エージェント。</p>
+    <p>助成・受託事業の予算がいくら残り、年度末にどこへ着地するか。3体のAIがそれぞれ違う情報を見て独立に判断し、上位のAIが1本にまとめる——神永が単独で開発中の財務予測エージェント。<strong>2026-08-19、実データで最初から最後まで動作。</strong></p>
     <div class="hero-chips">
       <span class="chip"><span class="dot dot-blue"></span>3視点 ＋ 調整AI</span>
-      <span class="chip"><span class="dot dot-green"></span>予算 vs 着地見込み</span>
+      <span class="chip"><span class="dot dot-green"></span>実データ一巡 済</span>
       <span class="chip"><span class="dot dot-orange"></span>ローカル稼働 / ¥0</span>
       <span class="chip"><span class="dot dot-purple"></span>Claude Code サブエージェント</span>
     </div>
@@ -3266,30 +3267,42 @@ session <span class="co">=</span> client.beta.sessions.create(
       <p class="sec-sub">2026-07-21にKoki Matanoとの共同作業から個別体制へ移行し、財務予測は神永の単独推進になった。石川さんの整理では「陸上戦（As-Is：現状の経理系仕組み化）」にあたる。</p>
     </div>
 
+    <!-- 初見向け：3行で何をするものか -->
+    <div class="callout c-info" style="margin-bottom:28px;">
+      <div class="callout-icon">🧭</div>
+      <div>
+        <p style="margin-bottom:10px;"><strong>初めて読む方へ — 一言でいうと、こういう道具です。</strong></p>
+        <p style="margin-bottom:10px;"><strong>入れるもの：</strong>予算書（CSV）と、会計ソフトから出した仕訳帳（CSV）の2つだけ。<br/>
+        <strong>出てくるもの：</strong>「この事業は年度末に◯◯円で着地しそう。予算に対して△△円余る／超える」という判定と、その根拠。</p>
+        <p style="margin-bottom:10px;">今いくら使ったかは引き算で出ます。AIが要るのは<strong>その先</strong>——このまま行くとどうなるか、です。ここで<strong>1体のAIに聞かず、3体に別々の材料を渡して独立に答えさせます</strong>。3体の答えが揃えば信頼でき、割れたときは<strong>割れ方そのものが「何が問題か」を教えてくれる</strong>のが、この設計の狙いです。</p>
+        <p style="margin:0;">→ 実際に動かした結果を先に見たい方は <a href="#kaminaga-run" style="color:var(--accent);font-weight:600;">3. 実演</a> へ。</p>
+      </div>
+    </div>
+
     <!-- 現在地サマリー -->
     <div class="status-grid">
       <div class="status-card ok">
         <div class="status-label">✅ 動いている</div>
         <ul>
-          <li>5エージェント構成（ダミーデータで通し確認済み）</li>
+          <li><strong>実データで一巡（8/19）</strong>——門番→収集→3視点→統合</li>
+          <li>Python門番（ホワイトリスト方式）</li>
+          <li>3視点の再設計（実績／計画／制約）</li>
           <li>予算消化ダッシュボード</li>
-          <li>データフロー図（石川さん承認済み）</li>
         </ul>
       </div>
       <div class="status-card wip">
         <div class="status-label">🔨 決定済み・未実装</div>
         <ul>
-          <li>3視点の再設計（実績／計画／制約）</li>
-          <li>Python門番（マスキング）</li>
-          <li>出力の社内ストレージ退避</li>
+          <li>出力の社内ストレージ退避<br/><span style="font-size:12px;opacity:.8;">（無いとバックテストが成立しない）</span></li>
+          <li>予算Excelテンプレートの提供</li>
         </ul>
       </div>
       <div class="status-card wait">
         <div class="status-label">⏳ 他者待ち</div>
         <ul>
-          <li>予算データのCSV化 ← <strong>最優先で依頼</strong></li>
+          <li>人件費・支援金の計上経路の確認 ← <strong>最優先</strong></li>
+          <li>2026年度予算のCSV化</li>
           <li>会社Claudeアカウント（貸与式）</li>
-          <li>バックテスト用の過去データ</li>
         </ul>
       </div>
     </div>
@@ -3309,10 +3322,10 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="sec-head">
       <div class="sec-tag">Design</div>
       <h2 class="sec-title">設計 — 何でできているか</h2>
-      <p class="sec-sub">2026-08-18時点。7月末の構成から3つの転換を経ている。</p>
+      <p class="sec-sub">2026-08-19時点。7月末の構成から5つの転換を経ている。</p>
     </div>
 
-    <!-- 3つの転換 -->
+    <!-- 転換の履歴 -->
     <div class="tbl-wrap" style="margin-bottom:32px;">
       <table>
         <thead><tr><th style="width:18mm;">日付</th><th style="width:40mm;">変えたこと</th><th>理由</th></tr></thead>
@@ -3320,6 +3333,8 @@ session <span class="co">=</span> client.beta.sessions.create(
           <tr><td>8/10</td><td>予測の中身<br/><strong>翌月の金額 → 予算消化ペース</strong></td><td>実データの月次データ点が3つしかなく時系列予測が成立しない。「年度末に使い切れるか」なら成立し、石川さんの要件にも直結する</td></tr>
           <tr><td>8/16</td><td>実行基盤<br/><strong>Python+Groq → Claude Code</strong></td><td>エージェントをMarkdownで定義でき、サブスクリプションで動き、ファイルを直接読める。独立コンテキストで<a href="#decisions">論点1</a>が構造的に保証される</td></tr>
           <tr><td>8/18</td><td>門番<br/><strong>LLM → Python</strong></td><td>LLMにマスキングさせると、マスク対象の生データをマスク前に社外APIへ送ることになり破綻する</td></tr>
+          <tr><td>8/18</td><td>3視点の軸<br/><strong>性格 → 問い</strong></td><td>批判的／中立／推進的は「同じ数字に余裕を足すか引くか」の1次元差でしかなく、全員が同じデータを見る形だった。問いで分ければ見るべきデータが自然に分かれる</td></tr>
+          <tr><td><strong>8/19</strong></td><td>門番の方式<br/><strong>ブロックリスト → ホワイトリスト</strong></td><td>実データで検証したところ<strong>個人名とブランド名が通過した</strong>。固有名詞を列挙して塞ぐ方式は原理的に漏れる。許可語だけを通す形に反転（下の🚨参照）</td></tr>
         </tbody>
       </table>
     </div>
@@ -3388,7 +3403,33 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-danger" style="margin-bottom:16px;">
       <div class="callout-icon">🚨</div>
       <div>
-        <p><strong>危険地帯は②より右だけ。</strong> ここを通る情報だけが会社の外に出る。<strong>門番は未実装のため、実データはまだ投入していない</strong>（ダミーのみで開発中）。<br/><br/><strong>門番がPythonでなければならない理由：</strong> LLMにマスキングさせると、守りたい生データを守る前に社外へ送ることになる。加えて処理が確率的なので一定確率でマスクし漏れる。Pythonなら決定論的で、監査ログも残り、生データが外に出ない。</p>
+        <p><strong>危険地帯は②より右だけ。</strong> ここを通る情報だけが会社の外に出る。<strong>門番は8/18に実装し、8/19に実データを初投入した。</strong><br/><br/><strong>門番がPythonでなければならない理由：</strong> LLMにマスキングさせると、守りたい生データを守る前に社外へ送ることになる。加えて処理が確率的なので一定確率でマスクし漏れる。Pythonなら決定論的で、監査ログも残り、生データが外に出ない。</p>
+      </div>
+    </div>
+
+    <!-- 漏洩と修正 -->
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🩹</div>
+      <div>
+        <p><strong>8/19、その門番が実データで漏らした。記録として残す。</strong></p>
+        <p style="margin:10px 0;">初版はブロックリスト方式——「株式会社」「有限会社」などの法人格を含む語を伏字にする形だった。実データを通したところ、データ収集AGが<strong>「摘要に人名が残っています」と報告してきた</strong>。調べると2種類が通過していた。</p>
+        <div class="tbl-wrap" style="margin-bottom:10px;">
+          <table>
+            <thead><tr><th style="width:36mm;">漏れたもの</th><th>なぜ通ったか</th></tr></thead>
+            <tbody>
+              <tr><td><strong>個人名</strong>（3件）</td><td>仕訳帳の摘要には<strong>精算相手や出席者の氏名</strong>が入る。見積書の氏名しか想定しておらず、この経路を設計時に考えていなかった</td></tr>
+              <tr><td><strong>ブランド名</strong>（4件）</td><td>鉄道会社やコインパーキングの通称は法人格を含まないため、ブロックリストの網にかからない</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin:10px 0;"><strong>そこで方式を反転させた。</strong> 会計・業務用語として明示的に許可した語だけを通し、それ以外の漢字・カタカナ・英字の連なりは<strong>人名か地名か組織名か判別できないもの</strong>として一律に伏字化する。過剰に伏字が出るが、<strong>緩く始めて後で締めるのは不可逆</strong>なので厳しい側から始める。</p>
+        <p style="margin:0;"><strong>1回目の修正でもまだ漏れた。</strong> 許可語を一部に含む語（「〈地名〉交通費」など）を丸ごと通す実装だったため。<strong>語が許可語だけで完全に分解できる場合のみ通す</strong>方式に直して解消。最終確認では漏洩語ゼロ、伏字74箇所、<strong>金額と行数は全件そのまま</strong>（分析に必要な情報は失われていない）。</p>
+      </div>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">📖</div>
+      <div>
+        <p><strong>この件で得た教訓は2つ。</strong> ①<strong>「危ないものを列挙して塞ぐ」は原理的に漏れる。</strong> 列挙し忘れたものが必ず出る。安全側の設計は「安全と確認できたものだけを通す」。<br/>②<strong>データの経路を1つ見落とすと防御が丸ごと無効になる。</strong> 見積書の氏名は完璧に守っていたのに、仕訳帳の摘要という別の経路が空いていた。<br/><br/>なお、この漏洩は<strong>1回のAPI送信で実際に社外へ出た</strong>。発覚時点で本人に開示済み。</p>
       </div>
     </div>
 
@@ -3400,7 +3441,7 @@ session <span class="co">=</span> client.beta.sessions.create(
           <tr><td>金額・総額</td><td><span class="tri">送る</span></td><td>予測に必須。マスクすると分析が成立しない</td></tr>
           <tr><td>単位・構造（日/回/月）</td><td><span class="tri">送る</span></td><td>「稼働日ベースか」は判断に効く。個人情報ではない</td></tr>
           <tr><td><strong>個人名・日単価</strong></td><td><span class="ok">送らない</span></td><td><strong>集約して落とす。</strong>氏名も単価も構造的に存在しない形にする</td></tr>
-          <tr><td>摘要の固有名詞</td><td><span class="ok">置換</span></td><td>組織名の辞書で置換。計画情報（「第1回セミナー」）は残す</td></tr>
+          <tr><td>摘要の固有名詞</td><td><span class="ok">置換</span></td><td><strong>ホワイトリスト方式。</strong>許可した業務語だけを通し、残りは一律 <code>［伏字］</code> に。数字・日付・助詞は残るので「［伏字］ 交通費 4月分」の形で文脈は保たれる</td></tr>
           <tr><td>予算額・残予算</td><td><span class="ok">出ない</span></td><td><strong>設計上、境界を越えない。</strong>突合はすべて社内のPython計算</td></tr>
         </tbody>
       </table>
@@ -3408,14 +3449,159 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-info">
       <div class="callout-icon">🔬</div>
       <div>
-        <p><strong>「粒度を落としても分析は痩せない」は実行ログで検証済み。</strong> 8/16の実行で3体が根拠に挙げたのは「総額」「稼働日ベースという構造」「残額」の3つで、<strong>個人名は一度も使われていない</strong>。<br/>
+        <p><strong>「粒度を落としても分析は痩せない」は実データで確認済み。</strong> 8/19の実行で3体が根拠に挙げたのは「金額」「稼働日ベース・件数ベースという構造」「経過月数」だけで、<strong>個人名は一度も使われていない</strong>。伏字が74箇所出ても、着地見込みの精度には影響していない。<br/>
         <strong>役割ラベル方式を採らなかった理由：</strong> 少人数組織では役職と個人が1対1に対応するため「ディレクター 46,800円/日」は氏名を消しても誰か分かる。匿名化にならない。</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ===== 3. 運用 ===== -->
+<!-- ===== 3. 実演 ===== -->
+<section id="kaminaga-run">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Run</div>
+      <h2 class="sec-title">実演 — 実データで動かすとこうなる</h2>
+      <p class="sec-sub">2026-08-19、実際の助成事業1件で最初から最後まで通した。設計の話ではなく、出てきたものそのものを載せる。</p>
+    </div>
+
+    <!-- お題 -->
+    <h3 class="sub-h">お題</h3>
+    <div class="tbl-wrap" style="margin-bottom:14px;">
+      <table>
+        <thead><tr><th style="width:32mm;">項目</th><th>中身</th></tr></thead>
+        <tbody>
+          <tr><td>対象</td><td>財団の助成事業1件（社外に出す際は <code>P3</code> という記号に置換）</td></tr>
+          <tr><td>年度</td><td>2025年度（2025-04-01 〜 2026-03-31）</td></tr>
+          <tr><td>時点</td><td><strong>2025年6月末</strong>——3ヶ月経過、つまり年度の1/4が終わったところ</td></tr>
+          <tr><td>入力</td><td>予算書（22明細）と仕訳帳（24取引）。どちらも門番を通した後のもの</td></tr>
+          <tr><td>問い</td><td><strong>この事業は年度末にいくらで着地するか</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-info" style="margin-bottom:32px;">
+      <div class="callout-icon">🔢</div>
+      <div>
+        <p><strong>まず、AIを使わなくても分かること。</strong> 予算 <strong>4,237,552円</strong>／使った額 <strong>423,866円</strong>。<br/>
+        <strong>時間は25%過ぎたのに、お金は10%しか使っていない。</strong> ——ここまでは引き算と割り算で、AIは要りません。石川さんが求めたのもここまででした。<br/><br/>
+        <strong>AIに聞きたいのはこの先です。</strong>「15ポイントの遅れは、後半で巻き返せる程度の遅れなのか。それとも、もう使い切れないことが確定しているのか。」これは引き算では出ません。</p>
+      </div>
+    </div>
+
+    <!-- 流れ -->
+    <h3 class="sub-h">実際に走った順番</h3>
+    <div class="flowrow" style="margin-bottom:14px;">
+      <div class="fnode gate"><b>① 門番</b><span>🐍 Python<br/>氏名・取引先を伏字に<br/><strong>74箇所を伏字化</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode ext"><b>② 収集AG</b><span>🤖 CSVを読んで整理<br/>予算と実績を対応づけ<br/><strong>不明点も記録</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode gate"><b>③ 証拠を分割</b><span>🐍 Python<br/>4ファイルに切り分け<br/><strong>見せる材料を変える</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode ext"><b>④ 3視点AG</b><span>🤖 同時・独立に判断<br/>互いの答えは見ない</span></div>
+      <div class="farr">→</div>
+      <div class="fnode gate"><b>⑤ 集計</b><span>🐍 Python<br/>割れ幅を計算<br/><strong>各AGの算数を検算</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode ext"><b>⑥ 調整AI</b><span>🤖 割れた理由を解釈<br/>1本にまとめる</span></div>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:32px;">
+      <div class="callout-icon">⚖️</div>
+      <div>
+        <p><strong>Python（🐍）とAI（🤖）が交互に並んでいるのは偶然ではありません。</strong> 数を数える・切り分ける・検算するといった<strong>間違えてはいけない確定作業はPython</strong>が担当し、<strong>意味を読み取る作業だけAI</strong>に任せています。どちらも「できてしまう」のですが、できることと任せてよいことは違います。<br/><br/>たとえば③の分割をAIに「これは見ないでください」と頼む形にすると、ファイルには全部書いてあるので実質的に守られません。だから<strong>物理的にファイルを分ける</strong>——見えないものは見えない、という状態を作ります。</p>
+      </div>
+    </div>
+
+    <!-- 3体が見たもの -->
+    <h3 class="sub-h">3体が見た材料は、それぞれ違う</h3>
+    <div class="tbl-wrap" style="margin-bottom:14px;">
+      <table>
+        <thead><tr><th style="width:30mm;">AG</th><th style="width:52mm;">渡した材料</th><th>あえて渡さなかったもの</th></tr></thead>
+        <tbody>
+          <tr><td>📉 <strong>実績AG</strong></td><td>月ごとの支出、勘定科目ごとの内訳</td><td><strong>予算書の中身</strong>——「何に使う計画だったか」を知らないまま判断させる</td></tr>
+          <tr><td>📋 <strong>計画AG</strong></td><td>予算の全明細、まだ実行されていない項目</td><td><strong>月ごとの推移</strong>——「今のペースが遅い」という情報を渡さない</td></tr>
+          <tr><td>🚧 <strong>制約AG</strong></td><td>費目の性質（稼働日ベースか件数ベースか）、残り月数</td><td><strong>他2体の答え</strong>——構造だけから執行可能な上限を積み上げさせる</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:32px;">
+      <div class="callout-icon">🤔</div>
+      <div>
+        <p><strong>「わざと情報を隠すのは、精度が落ちるのでは？」</strong> ——直感に反しますが、逆です。全員に同じ材料を渡すと3体は同じ答えに寄り、<strong>3体いる意味がなくなります</strong>（研究では、この形は単純な1体のAIにすら負けます）。材料を分けると答えが本当に割れ、<strong>その割れ幅が「どれくらい不確実か」の測定値になります</strong>。1体では「自信あります」としか言えないところを、3体なら「ここまで幅がある」と示せる。</p>
+      </div>
+    </div>
+
+    <!-- 結果 -->
+    <h3 class="sub-h">出てきた3つの答え</h3>
+    <div class="dg" style="margin-bottom:14px;">
+      <div class="dg-c">
+        <div class="dg-b"><i>実績</i><u class="r1" style="width:40%"></u></div>
+        <div class="dg-v">📉 1,695,464円</div>
+        <div class="dg-a">予算の<strong>40%</strong>／「このペースなら6割が余る」</div>
+      </div>
+      <div class="dg-c">
+        <div class="dg-b"><i>制約</i><u class="r3" style="width:85%"></u></div>
+        <div class="dg-v">🚧 3,598,892円</div>
+        <div class="dg-a">予算の<strong>85%</strong>／「58万円分は構造的に使えない」</div>
+      </div>
+      <div class="dg-c">
+        <div class="dg-b"><i>計画</i><u class="r2" style="width:100%"></u></div>
+        <div class="dg-v">📋 4,237,552円</div>
+        <div class="dg-a">予算の<strong>100%</strong>／「計画どおりなら満額使う」</div>
+      </div>
+      <div class="dg-c hot">
+        <div class="dg-b">
+          <i>実績</i><u class="r1" style="width:40%"></u>
+          <i>計画</i><u class="r2" style="width:100%"></u>
+          <i>制約</i><u class="r3" style="width:85%"></u>
+        </div>
+        <div class="dg-v" style="color:var(--red);">割れ幅 254万円</div>
+        <div class="dg-a">乖離度 <strong>0.706</strong>（基準0.3）→ <strong>人間の確認が必要</strong></div>
+      </div>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:32px;">
+      <div class="callout-icon">✅</div>
+      <div>
+        <p><strong>まず、狙いどおり「割れた」こと自体が成功です。</strong> 3体が同じような数字を出していたら、材料を分けた設計が効いていない証拠でした。<br/><br/>そして<strong>Pythonの検算では3体とも算数に誤りなし</strong>（消化率と金額の整合、既支出を下回っていないか、予算を超えていないか）。<strong>全員が正しい計算をして、それでも254万円ずれた</strong>——ここからが本題です。</p>
+      </div>
+    </div>
+
+    <!-- 調整AIの結論 -->
+    <h3 class="sub-h">調整AIの結論 — 一番の収穫は数字ではなかった</h3>
+    <div class="callout c-danger" style="margin-bottom:16px;">
+      <div class="callout-icon">🔍</div>
+      <div>
+        <p><strong>割れた原因を追うと、予測の見立ての差ではなく「データ側の問題」でした。</strong></p>
+        <p style="margin:10px 0;">仕訳帳24行を調べたところ、こうなっていました。</p>
+        <div class="tbl-wrap" style="margin-bottom:10px;">
+          <table>
+            <thead><tr><th style="width:40mm;">予算にある費目</th><th style="width:30mm;">予算額</th><th>仕訳帳での実績</th></tr></thead>
+            <tbody>
+              <tr><td>人件費</td><td>1,750,320円（予算の<strong>45%</strong>）</td><td><strong>該当する取引 0件</strong></td></tr>
+              <tr><td>支援金</td><td>1,200,000円（同 <strong>31%</strong>）</td><td><strong>0円</strong></td></tr>
+              <tr><td colspan="2"><strong>合計 予算の76%</strong></td><td><strong>仕訳帳に1行も存在しない</strong></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin:0;">つまり実績AGは、<strong>予算の24%しか含まない母集団</strong>を年換算していました。算数は正しいのに、事業全体の着地推定には使えない値です。計画AGの100%も「予算額を超えない」という制約による定義上の張り付きで、こちらは<strong>上限であって予測ではありません</strong>。</p>
+      </div>
+    </div>
+    <div class="callout c-warn" style="margin-bottom:16px;">
+      <div class="callout-icon">❓</div>
+      <div>
+        <p><strong>そこで、出力の主役は数字ではなく「経理に聞くべき1つの質問」になりました。</strong></p>
+        <p style="margin:10px 0;font-size:15px;"><strong>「人件費と支援金は、まだ使っていないのか。それとも、使ったけれどこの仕訳帳に載らない経路で処理されているのか。」</strong></p>
+        <p style="margin:0;">前者なら着地は360万円付近。後者なら<strong>「消化率10%」という数字そのものが誤り</strong>で、実際はもっと進んでいることになります。<strong>この1点で解釈が正反対になる</strong>ため、ここを確定させないまま出す予測は、どの数字であっても根拠が弱い。</p>
+      </div>
+    </div>
+    <div class="callout c-tip">
+      <div class="callout-icon">💡</div>
+      <div>
+        <p><strong>これが3体に分けた効果です。</strong> 1体のAIに「着地はいくら？」と聞いていたら、<strong>「40%で着地します」と答えて終わり</strong>でした。数字は返ってくるし、それらしく見える。しかしその数字は予算の1/4しか見ていないことに、誰も気づけません。<br/><br/>材料を分けたことで<strong>3体の答えが噛み合わなくなり、噛み合わない理由を追ったらデータの穴に行き着いた</strong>。予測AIの価値は、当たる数字を出すことだけではなく、<strong>「その数字はまだ信じるな」と言えること</strong>にもあります。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. 運用 ===== -->
 <section id="kaminaga-workflow">
   <div class="container">
     <div class="sec-head">
@@ -3530,16 +3716,34 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
-<!-- ===== 4. 記録 ===== -->
+<!-- ===== 5. 記録 ===== -->
 <section id="kaminaga-log">
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Log</div>
       <h2 class="sec-title">開発ログ</h2>
-      <p class="sec-sub">直近3回分を表示。それ以前は折りたたんである。</p>
+      <p class="sec-sub">直近4回分を表示。それ以前は折りたたんである。</p>
     </div>
 
     <div class="log-timeline">
+      <div class="log-entry">
+        <div class="log-date">8/19</div>
+        <div class="log-content">
+          <h4>実データで初めて一巡した — そして門番の穴が見つかった</h4>
+          <ul class="log-items">
+            <li><strong>門番が実データで漏らした。</strong>個人名3件とブランド名4件が通過。ブロックリスト方式を捨て<strong>ホワイトリスト方式</strong>へ反転。1回目の修正でも許可語を含む語が丸ごと通ったため、<strong>完全分解できる語のみ通す</strong>方式に直して解消（<a href="#kaminaga-design">設計</a>に詳細）</li>
+            <li><strong>証拠の分割をPythonで実装。</strong>分割後に検査したところ、実績スライスに <code>（予算では1,750,320円計上）</code> のような予算額が混入していた。収集AGは両方を見ているため書き添えてしまう。<strong>分割側で除去する処理を追加</strong></li>
+            <li>実データで<strong>6ステップが最初から最後まで完走</strong>。3体は 170万／360万／424万 と答え、乖離度0.706でエスカレーション（<a href="#kaminaga-run">実演</a>）</li>
+            <li>コードとエージェント定義を<strong>4コミットに分けてpush</strong>。これでアカウントが変わっても設計が復元できる状態になった</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 一番の収穫は予測値ではなく、データの穴だった：</strong>3体が割れた原因を追うと、<strong>予算の76%（人件費＋支援金）が仕訳帳に1行も無い</strong>ことに行き着いた。実績AGの外挿は予算の1/4しか覆っていない。<strong>1体に聞いていたら「40%で着地」で終わっていた</strong>。<br/>
+            <strong>📌 収集AGが門番の不備を報告した：</strong>「摘要に人名が残っています」と自発的に指摘。<strong>下流のAGが上流の欠陥を検出する</strong>形になっており、多段構成の副次的な利点として記録しておく。<br/>
+            <strong>📌 防御の教訓：</strong>見積書の氏名は完璧に守っていたのに、<strong>仕訳帳の摘要という別経路が空いていた</strong>。経路を1つ見落とすと防御全体が無効になる。
+          </div>
+        </div>
+      </div>
+
       <div class="log-entry">
         <div class="log-date">8/18</div>
         <div class="log-content">
@@ -3641,27 +3845,28 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
-<!-- ===== 5. 残作業 ===== -->
+<!-- ===== 6. 残作業 ===== -->
 <section id="kaminaga-next">
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Next</div>
       <h2 class="sec-title">残作業と見積もり</h2>
-      <p class="sec-sub">正味15〜25時間。工期を決めているのは作業量ではなく<strong>他者待ち</strong>。</p>
+      <p class="sec-sub">正味8〜15時間。8/19の実データ一巡で着手可の作業が大きく減り、<strong>工期を決めているのは他者待ちだけ</strong>になった。</p>
     </div>
 
     <div class="tbl-wrap" style="margin-bottom:20px;">
       <table>
         <thead><tr><th style="width:48mm;">作業</th><th style="width:18mm;">時間</th><th>依存</th></tr></thead>
         <tbody>
-          <tr><td>3体のmdを実績／計画／制約へ書き換え</td><td>1〜2h</td><td><span class="ok">着手可</span></td></tr>
-          <tr><td><strong>Python門番</strong>（集約マスキング＋監査ログ）</td><td>2〜4h</td><td><span class="ok">着手可</span></td></tr>
+          <tr><td><s>3体のmdを実績／計画／制約へ書き換え</s></td><td>—</td><td><span class="ok">✅ 8/18完了</span></td></tr>
+          <tr><td><s>Python門番</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span>（ホワイトリスト方式）</td></tr>
+          <tr><td><s>証拠の分割・集計スクリプト</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span></td></tr>
+          <tr><td><s>実データでの初回実行</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span>（<a href="#kaminaga-run">実演</a>）</td></tr>
           <tr><td><strong>予算テンプレート（Excel）</strong></td><td>1h</td><td><span class="ok">着手可</span>／<strong>渡すまで相手が動けない</strong></td></tr>
-          <tr><td>出力の社内ストレージ退避</td><td>1h</td><td><span class="ok">着手可</span></td></tr>
-          <tr><td>実データ形式対応（cp932・仕訳帳）</td><td>2〜3h</td><td><span class="ok">着手可</span></td></tr>
-          <tr><td>実データでの初回実行と調整</td><td>2〜4h</td><td><span class="tri">⚠️ 予算CSV待ち</span></td></tr>
+          <tr><td><strong>出力の社内ストレージ退避</strong></td><td>1h</td><td><span class="ok">着手可</span>／<strong>無いとバックテストが成立しない</strong></td></tr>
+          <tr><td>人件費・支援金の計上経路を反映</td><td>1〜2h</td><td><span class="tri">⚠️ 経理への確認待ち</span></td></tr>
           <tr><td>アカウント間の揺れ幅比較</td><td>2〜3h</td><td><span class="tri">⚠️ 会社アカウント待ち</span></td></tr>
-          <tr><td>バックテスト（<a href="#decisions">論点4</a>）</td><td>3〜5h</td><td><span class="tri">⚠️ 過去データ待ち</span></td></tr>
+          <tr><td>バックテスト（<a href="#decisions">論点4</a>）</td><td>3〜5h</td><td><span class="tri">⚠️ 年度末実績の再エクスポート待ち</span></td></tr>
         </tbody>
       </table>
     </div>
@@ -3669,16 +3874,20 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="callout c-danger" style="margin-bottom:20px;">
       <div class="callout-icon">🚧</div>
       <div>
-        <p><strong>最優先は予算テンプレートの提供。</strong> 予算が見積書PDFのままだと門番を通せず（PythonでのPDF構造化は困難、Claudeに読ませると門番の手前で個人名が社外へ出る）、<strong>実データ投入そのものが始められない</strong>。作業1時間で、渡した瞬間から相手が動ける。<br/><br/><strong>バックテストは前倒しできる可能性がある。</strong> いま持つ実データは<strong>すでに前年度（2025年度）のもの</strong>で、2025年6月19日にエクスポートされたためそこで切れている。同じ出力を今の日付で取り直せば、前年度の答え合わせと今年度の分析が<strong>一度に手に入る</strong>。</p>
+        <p><strong>いまのボトルネックは3つ、いずれも自分では解けない。</strong></p>
+        <p style="margin:10px 0;">① <strong>人件費と支援金の計上経路</strong>（経理へ確認）——予算の76%がどう処理されているかが未確定で、ここが決まらないと予測値そのものの意味が定まらない。<a href="#kaminaga-run">実演</a>で出た最大の論点。<br/>
+        ② <strong>2026年度予算のCSV/Excel化</strong>——PDFのままだと門番を通せない（PythonでのPDF構造化は困難、Claudeに読ませると門番の手前で個人名が社外へ出る）。<strong>テンプレートを1時間で作って渡せば、その瞬間から相手が動ける</strong>。<br/>
+        ③ <strong>出力の社内退避</strong>——これだけは自分で解ける。1時間の作業だが、<strong>やらないとバックテストの土台が毎回消える</strong>。</p>
+        <p style="margin:0;"><strong>バックテストは前倒しできる。</strong> いま持つ実データは<strong>すでに前年度（2025年度）のもの</strong>で、2025年6月19日にエクスポートされたためそこで切れている。同じ出力を今の日付で取り直せば、<strong>8/19に出した予測の答え合わせが即座にできる</strong>——年度は既に終わっているため、正解が確定している。</p>
       </div>
     </div>
 
     <h3 class="sub-h">タイムライン</h3>
     <div class="tl">
       <div class="tl-i">
-        <div class="tl-d">〜 8/24</div>
-        <div class="tl-h">打ち合わせ ／ 正味6〜10h</div>
-        <div class="tl-t">マスキング込みで<strong>5体が動き、ダッシュボードに出る</strong></div>
+        <div class="tl-d">✅ 8/19</div>
+        <div class="tl-h">達成済み</div>
+        <div class="tl-t">マスキング込みで<strong>実データが一巡し、ダッシュボードに出た</strong>（予定より5日早い）</div>
       </div>
       <div class="tl-i f2">
         <div class="tl-d">9月上旬</div>
