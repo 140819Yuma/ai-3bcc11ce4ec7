@@ -67,6 +67,24 @@ ALLOW_WORDS = set("""
 サーバー システム ソフト ライセンス ドメイン デザイン サイト ウェブ ページ 更新料
 """.split())
 
+# 案件ごとに増える業務語は、コードではなく外部ファイルで持つ。
+# git 追跡下に置くため、アカウントが変わっても語彙が引き継がれる。
+ALLOW_EXTRA_FILE = BASE / "allow_words_extra.txt"
+
+
+def load_allow_extra() -> set[str]:
+    if not ALLOW_EXTRA_FILE.exists():
+        return set()
+    words: set[str] = set()
+    for line in ALLOW_EXTRA_FILE.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if line and not line.startswith("#"):
+            words.update(line.split())
+    return words
+
+
+ALLOW_WORDS |= load_allow_extra()
+
 # 常に伏字化する語（自社名・取引先名・従業員名など）。
 # 実運用では agent/masked/redact_words.txt に1行1語で置く（gitignore対象）。
 # ホワイトリストで大半は塞がるが、確実に落としたい語をここで明示できる。
@@ -74,6 +92,11 @@ EXTRA_WORDS_FILE = OUT_DIR / "redact_words.txt"
 
 # 固有名詞になりうる文字列（漢字・カタカナ・英字の連なり）
 TOKEN_PATTERN = re.compile(r"[一-龥]{2,}|[ァ-ヶー]{3,}|[A-Za-z]{3,}")
+
+# 伏字にした語の記録。--review のときだけローカルへ書き出し、人間が目視で
+# 業務語だけを allow_words_extra.txt へ移す。氏名や取引先名を含むため、
+# このファイルは絶対に公開せず、LLMにも読ませない。
+REDACTED: Counter = Counter()
 
 
 def detect_encoding(path: Path) -> str:
@@ -134,6 +157,7 @@ def mask_text(text: str, extra: list[str], audit: Counter) -> str:
         if _fully_allowed(tok):
             return tok
         audit["未許可語を伏字化"] += 1
+        REDACTED[tok] += 1        # 語彙を育てるための候補（--review でのみ書き出す）
         return "［伏字］"
 
     out = TOKEN_PATTERN.sub(_sub, out)
@@ -170,6 +194,8 @@ def mask_file(path: Path, project_id: str, extra: list[str]) -> tuple[list[dict]
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--dry-run", action="store_true", help="書き出さず監査結果だけ表示")
+    ap.add_argument("--review", action="store_true",
+                    help="伏字にした語の候補一覧をローカルに書き出す（公開厳禁）")
     args = ap.parse_args()
 
     files = sorted(RAW_DIR.glob("*.csv"))
@@ -206,6 +232,17 @@ def main() -> None:
             encoding="utf-8",
         )
         print(f"\n出力先: {OUT_DIR}/  （対応表とあわせて社内にのみ保持する）")
+
+    if args.review:
+        # 伏字にした語を頻度順に書き出す。人間が目視で業務語だけを選び、
+        # allow_words_extra.txt へ移して語彙を育てる。氏名や取引先名を含むため、
+        # このファイルは公開せず、LLMにも読ませない（gitignore対象）。
+        p = OUT_DIR / "redact_candidates.txt"
+        lines = ["# 伏字にした語の一覧（頻度順）。公開厳禁・LLMに読ませない。",
+                 "# 業務語だけを選んで agent/allow_words_extra.txt へ移すこと。", ""]
+        lines += [f"{n:>4}  {w}" for w, n in REDACTED.most_common()]
+        p.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        print(f"候補一覧: {p}  （{len(REDACTED)}語・公開厳禁）")
 
 
 if __name__ == "__main__":
