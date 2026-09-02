@@ -44,22 +44,33 @@ def _strip_budget(notes: list) -> tuple[list[str], int]:
     return kept, dropped
 
 
+# 分割に無いと困るキー。欠けていたら止める（推測で埋めない）。
+REQUIRED = ("project", "budget", "actuals", "elapsed", "consumption_rate")
+
+
 def split(pid: str) -> None:
     src = OUT / f"collected_{pid}.json"
     d = json.loads(src.read_text(encoding="utf-8"))
 
+    # 収集AGの出力キーは案件ごとに揺れる（LLMが書くため、任意項目の有無が変わる）。
+    # 必須のものだけ厳密に検査し、補足情報は欠けていても続行する。止めるべきところで
+    # 止め、止めなくてよいところで止まらない、を分けておく。
+    missing = [k for k in REQUIRED if k not in d]
+    if missing:
+        raise SystemExit(f"collected_{pid}.json に必須キーがありません: {missing}")
+
     base = {
         "project": d["project"],
-        "fiscal_year": d["fiscal_year"],
-        "fiscal_period": d["fiscal_period"],
-        "as_of": d["as_of"],
+        "fiscal_year": d.get("fiscal_year"),
+        "fiscal_period": d.get("fiscal_period", d.get("elapsed", {}).get("period")),
+        "as_of": d.get("as_of"),
     }
 
     # --- 共有（全員が見てよい最低限の土台）---
     shared = {
         **base,
-        "budget_total": d["budget"]["total"],
-        "actuals_total": d["actuals"]["total"],
+        "budget_total": d["budget"].get("total"),
+        "actuals_total": d["actuals"].get("total"),
         "elapsed": d["elapsed"],
         "consumption_rate": d["consumption_rate"],
         "note": "これは3視点で共有する土台。詳細は各自の専有ファイルにある",
@@ -80,32 +91,32 @@ def split(pid: str) -> None:
     plan = {
         **base,
         "budget": {
-            "total": d["budget"]["total"],
-            "subtotal": d["budget"]["subtotal"],
-            "overhead": d["budget"]["overhead"],
-            "by_type": d["budget"]["by_type"],
-            "by_category": d["budget"]["by_category"],
-            "plan_notes": d["budget"]["plan_notes"],
+            "total": d["budget"].get("total"),
+            "subtotal": d["budget"].get("subtotal"),
+            "overhead": d["budget"].get("overhead"),
+            "by_type": d["budget"].get("by_type"),
+            "by_category": d["budget"].get("by_category"),
+            "plan_notes": d["budget"].get("plan_notes", []),
         },
         # 「どれだけ既に消化したか」は残額計算に要るので総額だけ渡す。
         # 月次推移（ペースの情報）は渡さない。
-        "already_spent_total": d["actuals"]["total"],
+        "already_spent_total": d["actuals"].get("total"),
         "mapping": d.get("mapping", []),
         "note": "実績の月次推移は意図的に渡していない。計画の残りを積み上げること",
     }
 
     # --- 制約AG専有（費目の性質と期限）---
-    constraint_notes = [n for n in d["budget"]["plan_notes"]
+    constraint_notes = [n for n in d["budget"].get("plan_notes", [])
                         if any(h in str(n) for h in CONSTRAINT_HINTS)]
     constraints = {
         **base,
-        "budget_by_category": d["budget"]["by_category"],
-        "budget_by_type": d["budget"]["by_type"],
+        "budget_by_category": d["budget"].get("by_category"),
+        "budget_by_type": d["budget"].get("by_type"),
         "cost_nature_notes": constraint_notes,
         "elapsed": d["elapsed"],
-        "months_remaining": d["elapsed"]["months_total"] - d["elapsed"]["months_elapsed"],
-        "already_spent_total": d["actuals"]["total"],
-        "spent_by_account": d["actuals"]["by_account"],
+        "months_remaining": d["elapsed"].get("months_total", 12) - d["elapsed"].get("months_elapsed", 0),
+        "already_spent_total": d["actuals"].get("total"),
+        "spent_by_account": d["actuals"].get("by_account", []),
         "note": (
             "費目の性質と残り期間から、執行可能な上限を積み上げること。"
             "稼働日ベースの費目は経過分を後から積めない点に注意"
