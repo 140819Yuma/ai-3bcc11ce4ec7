@@ -165,6 +165,47 @@
     .fnode.ext  { border: 2px solid var(--red); background: rgba(211,71,71,.06); }
     .farr { align-self: center; color: var(--text2); font-size: 15px; flex: 0 0 auto; }
 
+    /* ===== 説明書 ===== */
+    /* ファイル地図：役割ごとに色を分け、どれがPythonでどれがAIかを一目で分ける */
+    .ftree {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 12.5px; line-height: 2.05; background: var(--bg2);
+      border: 1px solid var(--border); border-radius: 10px;
+      padding: 16px 18px; overflow-x: auto; margin: 8px 0 16px;
+    }
+    .ftree .d { color: var(--text2); }
+    .ftree .py { color: var(--green); font-weight: 700; }
+    .ftree .ai { color: var(--accent); font-weight: 700; }
+    .ftree .lock { color: var(--red); font-weight: 700; }
+    .ftree .cm { color: var(--text2); font-family: var(--sans); font-size: 12px; }
+    .ftree-key { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text2); margin-bottom: 10px; }
+    .ftree-key b { font-family: ui-monospace, monospace; }
+
+    /* コマンド表 */
+    .cmd { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12.5px; }
+    .cmd-b { background: var(--bg2); border: 1px solid var(--border);
+             border-radius: 5px; padding: 2px 7px; white-space: nowrap; }
+
+    /* 手順のステップ */
+    .steps { counter-reset: st; display: grid; gap: 10px; margin: 10px 0 18px; }
+    .step {
+      display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-left: 3px solid var(--border); border-radius: 9px; padding: 13px 16px;
+    }
+    .step.p { border-left-color: var(--green); }
+    .step.a { border-left-color: var(--accent); }
+    .step::before {
+      counter-increment: st; content: counter(st);
+      font-weight: 700; font-size: 15px; color: var(--text2);
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 50%; width: 30px; height: 30px;
+      display: grid; place-items: center;
+    }
+    .step h5 { margin: 0 0 4px; font-size: 14px; font-weight: 700; }
+    .step p { margin: 0; font-size: 13px; line-height: 1.85; color: var(--text2); }
+    .step code { font-size: 12px; }
+
     /* ===== 図版 ===== */
     /* 5体の構成図 */
     .amap { margin: 8px 0 18px; }
@@ -645,9 +686,10 @@
   <a href="#kaminaga"><span class="sn-n">1</span>概要</a>
   <a href="#kaminaga-design"><span class="sn-n">2</span>設計</a>
   <a href="#kaminaga-run"><span class="sn-n">3</span>実演</a>
-  <a href="#kaminaga-workflow"><span class="sn-n">4</span>運用</a>
-  <a href="#kaminaga-log"><span class="sn-n">5</span>ログ</a>
-  <a href="#kaminaga-next"><span class="sn-n">6</span>残作業</a>
+  <a href="#kaminaga-manual"><span class="sn-n">4</span>説明書</a>
+  <a href="#kaminaga-workflow"><span class="sn-n">5</span>運用</a>
+  <a href="#kaminaga-log"><span class="sn-n">6</span>ログ</a>
+  <a href="#kaminaga-next"><span class="sn-n">7</span>残作業</a>
 </div>
 
 <main>
@@ -3284,17 +3326,18 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div class="status-card ok">
         <div class="status-label">✅ 動いている</div>
         <ul>
-          <li><strong>実データで一巡（8/19）</strong>——門番→収集→3視点→統合</li>
-          <li>Python門番（ホワイトリスト方式）</li>
+          <li><strong>実データで一巡</strong>——門番→収集→3視点→統合</li>
+          <li>門番：仕訳帳CSV・見積書PDFとも対応</li>
           <li>3視点の再設計（実績／計画／制約）</li>
-          <li>予算消化ダッシュボード</li>
+          <li><strong>予測の台帳</strong>（バックテストの入口）</li>
+          <li>予算CSVテンプレート（提出待ち）</li>
         </ul>
       </div>
       <div class="status-card wip">
         <div class="status-label">🔨 決定済み・未実装</div>
         <ul>
-          <li>出力の社内ストレージ退避<br/><span style="font-size:12px;opacity:.8;">（無いとバックテストが成立しない）</span></li>
-          <li>予算Excelテンプレートの提供</li>
+          <li>スキャンPDF対応（OCR）</li>
+          <li>P1の予算PDFの特定</li>
         </ul>
       </div>
       <div class="status-card wait">
@@ -3341,9 +3384,9 @@ session <span class="co">=</span> client.beta.sessions.create(
 
     <!-- 構成 -->
     <h3 class="sub-h">5体の構成 — 実体はMarkdownファイル</h3>
-    <p class="lead">エージェントの実体は <code>.claude/agents/*.md</code> という職務記述書。知能はClaude側にあり、mdは役割の定義だけを持つ。システム全体で<strong>298行のMarkdown</strong>＋入出力ファイルしかない。</p>
+    <p class="lead">エージェントの実体は <code>.claude/agents/*.md</code> という職務記述書。知能はClaude側にあり、mdは役割の定義だけを持つ。システム全体で<strong>約470行のMarkdown</strong>＋入出力ファイルしかない。</p>
     <div class="amap">
-      <div class="amap-src"><span>📄 予算CSV</span><span>📒 仕訳帳</span></div>
+      <div class="amap-src"><span>📄 予算CSV / 見積書PDF</span><span>📒 仕訳帳CSV</span></div>
       <div class="amap-arr">↓</div>
       <div class="amap-row">
         <div class="amap-box wide">
@@ -3389,15 +3432,15 @@ session <span class="co">=</span> client.beta.sessions.create(
     <div class="bnd">
       <div class="bnd-z in">
         <div class="zl">🏢 社内</div>
-        <div class="zi"><b>① 生データ</b><br/>予算CSV・仕訳帳<br/><br/><b>② 門番（Python）</b><br/>個人名と日単価を<br/>集約して落とす</div>
+        <div class="zi"><b>① 生データ</b><br/>見積書PDF・仕訳帳CSV<br/><br/><b>② 門番（Python）</b><br/>許可語だけ通す<br/>単価を落とし<br/><strong>数量は残す</strong><br/><br/><b>③ 検査</b><br/>本文を読まずに判定</div>
       </div>
       <div class="bnd-z out">
         <div class="zl">🌐 社外（Claude）</div>
-        <div class="zi"><b>③ 5体が動く</b><br/>データ収集AG<br/>→ 実績・計画・制約<br/>→ 調整AI<br/><br/>ここを通る情報だけが<br/>会社の外に出る</div>
+        <div class="zi"><b>④ 5体が動く</b><br/>データ収集AG<br/>→ 実績・計画・制約<br/>→ 調整AI<br/><br/>ここを通る情報だけが<br/>会社の外に出る</div>
       </div>
       <div class="bnd-z in">
         <div class="zl">🏢 社内</div>
-        <div class="zi"><b>④ 戻ってから</b><br/>予算との突合<br/>ダッシュボード表示<br/><br/>予算額は<br/>一度も外に出ない</div>
+        <div class="zi"><b>⑤ 戻ってから</b><br/>予算との突合<br/>ダッシュボード表示<br/><br/>予算額は<br/>一度も外に出ない</div>
       </div>
     </div>
     <div class="callout c-danger" style="margin-bottom:16px;">
@@ -3529,9 +3572,9 @@ session <span class="co">=</span> client.beta.sessions.create(
         <div class="dg-a">予算の<strong>40%</strong>／「このペースなら6割が余る」</div>
       </div>
       <div class="dg-c">
-        <div class="dg-b"><i>制約</i><u class="r3" style="width:85%"></u></div>
-        <div class="dg-v">🚧 3,598,892円</div>
-        <div class="dg-a">予算の<strong>85%</strong>／「58万円分は構造的に使えない」</div>
+        <div class="dg-b"><i>制約</i><u class="r3" style="width:82%"></u></div>
+        <div class="dg-v">🚧 3,480,642円</div>
+        <div class="dg-a">予算の<strong>82%</strong>／「69万円分は構造的に使えない」</div>
       </div>
       <div class="dg-c">
         <div class="dg-b"><i>計画</i><u class="r2" style="width:100%"></u></div>
@@ -3542,10 +3585,10 @@ session <span class="co">=</span> client.beta.sessions.create(
         <div class="dg-b">
           <i>実績</i><u class="r1" style="width:40%"></u>
           <i>計画</i><u class="r2" style="width:100%"></u>
-          <i>制約</i><u class="r3" style="width:85%"></u>
+          <i>制約</i><u class="r3" style="width:82%"></u>
         </div>
         <div class="dg-v" style="color:var(--red);">割れ幅 254万円</div>
-        <div class="dg-a">乖離度 <strong>0.706</strong>（基準0.3）→ <strong>人間の確認が必要</strong></div>
+        <div class="dg-a">乖離度 <strong>0.730</strong>（基準0.3）→ <strong>人間の確認が必要</strong></div>
       </div>
     </div>
     <div class="callout c-tip" style="margin-bottom:32px;">
@@ -3566,13 +3609,13 @@ session <span class="co">=</span> client.beta.sessions.create(
           <table>
             <thead><tr><th style="width:40mm;">予算にある費目</th><th style="width:30mm;">予算額</th><th>仕訳帳での実績</th></tr></thead>
             <tbody>
-              <tr><td>人件費</td><td>1,750,320円（予算の<strong>45%</strong>）</td><td><strong>該当する取引 0件</strong></td></tr>
-              <tr><td>支援金</td><td>1,200,000円（同 <strong>31%</strong>）</td><td><strong>0円</strong></td></tr>
-              <tr><td colspan="2"><strong>合計 予算の76%</strong></td><td><strong>仕訳帳に1行も存在しない</strong></td></tr>
+              <tr><td>人件費</td><td>1,878,320円（予算の<strong>46%</strong>）</td><td><strong>該当する取引 0件</strong></td></tr>
+              <tr><td>支援金</td><td>1,200,000円（同 <strong>28%</strong>）</td><td><strong>0円</strong></td></tr>
+              <tr><td colspan="2"><strong>合計 予算の73%</strong></td><td><strong>仕訳帳に1行も存在しない</strong></td></tr>
             </tbody>
           </table>
         </div>
-        <p style="margin:0;">つまり実績AGは、<strong>予算の24%しか含まない母集団</strong>を年換算していました。算数は正しいのに、事業全体の着地推定には使えない値です。計画AGの100%も「予算額を超えない」という制約による定義上の張り付きで、こちらは<strong>上限であって予測ではありません</strong>。</p>
+        <p style="margin:0;">つまり実績AGは、<strong>予算の約3割しか含まない母集団</strong>を年換算していました。算数は正しいのに、事業全体の着地推定には使えない値です。計画AGの100%も「予算額を超えない」という制約による定義上の張り付きで、こちらは<strong>上限であって予測ではありません</strong>。</p>
       </div>
     </div>
     <div class="callout c-warn" style="margin-bottom:16px;">
@@ -3580,7 +3623,7 @@ session <span class="co">=</span> client.beta.sessions.create(
       <div>
         <p><strong>そこで、出力の主役は数字ではなく「経理に聞くべき1つの質問」になりました。</strong></p>
         <p style="margin:10px 0;font-size:15px;"><strong>「人件費と支援金は、まだ使っていないのか。それとも、使ったけれどこの仕訳帳に載らない経路で処理されているのか。」</strong></p>
-        <p style="margin:0;">前者なら着地は360万円付近。後者なら<strong>「消化率10%」という数字そのものが誤り</strong>で、実際はもっと進んでいることになります。<strong>この1点で解釈が正反対になる</strong>ため、ここを確定させないまま出す予測は、どの数字であっても根拠が弱い。</p>
+        <p style="margin:0;">前者なら着地は348万円付近。後者なら<strong>「消化率10%」という数字そのものが誤り</strong>で、実際はもっと進んでいることになります。<strong>この1点で解釈が正反対になる</strong>ため、ここを確定させないまま出す予測は、どの数字であっても根拠が弱い。</p>
       </div>
     </div>
     <div class="callout c-tip">
@@ -3592,7 +3635,188 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
-<!-- ===== 4. 運用 ===== -->
+<!-- ===== 4. 説明書 ===== -->
+<section id="kaminaga-manual">
+  <div class="container">
+    <div class="sec-head">
+      <div class="sec-tag">Manual</div>
+      <h2 class="sec-title">説明書 — 何がどこにあり、どう動かすか</h2>
+      <p class="sec-sub">初めて触る人が、このリポジトリを開いて動かせるようになるまでの手引き。</p>
+    </div>
+
+    <!-- ファイル地図 -->
+    <h3 class="sub-h">ファイル地図</h3>
+    <p class="lead" style="margin-bottom:12px;"><strong>色が役割を表します。</strong> 緑はPython（確定処理）、青はAI（解釈）、赤は読んではいけないもの。この3色の並び方が、そのまま安全設計になっています。</p>
+    <div class="ftree-key">
+      <span><b class="py" style="font-family:inherit;">■</b> Python＝確定処理</span>
+      <span><b class="ai" style="font-family:inherit;">■</b> AI＝解釈</span>
+      <span><b class="lock" style="font-family:inherit;">■</b> 読むな（生データ）</span>
+    </div>
+    <div class="ftree">
+<span class="d">AI作業/</span>
+├── <b>CLAUDE.md</b>                    <span class="cm">共通ルール。安全ルールが最優先で書いてある</span>
+├── <b>index.html</b>                   <span class="cm">この研究ノート（人が読む用）</span>
+├── <span class="d">docs/</span>                        <span class="cm">レポート（機械が読む用・自動生成）</span>
+│
+├── <span class="d">.claude/</span>
+│   ├── <span class="d">agents/</span>
+│   │   ├── <span class="ai">fc-data-collector.md</span>     <span class="cm">予算と実績を読んで整理する</span>
+│   │   ├── <span class="ai">fc-actuals.md</span>            <span class="cm">このペースが続いたら？</span>
+│   │   ├── <span class="ai">fc-plan.md</span>               <span class="cm">計画どおりなら？</span>
+│   │   └── <span class="ai">fc-constraint.md</span>         <span class="cm">そもそも執行可能なのは？</span>
+│   └── <span class="d">skills/fc-forecast/</span>
+│       └── <span class="ai">SKILL.md</span>                 <span class="cm">調整AIの手順書。予測の前に必読</span>
+│
+├── <span class="d">agent/</span>
+│   ├── <span class="py">masking.py</span>               <span class="cm">門番①　仕訳帳CSV</span>
+│   ├── <span class="py">pdf_extract.py</span>           <span class="cm">門番②　見積書PDF</span>
+│   ├── <span class="py">verify_mask.py</span>           <span class="cm">検査　　本文を読まずに安全性を判定</span>
+│   ├── <b>allow_words_extra.txt</b>     <span class="cm">許可語 339語（門番の語彙）</span>
+│   ├── <span class="py">split_evidence.py</span>        <span class="cm">証拠を4分割（誰が何を見るかの制御）</span>
+│   ├── <span class="py">aggregate.py</span>             <span class="cm">集計と検算（AIの算数を信用しない）</span>
+│   ├── <span class="py">ledger.py</span>                <span class="cm">予測の台帳（バックテストの入口）</span>
+│   ├── <span class="py">app.py</span>                   <span class="cm">ダッシュボード。LLMを一切呼ばない</span>
+│   └── <span class="d">data/</span><b>template_予算.csv</b>   <span class="cm">提出用テンプレート</span>
+│
+├── <span class="lock">data/</span>                        <span class="cm">🚨 会社の生データ。絶対に読ませない</span>
+├── <span class="lock">agent/masked/</span>                <span class="cm">門番の出力＋対応表。git管理外</span>
+└── <span class="lock">agent/output/</span>                <span class="cm">中間・最終出力。git管理外</span>
+    </div>
+    <div class="callout c-danger" style="margin-bottom:32px;">
+      <div class="callout-icon">🚨</div>
+      <div>
+        <p><strong>赤の3つは、AIに読ませてはいけません。</strong> <code>data/</code> には氏名・日単価・取引先名が入っており、<strong>AIが読んだ内容はすべて外部APIへ送信されます</strong>。門番を通す前に読めば、守るべきものを守る前に社外へ出すことになります。<br/><br/>残り2つは門番通過後ですが、<strong>記号（P1〜P3）と実際の案件名の対応表</strong>や予測の実額を含むため、公開はしません。</p>
+      </div>
+    </div>
+
+    <!-- コマンド一覧 -->
+    <h3 class="sub-h">コマンド一覧</h3>
+    <div class="tbl-wrap" style="margin-bottom:14px;">
+      <table>
+        <thead><tr><th style="width:62mm;">コマンド</th><th style="width:26mm;">入力</th><th>やること</th></tr></thead>
+        <tbody>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/masking.py</span></td><td>仕訳帳CSV</td><td>列を削り、摘要を伏字化して <code>masked/&lt;PID&gt;_journal.csv</code> へ</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/pdf_extract.py</span></td><td>見積書PDF</td><td>テキスト抽出→氏名と単価を伏字化して <code>masked/&lt;PID&gt;_budget_raw.txt</code> へ</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/verify_mask.py</span></td><td>門番の出力</td><td><strong>本文を読まずに</strong>①②③を判定。<strong>0でなければ出さない</strong></td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/masking.py --review</span></td><td>仕訳帳CSV</td><td>伏字にした語の候補一覧（語彙を育てる用・<strong>公開厳禁</strong>）</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/split_evidence.py P3</span></td><td>collected.json</td><td>shared / actuals / plan / constraints の4つへ分割</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/aggregate.py P3</span></td><td>3体の意見</td><td>中央値・乖離度を計算し、各AGの算数を検算</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/ledger.py record P3</span></td><td>予測結果</td><td>台帳へ追記（金額は社内、比率はgit）</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/ledger.py settle P3 …</span></td><td>確定実績</td><td><strong>答え合わせ。</strong>季節ナイーブと比べて勝ったか負けたか</td></tr>
+          <tr><td class="cmd"><span class="cmd-b">python3 agent/app.py</span></td><td>forecast_*.json</td><td>ダッシュボードを起動（<code>127.0.0.1:5001</code>）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-info" style="margin-bottom:32px;">
+      <div class="callout-icon">🤖</div>
+      <div>
+        <p><strong>AIを動かすコマンドはありません。</strong> 表にあるのは全部Pythonです。AIの部分は<strong>Claude Codeに話しかけて起動</strong>します——「P3の予算消化を分析して」と言えば、<code>SKILL.md</code> の手順に従って収集AGと3視点AGが順に動きます。<br/><br/>この非対称は意図的です。<strong>確定処理はコマンドとして固定し、判断が要る部分だけ人間が起点になる</strong>ようにしてあります。</p>
+      </div>
+    </div>
+
+    <!-- 実行手順 -->
+    <h3 class="sub-h">通しで動かす手順</h3>
+    <div class="steps">
+      <div class="step p">
+        <div>
+          <h5>門番を通す　<span class="cmd cmd-b">masking.py</span> <span class="cmd cmd-b">pdf_extract.py</span></h5>
+          <p>生データ → <code>agent/masked/</code>。<strong>ここまで一切社外に出ません。</strong> 監査結果（伏字件数）が0なら門番が効いていないので疑うこと。</p>
+        </div>
+      </div>
+      <div class="step p">
+        <div>
+          <h5>検査する　<span class="cmd cmd-b">verify_mask.py</span></h5>
+          <p><strong>①②③がすべて0でなければ、ここで止まります。</strong> 0にならないまま次へ進めてはいけません。</p>
+        </div>
+      </div>
+      <div class="step a">
+        <div>
+          <h5>収集AGを起動　<span style="color:var(--text2);font-size:12px;">Claude Codeに依頼</span></h5>
+          <p>マスク済みファイルを読ませ、<code>collected_&lt;PID&gt;.json</code> を作らせる。戻ってきたら<strong>自分で中身を確認</strong>——年度の開始月（日本の年度は4月始まり）と、<code>uncertain</code> に致命的な欠損が無いか。</p>
+        </div>
+      </div>
+      <div class="step p">
+        <div>
+          <h5>証拠を分割　<span class="cmd cmd-b">split_evidence.py</span></h5>
+          <p>4ファイルに分かれます。<strong>実績スライスに予算額が混入していないか</strong>だけ確認すること（収集AGは両方を見ているので書き添えてしまう）。</p>
+        </div>
+      </div>
+      <div class="step a">
+        <div>
+          <h5>3視点を並列起動　<span style="color:var(--text2);font-size:12px;">1回のメッセージで3体まとめて</span></h5>
+          <p>各AGには<strong>自分のスライスと shared だけ</strong>を渡す。<strong>互いの出力を渡さないこと。</strong> 結果は <code>stance_&lt;PID&gt;_*.json</code> へ保存。</p>
+        </div>
+      </div>
+      <div class="step p">
+        <div>
+          <h5>集計する　<span class="cmd cmd-b">aggregate.py</span></h5>
+          <p>乖離度と検算。<strong>0.3を超えたら人間へのエスカレーション対象</strong>です。</p>
+        </div>
+      </div>
+      <div class="step a">
+        <div>
+          <h5>統合する　<span style="color:var(--text2);font-size:12px;">調整AI＝メインセッション</span></h5>
+          <p><strong>平均で丸めない。</strong> なぜ割れたのかを原因まで降りること。<strong>原因が予測の見立てではなくデータ側にあることは珍しくありません。</strong></p>
+        </div>
+      </div>
+      <div class="step p">
+        <div>
+          <h5>記録して表示　<span class="cmd cmd-b">ledger.py record</span> <span class="cmd cmd-b">app.py</span></h5>
+          <p><strong>記録を飛ばすと精度が永久に測れません。</strong> ここが改善ループの入口です。</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 門番の中身 -->
+    <h3 class="sub-h">門番の中身 — 1行がどう処理されるか</h3>
+    <div class="flowrow" style="margin-bottom:14px;">
+      <div class="fnode safe"><b>元の行</b><span>山田太郎 立替<br/>交通費 4月分</span></div>
+      <div class="farr">→</div>
+      <div class="fnode gate"><b>語の判定</b><span>許可語だけで<br/><strong>完全に分解できるか</strong><br/>「交通費」＝○<br/>「山田太郎」＝×</span></div>
+      <div class="farr">→</div>
+      <div class="fnode gate"><b>数字の判定</b><span>行内で <strong>a×b=c</strong> を探す<br/>c（金額）は残す<br/>a（単価）は落とす<br/><strong>b（数量）は残す</strong></span></div>
+      <div class="farr">→</div>
+      <div class="fnode safe"><b>出力</b><span>■■■■ 交通費<br/>4月分</span></div>
+    </div>
+    <div class="tbl-wrap" style="margin-bottom:16px;">
+      <table>
+        <thead><tr><th style="width:42mm;">仕組み</th><th>なぜそうなっているか</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ホワイトリスト</strong><br/>許可語だけ通す</td><td>「危ない語を列挙して塞ぐ」方式は<strong>原理的に漏れる</strong>。列挙し忘れが必ず出る。法人格を含まないブランド名や、規則性の無い氏名は列挙しきれない</td></tr>
+          <tr><td><strong>完全分解で判定</strong><br/>部分一致では通さない</td><td>「〈地名〉交通費」は「交通費」を含むが地名は許可語ではない。部分一致で通すと、許可語を含んだ固有名詞が丸ごと漏れる</td></tr>
+          <tr><td><strong>数量は残す</strong><br/>単価だけ落とす</td><td><strong>機密なのは単価であって数量ではない。</strong>「0.5日/月×12か月」は誰の情報でもなく、制約AGが「経過分は後から積めない」と判断する中核データ。閾値1,000円で分ける</td></tr>
+          <tr><td><strong>伏字は同じ文字数</strong><br/><code>■</code> を元の長さぶん</td><td>PDFは<strong>空白で列位置を表す</strong>ため、長さが変わると桁が崩れ、どの数値が単価列でどれが金額列か判別できなくなる</td></tr>
+          <tr><td><strong>検査は本文を読まない</strong></td><td>確認のために人やAIが読むと、<strong>漏れていた場合に「確認のために漏らす」</strong>ことになる。集計値だけで判定する</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="callout c-tip" style="margin-bottom:32px;">
+      <div class="callout-icon">📖</div>
+      <div>
+        <p><strong>許可語を増やすときの唯一の禁則。</strong> <code>allow_words_extra.txt</code> に<strong>氏名・団体名・地名を足してはいけません</strong>。許可語は<strong>組み合わさります</strong>——「起業」と「支援」を両方許可すると、それを名乗る団体名も素通りします。増やすときは <code>--review</code> で候補を出し、業務語だけを選んでください。</p>
+      </div>
+    </div>
+
+    <!-- 出力ファイル -->
+    <h3 class="sub-h">出てくるファイルの読み方</h3>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th style="width:52mm;">ファイル</th><th>中身</th></tr></thead>
+        <tbody>
+          <tr><td><code>collected_&lt;PID&gt;.json</code></td><td>予算と実績の整理結果。<strong><code>uncertain</code> を必ず読むこと</strong>——収集AGが「読めなかった・矛盾した」と申告した箇所です</td></tr>
+          <tr><td><code>collected_&lt;PID&gt;_*.json</code></td><td>4分割された証拠。<code>shared</code> は全員が見る土台、他は各AGの専有</td></tr>
+          <tr><td><code>stance_&lt;PID&gt;_*.json</code></td><td>3体それぞれの予測。<code>key_drivers</code> に根拠が金額つきで入る</td></tr>
+          <tr><td><code>aggregate_&lt;PID&gt;.json</code></td><td>中央値・乖離度・<strong>検算の結果</strong></td></tr>
+          <tr><td><code>forecast_&lt;PID&gt;_&lt;時点&gt;.json</code></td><td>統合結果。<strong><code>key_uncertainty</code> が最重要</strong>——「経理に聞くべき1点」が入る</td></tr>
+          <tr><td><code>forecast_log.jsonl</code></td><td>予測の台帳（追記のみ・金額入り）。<strong>社内にのみ保持</strong></td></tr>
+          <tr><td><code>forecast_index.md</code></td><td>同じ記録の<strong>比率だけの版</strong>。金額を含まないのでgitに入る</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. 運用 ===== -->
 <section id="kaminaga-workflow">
   <div class="container">
     <div class="sec-head">
@@ -3707,16 +3931,35 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
-<!-- ===== 5. 記録 ===== -->
+<!-- ===== 6. 記録 ===== -->
 <section id="kaminaga-log">
   <div class="container">
     <div class="sec-head">
       <div class="sec-tag">Log</div>
       <h2 class="sec-title">開発ログ</h2>
-      <p class="sec-sub">直近4回分を表示。それ以前は折りたたんである。</p>
+      <p class="sec-sub">直近5回分を表示。それ以前は折りたたんである。</p>
     </div>
 
     <div class="log-timeline">
+      <div class="log-entry">
+        <div class="log-date">9/2</div>
+        <div class="log-content">
+          <h4>制約AGが機能を回復、精度測定の土台を用意</h4>
+          <ul class="log-items">
+            <li><strong>門番が厳しすぎて制約AGが仕事をできなくなっていた。</strong>「稼働日ベース」「件数ベース」というラベルごと伏字になり、費目の性質を判断できず粗い割り算に退化していた。許可語を90→<strong>339語</strong>に拡充し外部ファイル化（git追跡下なので語彙が引き継がれる）</li>
+            <li><strong>数量を落とすのをやめた。</strong>機密なのは単価であって数量ではない。「0.5日/月×12か月」は誰の情報でもなく、制約AGの中核データ。閾値1,000円で単価と数量を分離</li>
+            <li><strong>伏字を幅保存に変更</strong>（<code>■</code>を元と同じ文字数）。PDFは空白で列位置を表すため、長さが変わると単価列と金額列が判別できなくなっていた</li>
+            <li><strong>予測の台帳（ledger.py）を実装。</strong>金額入りは社内、比率だけの版はgit追跡。<strong>精度の履歴は設計とともに引き継がれ、金額は引き継がれない</strong></li>
+            <li>予算CSVテンプレートと記入要領を作成。<strong>P2を初めて通し、分割スクリプトの損壊バグを発見・修正</strong>（収集AGはLLMなので任意キーが案件ごとに揺れる）</li>
+          </ul>
+          <div class="log-insight">
+            <strong>📌 制約AGの推論の質が上がった：</strong>「経過3ヶ月分295,600円は本来後付け不能。<strong>ただし実績423,866円がこれを上回るため、経過分は執行済みとみなし逸失計上しない</strong>」——数量が読めなければ到達できない判断。着地は3,598,892円→<strong>3,480,642円</strong>に更新。<br/>
+            <strong>📌 3案件すべてで同じパターンが出た：</strong>P2は<strong>予算7費目すべてに対し実績0円</strong>、P1も広告宣伝費のみ。<strong>P3固有ではなく経理の運用そのものに起因する</strong>可能性が高い。<br/>
+            <strong>📌 まだ精度は測っていない：</strong>台帳の要約には「答え合わせ0件・精度の裏づけは無い」と表示され続ける。事実でなくなるまで消えない。
+          </div>
+        </div>
+      </div>
+
       <div class="log-entry">
         <div class="log-date">8/19</div>
         <div class="log-content">
@@ -3836,7 +4079,7 @@ session <span class="co">=</span> client.beta.sessions.create(
   </div>
 </section>
 
-<!-- ===== 6. 残作業 ===== -->
+<!-- ===== 7. 残作業 ===== -->
 <section id="kaminaga-next">
   <div class="container">
     <div class="sec-head">
@@ -3853,8 +4096,9 @@ session <span class="co">=</span> client.beta.sessions.create(
           <tr><td><s>Python門番</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span>（ホワイトリスト方式）</td></tr>
           <tr><td><s>証拠の分割・集計スクリプト</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span></td></tr>
           <tr><td><s>実データでの初回実行</s></td><td>—</td><td><span class="ok">✅ 8/19完了</span>（<a href="#kaminaga-run">実演</a>）</td></tr>
-          <tr><td><strong>予算テンプレート（Excel）</strong></td><td>1h</td><td><span class="ok">着手可</span>／<strong>渡すまで相手が動けない</strong></td></tr>
-          <tr><td><strong>出力の社内ストレージ退避</strong></td><td>1h</td><td><span class="ok">着手可</span>／<strong>無いとバックテストが成立しない</strong></td></tr>
+          <tr><td><s>予算CSVテンプレート</s></td><td>—</td><td><span class="ok">✅ 9/2完了</span>／<strong>渡すのは人の作業</strong></td></tr>
+          <tr><td><s>予測の台帳（出力の永続化）</s></td><td>—</td><td><span class="ok">✅ 9/2完了</span></td></tr>
+          <tr><td>スキャンPDF対応（OCR）</td><td>2h</td><td><span class="ok">着手可</span>／<code>tesseract</code>導入済</td></tr>
           <tr><td>人件費・支援金の計上経路を反映</td><td>1〜2h</td><td><span class="tri">⚠️ 経理への確認待ち</span></td></tr>
           <tr><td>アカウント間の揺れ幅比較</td><td>2〜3h</td><td><span class="tri">⚠️ 会社アカウント待ち</span></td></tr>
           <tr><td>バックテスト（<a href="#decisions">論点4</a>）</td><td>3〜5h</td><td><span class="tri">⚠️ 年度末実績の再エクスポート待ち</span></td></tr>
