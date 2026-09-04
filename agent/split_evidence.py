@@ -48,8 +48,12 @@ def _strip_budget(notes: list) -> tuple[list[str], int]:
 REQUIRED = ("project", "budget", "actuals", "elapsed", "consumption_rate")
 
 
-def split(pid: str) -> None:
-    src = OUT / f"collected_{pid}.json"
+def split(pid: str, dir_: Path | None = None) -> None:
+    # 検証シナリオは scenarios/<名前>/collected.json に置くため、置き場を差し替えられる
+    # ようにしてある。本番とシナリオで別のコードを使うと、検証したものと動かすものが
+    # 食い違うので、同じ関数を通す。
+    root = dir_ or OUT          # 既存の base（共通フィールドの辞書）と名前を分ける
+    src = root / ("collected.json" if dir_ else f"collected_{pid}.json")
     d = json.loads(src.read_text(encoding="utf-8"))
 
     # 収集AGの出力キーは案件ごとに揺れる（LLMが書くため、任意項目の有無が変わる）。
@@ -125,13 +129,14 @@ def split(pid: str) -> None:
 
     for name, payload in [("shared", shared), ("actuals", actuals),
                           ("plan", plan), ("constraints", constraints)]:
-        p = OUT / f"collected_{pid}_{name}.json"
+        p = root / (f"collected_{name}.json" if dir_ else f"collected_{pid}_{name}.json")
         p.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"  {p.name:34s} {len(p.read_text(encoding='utf-8')):>6,}字")
 
 
 if __name__ == "__main__":
-    pid = sys.argv[1] if len(sys.argv) > 1 else "P3"
-    print(f"=== {pid} の証拠を分割 ===")
-    split(pid)
+    arg = sys.argv[1] if len(sys.argv) > 1 else "P3"
+    sc = Path(__file__).parent / "scenarios" / arg
+    print(f"=== {arg} の証拠を分割 ===")
+    split(arg, sc if sc.is_dir() else None)
     print("\n各AGは自分のファイルと shared だけを読む。互いの専有ファイルは渡さない。")

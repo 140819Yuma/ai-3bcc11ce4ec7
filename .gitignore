@@ -42,3 +42,8 @@ agent/output/
 
 # 門番の出力（マスク済みでも実データ由来。対応表も含むため公開しない）
 agent/masked/
+
+# 検証シナリオの生成物（正解・中間結果。生成し直せるのでリポジトリには置かない）
+agent/scenarios/*/
+agent/scenarios/index.json
+agent/scenarios/score.json
