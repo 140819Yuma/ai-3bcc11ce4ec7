@@ -47,3 +47,7 @@ agent/masked/
 agent/scenarios/*/
 agent/scenarios/index.json
 agent/scenarios/score.json
+
+# 面談メモ（個人の面談内容。人事評価に関わるため公開しない）
+intern/sheets/
+intern/transcripts/
